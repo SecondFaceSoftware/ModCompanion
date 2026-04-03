@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-subgrid col-span-full gap-1 bg-neutral-850 py-1 px-2 h-full inset-shadow-rim">
+    <MPaper class="grid grid-cols-subgrid col-span-full gap-1">
         <FooterModcompButton />
         <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
             <div>
@@ -15,7 +15,7 @@
                 <FooterInteropStatus />
             </div>
         </div>
-    </div>
+    </MPaper>
 </template>
 
 <script setup lang="ts">

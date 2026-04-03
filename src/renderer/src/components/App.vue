@@ -1,6 +1,6 @@
 <template>
     <UApp>
-        <div class="grid main-layout h-screen bg-neutral-925">
+        <div class="grid main-layout h-screen bg-neutral-250 dark:bg-neutral-925">
             <div>
                 <TheSidebar />
             </div>

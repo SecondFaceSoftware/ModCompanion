@@ -1,5 +1,11 @@
 import { NuxtUIOptions } from "@nuxt/ui/vite";
 
+const loweredCave =
+    "bg-neutral-250 dark:bg-neutral-900 hover:bg-neutral-300 dark:hover:bg-neutral-850 inset-shadow-cave shadow-neutral-950";
+const tactile =
+    "bg-neutral-200 dark:bg-neutral-800 active:bg-neutral-850 disabled:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-xs shadow-neutral-950/50 disabled:inset-shadow-none disabled:text-neutral-600";
+const tactileHover = "hover:bg-neutral-750";
+
 export default function buildConfig(): NuxtUIOptions {
     return {
         components: {
@@ -37,14 +43,14 @@ export default function buildConfig(): NuxtUIOptions {
                 variants: {
                     variant: {
                         solid: "inset-shadow-rim",
-                        cave: "bg-neutral-900 hover:bg-neutral-850 inset-shadow-cave shadow-neutral-950 ring-transparent border border-accented outline-primary-500 outline-2 outline-none focus-visible:outline-solid focus-visible:outline-groove",
+                        cave: `${loweredCave} ring-transparent border border-accented outline-primary-500 outline-2 outline-none focus-visible:outline-solid focus-visible:outline-groove`,
                     },
                 },
                 compoundVariants: [
                     {
                         color: "neutral",
                         variant: "solid",
-                        class: "bg-neutral-800 hover:bg-neutral-750 active:bg-neutral-850 disabled:bg-neutral-900 text-neutral-100 shadow-xs shadow-neutral-950/50 disabled:inset-shadow-none disabled:text-neutral-600",
+                        class: `${tactile}`,
                     },
                 ],
                 defaultVariants: {
@@ -107,8 +113,7 @@ export default function buildConfig(): NuxtUIOptions {
                 },
                 variants: {
                     variant: {
-                        lowered:
-                            "bg-neutral-900 hover:bg-neutral-850 inset-shadow-cave shadow-neutral-950 ring-transparent border border-accented outline-primary-500 outline-2 outline-none focus-visible:outline-solid",
+                        lowered: `${loweredCave} ring-transparent border border-accented outline-primary-500 outline-2 outline-none focus-visible:outline-solid`,
                     },
                 },
                 defaultVariants: {

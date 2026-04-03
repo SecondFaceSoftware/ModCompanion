@@ -35,6 +35,7 @@
     --color-neutral-50: oklch(98.5% 0 0);
     --color-neutral-100: oklch(97% 0 0);
     --color-neutral-200: oklch(92.2% 0 0);
+    --color-neutral-250: oklch(89% 0 0);
     --color-neutral-300: oklch(87% 0 0);
     --color-neutral-400: oklch(70.8% 0 0);
     --color-neutral-500: oklch(55.6% 0 0);
@@ -59,17 +60,78 @@
     --color-magenta-800: oklch(0.13 0.241 335.604);
     --color-magenta-900: oklch(0.07 0.241 335.604);
 
-    --inset-shadow-rim: inset 1px 1px 1px rgba(255, 255, 255, 0.08), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
-    --inset-shadow-rim-strong: inset 1px 1px 1px rgba(255, 255, 255, 0.9), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
-    --inset-shadow-cave: inset -1px -1px 2px rgba(0, 0, 0, 0.2), inset 1px 1px 2px rgba(0, 0, 0, 0.9);
+    --inset-shadow-rim-dark: inset 1px 1px 1px rgba(255, 255, 255, 0.08), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
+    --inset-shadow-rim-dark-strong: inset 1px 1px 1px rgba(255, 255, 255, 0.9), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
+    --inset-shadow-cave-dark: inset -1px -1px 2px rgba(0, 0, 0, 0.1), inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+
+    --inset-shadow-rim-light: inset 1px 1px 1px rgba(255, 255, 255, 0.08), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
+    --inset-shadow-rim-light-strong: inset 1px 1px 1px rgba(255, 255, 255, 0.9), inset -1px -1px 1px rgba(0, 0, 0, 0.4);
+    --inset-shadow-cave-light: inset -1px -1px 2px rgba(0, 0, 0, 0.2), inset 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.inset-shadow-cave {
+    box-shadow: var(--inset-shadow-cave-light);
+    @variant dark {
+        box-shadow: var(--inset-shadow-cave-dark);
+    }
+}
+
+.inset-shadow-rim {
+    box-shadow: var(--inset-shadow-rim-light);
+    @variant dark {
+        box-shadow: var(--inset-shadow-rim-dark);
+    }
+}
+
+.inset-shadow-rim-strong {
+    box-shadow: var(--inset-shadow-rim-light-strong);
+    @variant dark {
+        box-shadow: var(--inset-shadow-rim-dark-strong);
+    }
 }
 
 .dockview-theme-modcomp,
 .dockview-theme-modcomp--nested {
     --dv-tabs-and-actions-container-background-color: transparent;
     --dv-tabs-and-actions-container-height: 24px;
-    --dv-drag-over-background-color: color-mix(in oklab, var(--color-neutral-400), transparent 75%);
     --dv-overlay-z-index: 10;
+
+
+    .dv-tab {
+        border-top-left-radius: var(--radius-md);
+        border-top-right-radius: var(--radius-md);
+        font-size: var(--text-xs);
+
+        padding-inline: calc(var(--spacing) * 2);
+        padding-block: 0;
+    }
+
+    .dv-content-container {
+        border-radius: var(--radius-md);
+        border-top-left-radius: 0;
+    }
+
+    .dv-tabs-overflow-dropdown-default {
+        font-size: var(--text-xs);
+    }
+
+    .dv-tabs-overflow-container .dv-tab {
+        padding-block: var(--spacing);
+        border-radius: var(--radius-md);
+    }
+}
+
+.dockview-theme-modcomp--nested {
+    --dv-group-view-background-color: transparent;
+}
+
+.outline-groove {
+    outline-style: groove;
+}
+
+.dark .dockview-theme-modcomp,
+.dark .dockview-theme-modcomp--nested {
+    --dv-drag-over-background-color: color-mix(in oklab, var(--color-neutral-400), transparent 75%);
 
     --dv-group-view-background-color: var(--color-neutral-900);
 
@@ -85,37 +147,44 @@
 
     .dv-tab {
         box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.08), inset -1px 0px 1px rgba(0, 0, 0, 0.4);
-        border-top-left-radius: var(--radius-md);
-        border-top-right-radius: var(--radius-md);
-        font-size: var(--text-xs);
-
-        padding-inline: calc(var(--spacing) * 2);
-        padding-block: 0;
     }
 
     .dv-content-container {
         background-color: var(--color-neutral-850);
         box-shadow: var(--inset-shadow-rim);
-        border-radius: var(--radius-md);
-        border-top-left-radius: 0;
-    }
-
-    .dv-tabs-overflow-dropdown-default {
-        font-size: var(--text-xs);
     }
 
     .dv-tabs-overflow-container .dv-tab {
-        padding-block: var(--spacing);
-
         box-shadow: var(--inset-shadow-rim);
-        border-radius: var(--radius-md);
     }
 }
 
+.dockview-theme-modcomp,
 .dockview-theme-modcomp--nested {
-    --dv-group-view-background-color: transparent;
-}
+    --dv-drag-over-background-color: color-mix(in oklab, var(--color-neutral-400), transparent 75%);
 
-.outline-groove {
-    outline-style: groove;
+    --dv-group-view-background-color: var(--color-neutral-200);
+
+    --dv-activegroup-visiblepanel-tab-background-color: var(--color-neutral-200);
+    --dv-inactivegroup-visiblepanel-tab-background-color: var(--color-neutral-200);
+    --dv-activegroup-hiddenpanel-tab-background-color: var(--color-neutral-300);
+    --dv-inactivegroup-hiddenpanel-tab-background-color: var(--color-neutral-300);
+
+    --dv-activegroup-visiblepanel-tab-color: var(--color-neutral-900);
+    --dv-inactivegroup-visiblepanel-tab-color: var(--color-neutral-900);
+    --dv-activegroup-hiddenpanel-tab-color: var(--color-neutral-700);
+    --dv-inactivegroup-hiddenpanel-tab-color: var(--color-neutral-700);
+
+    .dv-tab {
+        box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.08), inset -1px 0px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    .dv-content-container {
+        background-color: var(--color-neutral-200);
+        box-shadow: var(--inset-shadow-rim);
+    }
+
+    .dv-tabs-overflow-container .dv-tab {
+        box-shadow: var(--inset-shadow-rim);
+    }
 }

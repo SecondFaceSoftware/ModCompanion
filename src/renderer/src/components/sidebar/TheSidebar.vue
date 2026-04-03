@@ -28,9 +28,8 @@
                     v-for="option of Shared.Launchers.SharedLauncherOptions"
                     :key="option.name"
                     size="sm"
-                    variant="soft"
+                    variant="ghost"
                     color="neutral"
-                    class="bg-neutral-800"
                     :label="option.name"
                     @click="() => launch(option)"
                 >
@@ -39,14 +38,11 @@
                     </template>
                 </UButton>
 
-                <USeparator />
-
                 <UButton
                     size="sm"
-                    variant="soft"
+                    variant="ghost"
                     color="neutral"
                     label="Quit"
-                    class="bg-neutral-800"
                     :icon="AppDesign.Icons.Close"
                     @click="() => quit()"
                 />

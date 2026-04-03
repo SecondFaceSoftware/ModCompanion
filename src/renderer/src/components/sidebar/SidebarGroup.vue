@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-neutral-850 inset-shadow-rim rounded shadow-sm p-1">
+    <MPaper class="rounded">
         <div class="flex items-start pl-3 pr-1 pb-1 pt-1">
-            <span class="text-xs text-neutral-200 select-none grow">
+            <span class="text-xs text-neutral-900 dark:text-neutral-200 select-none grow">
                 {{ heading }}
             </span>
 
@@ -10,7 +10,7 @@
         <div class="grid gap-1 content-start">
             <slot name="default" />
         </div>
-    </div>
+    </MPaper>
 </template>
 
 <script setup lang="ts">
