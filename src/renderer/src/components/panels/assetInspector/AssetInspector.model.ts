@@ -6,6 +6,7 @@ import { PanelBehavior, PanelModel } from "~/helper/GlobalComponents.js";
 
 export interface AssetInspectorModel extends PanelModel {
     assetId: Shared.Asset.AssetId;
+    editAsset?: Shared.Asset.Asset;
 }
 
 export const AssetInspectorBehavior = {
