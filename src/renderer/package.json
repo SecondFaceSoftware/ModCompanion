@@ -18,6 +18,8 @@
         "@types/lodash": "^4.17.24",
         "@types/node": "^25.3.5",
         "@vitejs/plugin-vue": "^6.0.4",
+        "vite-plugin-monaco-editor": "^1.1.0",
+        "vite-plugin-monaco-editor-esm": "^2.0.2",
         "vitest": "^4.0.18"
     },
     "dependencies": {
@@ -34,6 +36,7 @@
         "jwt-decode": "^4.0.0",
         "lodash": "^4.17.21",
         "mod_companion_shared": "../shared",
+        "monaco-editor": "^0.55.1",
         "pathe": "^2.0.3",
         "pinia": "^3.0.2",
         "qrcode": "^1.5.4",

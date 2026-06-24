@@ -1,12 +1,13 @@
 import { defineConfig } from "vite";
+import { fileURLToPath, URL } from "node:url";
 import vue from "@vitejs/plugin-vue";
 import ui from "@nuxt/ui/vite";
 import uiconfig from "./uiconfig.js";
-import { fileURLToPath, URL } from "node:url";
+import monacoEditorEsmPlugin from "vite-plugin-monaco-editor-esm";
 
 // https://vitejs.dev/config
 export default defineConfig({
-    plugins: [vue(), ui(uiconfig())],
+    plugins: [vue(), ui(uiconfig()), monacoEditorEsmPlugin()],
     base: "./",
     root: "src",
     build: {
