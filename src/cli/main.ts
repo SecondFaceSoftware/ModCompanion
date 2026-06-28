@@ -3,6 +3,7 @@ import * as Core from "mod_companion_core";
 import * as Shared from "mod_companion_shared";
 import chalk from "chalk";
 import humanizePlus from "humanize-plus";
+import * as fs from "node:fs/promises";
 
 program.name("Mod Companion CLI").description("Headless cli for mod companion tasks without GUI");
 
@@ -212,6 +213,72 @@ program
             const endTime = new Date().getTime();
             const totalTime = (endTime - startTime) / 1000;
             Core.Logger.info(Shared.Log.Channel.Cli, chalk.green(`Done! Took ${totalTime} seconds`));
+        }
+    });
+
+program
+    .command("asset-groups")
+    .option("-d, --delete-missing", "Delete references to missing assets")
+    .action(async (opts) => {
+        await Core.ConfigSystem.initConfigSystem();
+        Core.FileBrowserSystem.initSystem();
+        await new Promise<Shared.Asset.AssetRescanEvent>((resolve) => {
+            Core.AssetRepositorySystem.initSystem(resolve);
+        });
+
+        Core.Logger.info(Shared.Log.Channel.Cli, "Scanning assets...");
+
+        Core.Logger.info(Shared.Log.Channel.Cli, "Scanning asset groups...");
+        const groupsResult = await new Promise<Shared.AssetGroup.RescanEvent>((resolve) => {
+            Core.AssetGroupsSystem.initSystem(resolve).then(() => Core.AssetGroupsSystem.scan());
+        });
+
+        if (!opts.deleteMissing) {
+            for (const group of groupsResult.groups.values()) {
+                Core.Logger.info(Shared.Log.Channel.Cli, group.def.displayName, chalk.gray(` (${group.id})`));
+                for (const assetId of group.def.assets) {
+                    const asset = Core.AssetRepositorySystem.getAssetFromId(assetId);
+                    if (asset) {
+                        Core.Logger.info(
+                            Shared.Log.Channel.Cli,
+                            chalk.gray(`- `),
+                            asset.def.displayName,
+                            chalk.gray(` (${assetId})`),
+                        );
+                    } else {
+                        Core.Logger.info(
+                            Shared.Log.Channel.Cli,
+                            chalk.gray(`- `),
+                            chalk.redBright(`${assetId} (MISSING)`),
+                        );
+                    }
+                }
+            }
+        } else {
+            for (const group of groupsResult.groups.values()) {
+                const groupCopy = structuredClone(group.def);
+                let modified = false;
+                for (const assetId of group.def.assets) {
+                    const asset = Core.AssetRepositorySystem.getAssetFromId(assetId);
+                    if (!asset) {
+                        Core.Logger.info(
+                            Shared.Log.Channel.Cli,
+                            chalk.gray(`Removing`),
+                            chalk.redBright(assetId),
+                            "from",
+                            chalk.blue(group.def.displayName),
+                        );
+
+                        groupCopy.assets.splice(groupCopy.assets.indexOf(assetId), 1);
+                        modified = true;
+                    }
+                }
+
+                if (modified) {
+                    Core.Logger.info(Shared.Log.Channel.Cli, chalk.gray(`Writing`), chalk.blue(group.filePath));
+                    await fs.writeFile(group.filePath, JSON.stringify(groupCopy));
+                }
+            }
         }
     });
 
