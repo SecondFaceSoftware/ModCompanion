@@ -11,7 +11,6 @@ import { existsSync } from "fs";
 import { Logger } from "../CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { FileBrowserSystem } from "../CoreFileBrowserSystem.js";
-import { createModelAssetDefinition } from "./CoreAssetCreateModel.js";
 
 let assetMap: Map<Shared.Asset.AssetId, Shared.Asset.Asset> = new Map();
 let potentialAssets: Shared.Asset.Asset[] = [];
@@ -77,15 +76,6 @@ export const AssetRepositorySystem = {
                 newAssets.push(newAsset);
             }
             return newAssets;
-        }
-
-        if (inferredType === AssetCreationInferResults.Model) {
-            const { qcFile, def } = createModelAssetDefinition(primaryFile, otherFiles);
-            const mca = (qcFile ?? primaryFile) + Shared.Asset.McaFileExt;
-
-            const newAsset = await AssetRepositorySystem.writeAssetDef(def, mca);
-            assetMap.set(def.id, newAsset);
-            return [newAsset];
         }
 
         return undefined;
@@ -190,16 +180,20 @@ async function _buildAssets(
 
     for (const filePaths of index.values()) {
         for (const filePath of filePaths) {
-            if (!Shared.Asset.isMcaFile(filePath.path)) continue;
+            let definition: Shared.Asset.AssetDef | undefined;
+            let isTransient = false;
 
-            const definition = await _readMcaFile(filePath.path, rootPath);
+            if (Shared.Asset.isMcaFile(filePath.path)) {
+                definition = await _readMcaFile(filePath.path, rootPath);
+            } else if (Shared.Asset.isQcFile(filePath.path)) {
+                definition = await _readQcFile(filePath.path, rootPath);
+                isTransient = true;
+            } else {
+                continue;
+            }
+
             if (definition === undefined) {
-                Logger.warning(
-                    Shared.Log.Channel.Assets,
-                    "Asset definition file",
-                    filePath,
-                    "is invalid and will be ignored",
-                );
+                Logger.warning(Shared.Log.Channel.Assets, "Asset", filePath, "is invalid and will be ignored");
                 continue;
             }
 
@@ -220,6 +214,7 @@ async function _buildAssets(
             const asset: Shared.Asset.Asset = {
                 def: definition,
                 defFilePath: Shared.SourceFs.forwardSlashed(filePath.path),
+                isTransient,
             };
             assets.set(definition.id, asset);
         }
@@ -264,4 +259,8 @@ async function _readMcaFile(filePath: string, fileRootPath: string): Promise<Sha
     }
 
     return unk;
+}
+
+async function _readQcFile(filePath: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
+    return undefined;
 }

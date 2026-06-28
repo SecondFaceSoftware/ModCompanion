@@ -4,9 +4,14 @@ import pathe from "pathe";
 export type AssetId = string;
 
 export const McaFileExt = ".mca"; // Mod Companion Asset
+export const QcFileExt = ".qc";
 
 export function isMcaFile(filePath: string): boolean {
     return pathe.extname(filePath).toLowerCase() === McaFileExt;
+}
+
+export function isQcFile(filePath: string): boolean {
+    return pathe.extname(filePath).toLowerCase() === QcFileExt;
 }
 
 export const Types = {
@@ -89,11 +94,14 @@ export function getAssociatedEntryName(field: keyof AssociatedFiles) {
 }
 
 export interface Asset {
-    /** Asset definition data read from the mca file */
+    /** Asset definition data read from the mca file or generated implicitly */
     readonly def: AssetDef;
 
-    /** Path to the mca file */
+    /** Path to the asset's source file like .mca or .qc path */
     readonly defFilePath?: string;
+
+    /** When true, this asset was generated at app start and doesn't live in disk */
+    readonly isTransient?: boolean;
 }
 
 export interface TextureAsset extends Asset {
