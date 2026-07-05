@@ -23,11 +23,11 @@ const indexDoneEvent = createEvent<Map<string, Shared.FileBrowser.FileEntry[]>>(
 const fileChangedEvent = createEvent<string>();
 
 export const FileBrowserSystem = {
-    initSystem(notifyFunc?: Shared.FileBrowser.DirUpdatedNotifyFunc) {
+    initSystem(notifyFunc?: Shared.FileBrowser.DirUpdatedNotifyFunc, noWatchers = false) {
         dirUpdatedNotifyFunc = notifyFunc;
         this.indexFiles();
 
-        {
+        if (!noWatchers) {
             const config = ConfigSystem.getAppConfig();
             const alwaysWatchedPaths = [
                 config.textureOutputPath,

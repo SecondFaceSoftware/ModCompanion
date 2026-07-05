@@ -31,7 +31,10 @@ program
         if (opts.verbose)
             Core.Logger.debug(Shared.Log.Channel.Cli, "Maretf Path", Core.MareTfSystem.getMareTfBinaryPath());
 
-        await Core.AssetRepositorySystem.rescan();
+        Core.FileBrowserSystem.initSystem(undefined, true);
+        await new Promise<Shared.Asset.AssetRescanEvent>((resolve) => {
+            Core.AssetRepositorySystem.initSystem(resolve);
+        });
         const assets = Core.AssetRepositorySystem.getAssetMap();
 
         if (files.length > 0) {
@@ -221,12 +224,11 @@ program
     .option("-d, --delete-missing", "Delete references to missing assets")
     .action(async (opts) => {
         await Core.ConfigSystem.initConfigSystem();
-        Core.FileBrowserSystem.initSystem();
+        Core.FileBrowserSystem.initSystem(undefined, true);
+        Core.Logger.info(Shared.Log.Channel.Cli, "Scanning assets...");
         await new Promise<Shared.Asset.AssetRescanEvent>((resolve) => {
             Core.AssetRepositorySystem.initSystem(resolve);
         });
-
-        Core.Logger.info(Shared.Log.Channel.Cli, "Scanning assets...");
 
         Core.Logger.info(Shared.Log.Channel.Cli, "Scanning asset groups...");
         const groupsResult = await new Promise<Shared.AssetGroup.RescanEvent>((resolve) => {
