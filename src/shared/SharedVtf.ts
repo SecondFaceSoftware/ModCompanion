@@ -21,6 +21,15 @@ export function getVtfVersionName(version: SharedVtfVersion): string {
     }
 }
 
+export function createVtfVersion(major: number, minor: number): SharedVtfVersion | undefined {
+    const str = `${major}.${minor}`;
+    if((Object.values(SharedVtfVersions) as string[]).includes(str)) {
+        return str as SharedVtfVersion;
+    } else {
+        return undefined;
+    }
+}
+
 // -------------------------------
 
 export interface SharedVtfCreateOptions {
@@ -58,6 +67,162 @@ export type SharedVtfCreateEnumOptions =
     | typeof SharedVtfCompressionMethods;
 
 export type SharedVtfCreateNumberOptions = "compressionLevel" | "bumpScale";
+
+// Original:
+// "format"
+// {
+//         "platform" "PC"
+//         "version_major" "7"
+//         "version_minor" "6"
+// }
+// "image"
+// {
+//         "format" "BC7"
+//         "dimensions"
+//         {
+//                 "width" "2048"
+//                 "height" "2048"
+//                 "depth" "1"
+//                 "mips" "12"
+//                 "frames" "1"
+//                 "faces" "1"
+//         }
+//         "flags" "8192"
+//         "reflectivity"
+//         {
+//                 "r" "0.8289776"
+//                 "g" "0.82898"
+//                 "b" "0.82898"
+//         }
+//         "start_frame" "0"
+//         "bumpmap_scale" "1"
+//         "mip_scale" "0"
+//         "compression"
+//         {
+//                 "method" "DEFLATE"
+//                 "level" "6"
+//         }
+// }
+// "resources"
+// {
+//         "thumbnail"
+//         {
+//                 "present" "1"
+//                 "format" "DXT1"
+//                 "width" "16"
+//                 "height" "16"
+//         }
+//         "palette"
+//         {
+//                 "present" "0"
+//         }
+//         "fallback"
+//         {
+//                 "present" "0"
+//                 "width" "0"
+//                 "height" "0"
+//                 "mips" "0"
+//         }
+// }
+
+export interface SharedVtfInfoRawOutput {
+    format: {
+        platform: string;
+        version_major: number;
+        version_minor: number;
+    },
+    image: {
+        format: string;
+        dimensions: {
+            width: number;
+            height: number;
+            depth: number;
+            mips: number;
+            frames: number;
+            faces: number;
+        },
+        flags: number;
+        reflectivity: {
+            r: number;
+            g: number;
+            b: number;
+        },
+        "start_frame": number;
+        "bumpmap_scale": number;
+        "mip_scale": number;
+        "compression": {
+            "method": string;
+            "level": number;
+        }
+    },
+    "resources": {
+        "thumbnail" :{
+            "present": number;
+            "format": string;
+            "width": number
+            "height": number
+        },
+        "palette": {
+            "present": number;
+        },
+        "fallback": {
+            "present": number;
+            "width": number;
+            "height": number;
+            "mips": number;
+        }
+    }
+}
+
+export interface SharedVtfInfoFormat {
+    platform?: string;
+    version?: SharedVtfVersion;
+}
+
+export interface SharedVtfInfoImage {
+    format?: SharedVtfImageFormat;
+    dimensions: {
+        width: number;
+        height: number;
+        depth: number;
+        mips: number;
+        frames: number;
+        faces: number;
+    },
+    flags: SharedVtfFlag[];
+    reflectivity: { r: number; g: number; b: number },
+    startFrame: number;
+    bumpMapScale: number;
+    mipScale: number;
+    compression?: {
+        method: SharedVtfCompressionMethod;
+        level: number;
+    },
+}
+
+export interface SharedVtfInfoResources {
+    thumbnail: {
+        preset: number;
+        format: SharedVtfImageFormat;
+        width: number;
+        height: number;
+    },
+    palette: {
+        present: boolean;
+    },
+    fallback: {
+        present: boolean;
+        width: number;
+        height: number;
+        mips: number;
+    }
+}
+
+export interface SharedVtfInfo {
+    format?: SharedVtfInfoFormat;
+    image?: SharedVtfInfoImage;
+    resources?: SharedVtfInfoResources;
+}
 
 export function buildMareTfCreateArgs(options: SharedVtfCreateOptions): string {
     let a = "";
@@ -205,6 +370,10 @@ export const SharedVtfFlags = {
     CsgoAsyncSkipInitialLowRes: "CSGO_ASYNC_SKIP_INITIAL_LOW_RES",
 } as const;
 export type SharedVtfFlag = (typeof SharedVtfFlags)[keyof typeof SharedVtfFlags];
+
+export function createVtfFlagsArray(bits: number): SharedVtfFlag[] {
+
+}
 
 export const SharedVtfFlagVersionMap = new Map<SharedVtfFlag, SharedVtfVersion>([
     [SharedVtfFlags.PointSample, SharedVtfVersions.v74],
@@ -418,6 +587,14 @@ export const SharedVtfImageFormats = {
 } as const;
 export type SharedVtfImageFormat = (typeof SharedVtfImageFormats)[keyof typeof SharedVtfImageFormats];
 export const SharedVtfDefaultImageFormat = SharedVtfImageFormats.BC7;
+
+export function createVtfImageFormat(formatStr: string): SharedVtfImageFormat | undefined {
+    if((Object.values(SharedVtfImageFormats) as string[]).includes(formatStr)) {
+        return formatStr as SharedVtfImageFormat;
+    } else {
+        return undefined;
+    }
+}
 
 const SharedVtfImageFormatGroups: SharedVtfEnumGroup<SharedVtfImageFormat>[] = [
     {
