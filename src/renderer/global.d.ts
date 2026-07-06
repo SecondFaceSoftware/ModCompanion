@@ -156,6 +156,10 @@ declare global {
             mdl: {
                 info: (filePath: string) => Promise<Shared.MdlInfo.SharedMdlInfoReport>;
             };
+
+            vtf: {
+                getInfo: (absFilePath: string) => Promise<Shared.Vtf.SharedVtfInfo | undefined>;
+            };
         };
     }
 }

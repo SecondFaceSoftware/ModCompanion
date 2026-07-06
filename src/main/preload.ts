@@ -195,4 +195,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     mdl: {
         info: (filePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.MdlInfoGet, filePath),
     },
+
+    vtf: {
+        getInfo: (absFilePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfInfoQuery, absFilePath),
+    },
 });

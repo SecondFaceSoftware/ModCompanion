@@ -78,6 +78,8 @@ export const Channels = {
 
     MdlInfoGet: "mdlinfo_get",
 
+    VtfInfoQuery: "vtf_info_query",
+
     LogSendFromRenderer: "log_send_from_renderer",
     LogSendFromMain: "log_send_from_main",
 } as const;

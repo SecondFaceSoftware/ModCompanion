@@ -17,6 +17,7 @@ import { registerFileApi } from "../api/MainFileApi.js";
 import { registerLoggerApi } from "../api/MainLoggerApi.js";
 import { registerMdlInfoApi } from "../api/MainMdlInfoApi.js";
 import { FileBrowserApi } from "../api/MainFileBrowserApi.js";
+import { VtfApi } from "../api/MainVtfApi.js";
 
 const apis: (() => boolean)[] = [
     registerLoggerApi,
@@ -38,6 +39,7 @@ const apis: (() => boolean)[] = [
     registerTcArtifactsApi,
     registerFileApi,
     registerMdlInfoApi,
+    VtfApi.register,
 ];
 
 export function initApiSystem(): boolean {

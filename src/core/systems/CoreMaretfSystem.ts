@@ -54,7 +54,7 @@ export const MareTfSystem = {
             try {
                 let data = "";
                 const proc = child_process.spawn(cmd, { shell: true });
-                proc.stdout.on("data", (o: any) => data += o.toString());
+                proc.stdout.on("data", (o: any) => (data += o.toString()));
                 if (proc.pid !== undefined) {
                     os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
                 }
@@ -73,11 +73,17 @@ export const MareTfSystem = {
                 }
             }
         });
+        console.log(infoText);
+        Logger.debug(Shared.Log.Channel.MareTF, infoText);
 
         // maretf outputs multiple root nodes and it's easier to parse this way.
         // should probably have sourcelib output this better
-        const fullKv = `"info" \n{${infoText}\n}`;
+        const fullKv = `"info"{\n${infoText}\n}`;
         const parsed = sourcelib.kv.KvSerializer.deserialize(sourcelib.kv.KvParser.parseText(fullKv));
+        Logger.debug(Shared.Log.Channel.MareTF, parsed);
+        if (parsed.length === 0) {
+            throw new Error("Failed to parse maretf info output");
+        }
         const raw = parsed[0] as unknown as SharedVtfInfoRawOutput;
 
         const result: Shared.Vtf.SharedVtfInfo = {
@@ -88,12 +94,37 @@ export const MareTfSystem = {
             image: {
                 format: Shared.Vtf.createVtfImageFormat(raw.image.format),
                 dimensions: raw.image.dimensions,
-                flags:
-            }
+                flags: Shared.Vtf.createVtfFlagsArray(raw.image.flags),
+                reflectivity: raw.image.reflectivity,
+                startFrame: raw.image.start_frame,
+                bumpMapScale: raw.image.bumpmap_scale,
+                mipScale: raw.image.mip_scale,
+                compression: {
+                    method: Shared.Vtf.createVtfCompressionMethod(raw.image.compression.method),
+                    level: raw.image.compression.level,
+                },
+            },
+            resources: {
+                thumbnail: {
+                    preset: Boolean(raw.resources.thumbnail.present),
+                    format: Shared.Vtf.createVtfImageFormat(raw.resources.thumbnail.format),
+                    width: raw.resources.thumbnail.width,
+                    height: raw.resources.thumbnail.height,
+                },
+                palette: {
+                    present: Boolean(raw.resources.palette.present),
+                },
+                fallback: {
+                    present: Boolean(raw.resources.fallback.present),
+                    width: raw.resources.fallback.width,
+                    height: raw.resources.fallback.height,
+                    mips: raw.resources.fallback.mips,
+                },
+            },
         };
 
         return result;
-    }
+    },
 };
 
 function _buildMateTfCreateCommand(
@@ -106,9 +137,7 @@ function _buildMateTfCreateCommand(
     return cmd;
 }
 
-function _buildMateTfInfoCommand(
-    inputPath: string
-): string {
+function _buildMateTfInfoCommand(inputPath: string): string {
     const cmd = `${binary} info --info-output-mode=kv1 ${inputPath}`;
     return cmd;
 }

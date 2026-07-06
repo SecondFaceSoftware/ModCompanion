@@ -7,6 +7,7 @@ import FilePreviewText from "~/components/panels/fileInspector/previews/FilePrev
 import FilePreviewMap from "~/components/panels/fileInspector/previews/FilePreviewMap.vue";
 import FilePreviewChamberSign from "~/components/panels/fileInspector/previews/FilePreviewChamberSign.vue";
 import * as Shared from "mod_companion_shared";
+import FilePreviewTexture from "~/components/panels/fileInspector/previews/FilePreviewTexture.vue";
 
 export enum FileInspectors {
     Unknown,
@@ -150,6 +151,8 @@ export function getFileInspectorComponent(inspector: FileInspectors): FileInspec
             return FilePreviewMap;
         case FileInspectors.ChamberSign:
             return FilePreviewChamberSign;
+        case FileInspectors.Texture:
+            return FilePreviewTexture;
         default:
         case FileInspectors.Unknown:
             return undefined;

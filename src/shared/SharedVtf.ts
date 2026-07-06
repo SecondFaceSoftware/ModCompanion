@@ -23,7 +23,7 @@ export function getVtfVersionName(version: SharedVtfVersion): string {
 
 export function createVtfVersion(major: number, minor: number): SharedVtfVersion | undefined {
     const str = `${major}.${minor}`;
-    if((Object.values(SharedVtfVersions) as string[]).includes(str)) {
+    if ((Object.values(SharedVtfVersions) as string[]).includes(str)) {
         return str as SharedVtfVersion;
     } else {
         return undefined;
@@ -130,7 +130,7 @@ export interface SharedVtfInfoRawOutput {
         platform: string;
         version_major: number;
         version_minor: number;
-    },
+    };
     image: {
         format: string;
         dimensions: {
@@ -140,38 +140,38 @@ export interface SharedVtfInfoRawOutput {
             mips: number;
             frames: number;
             faces: number;
-        },
+        };
         flags: number;
         reflectivity: {
             r: number;
             g: number;
             b: number;
-        },
-        "start_frame": number;
-        "bumpmap_scale": number;
-        "mip_scale": number;
-        "compression": {
-            "method": string;
-            "level": number;
-        }
-    },
-    "resources": {
-        "thumbnail" :{
-            "present": number;
-            "format": string;
-            "width": number
-            "height": number
-        },
-        "palette": {
-            "present": number;
-        },
-        "fallback": {
-            "present": number;
-            "width": number;
-            "height": number;
-            "mips": number;
-        }
-    }
+        };
+        start_frame: number;
+        bumpmap_scale: number;
+        mip_scale: number;
+        compression: {
+            method: string;
+            level: number;
+        };
+    };
+    resources: {
+        thumbnail: {
+            present: number;
+            format: string;
+            width: number;
+            height: number;
+        };
+        palette: {
+            present: number;
+        };
+        fallback: {
+            present: number;
+            width: number;
+            height: number;
+            mips: number;
+        };
+    };
 }
 
 export interface SharedVtfInfoFormat {
@@ -188,34 +188,34 @@ export interface SharedVtfInfoImage {
         mips: number;
         frames: number;
         faces: number;
-    },
+    };
     flags: SharedVtfFlag[];
-    reflectivity: { r: number; g: number; b: number },
+    reflectivity: { r: number; g: number; b: number };
     startFrame: number;
     bumpMapScale: number;
     mipScale: number;
     compression?: {
         method: SharedVtfCompressionMethod;
         level: number;
-    },
+    };
 }
 
 export interface SharedVtfInfoResources {
     thumbnail: {
-        preset: number;
-        format: SharedVtfImageFormat;
-        width: number;
-        height: number;
-    },
+        preset: boolean;
+        format?: SharedVtfImageFormat;
+        width?: number;
+        height?: number;
+    };
     palette: {
         present: boolean;
-    },
+    };
     fallback: {
         present: boolean;
-        width: number;
-        height: number;
-        mips: number;
-    }
+        width?: number;
+        height?: number;
+        mips?: number;
+    };
 }
 
 export interface SharedVtfInfo {
@@ -372,7 +372,7 @@ export const SharedVtfFlags = {
 export type SharedVtfFlag = (typeof SharedVtfFlags)[keyof typeof SharedVtfFlags];
 
 export function createVtfFlagsArray(bits: number): SharedVtfFlag[] {
-
+    return [];
 }
 
 export const SharedVtfFlagVersionMap = new Map<SharedVtfFlag, SharedVtfVersion>([
@@ -459,6 +459,14 @@ export const SharedVtfCompressionMethods = {
 export type SharedVtfCompressionMethod = (typeof SharedVtfCompressionMethods)[keyof typeof SharedVtfCompressionMethods];
 export const SharedVtfDefaultCompressionMethod = SharedVtfCompressionMethods.Deflate;
 export const SharedVtfDefaultCompressionLevel = 6;
+
+export function createVtfCompressionMethod(str: string): SharedVtfCompressionMethod {
+    if ((Object.values(SharedVtfCompressionMethods) as string[]).includes(str)) {
+        return str as SharedVtfCompressionMethod;
+    } else {
+        return SharedVtfCompressionMethods.None;
+    }
+}
 
 export function getVtfCompressionMethodName(compressionMethod: SharedVtfCompressionMethod): string {
     switch (compressionMethod) {
@@ -589,7 +597,7 @@ export type SharedVtfImageFormat = (typeof SharedVtfImageFormats)[keyof typeof S
 export const SharedVtfDefaultImageFormat = SharedVtfImageFormats.BC7;
 
 export function createVtfImageFormat(formatStr: string): SharedVtfImageFormat | undefined {
-    if((Object.values(SharedVtfImageFormats) as string[]).includes(formatStr)) {
+    if ((Object.values(SharedVtfImageFormats) as string[]).includes(formatStr)) {
         return formatStr as SharedVtfImageFormat;
     } else {
         return undefined;
