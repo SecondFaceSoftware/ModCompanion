@@ -7,8 +7,9 @@ import { runConverter } from "../helpers/converter/CoreSharedConverter.js";
 import { ConfigSystem } from "./CoreConfigSystem.js";
 import { Logger } from "./CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
-import { SharedVtfInfo, SharedVtfInfoRawOutput } from "mod_companion_shared/SharedVtf.js";
+import { createVtfInfo, SharedVtfInfo, SharedVtfInfoRawOutput } from "mod_companion_shared/SharedVtf.js";
 import * as sourcelib from "sourcelib";
+import { Channel } from "mod_companion_shared/SharedLog.js";
 
 let binary = "";
 
@@ -48,29 +49,7 @@ export const MareTfSystem = {
         return runConverter(cmd, ConfigSystem.getAppConfig().gamePath, "MareTF");
     },
     async getVtfInfo(inputPath: string): Promise<SharedVtfInfo> {
-        const infoText = await new Promise<string>((resolve, reject) => {
-            try {
-                let data = "";
-                const proc = child_process.spawn(binary, ["info", "--info-output-mode=kv1", inputPath]);
-                proc.stdout.on("data", (o: any) => (data += o.toString()));
-                if (proc.pid !== undefined) {
-                    os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
-                }
-                proc.on("exit", (code) => {
-                    if (code === 0) {
-                        resolve(data);
-                    } else {
-                        reject();
-                    }
-                });
-            } catch (e) {
-                if (typeof e === "string") {
-                    reject(e);
-                } else {
-                    reject("MareTF info exited with unknown error");
-                }
-            }
-        });
+        const infoText = await _runMaretfInfo(inputPath);
 
         if (!infoText) {
             throw new Error("Failed to get vtf info");
@@ -84,47 +63,51 @@ export const MareTfSystem = {
             throw new Error("Failed to parse vtf info output");
         }
         const raw = parsed[0] as unknown as SharedVtfInfoRawOutput;
-
-        const result: Shared.Vtf.SharedVtfInfo = {
-            format: {
-                platform: raw.format.platform,
-                version: Shared.Vtf.createVtfVersion(raw.format.version_major, raw.format.version_minor),
-            },
-            image: {
-                format: Shared.Vtf.createVtfImageFormat(raw.image.format),
-                dimensions: raw.image.dimensions,
-                flags: Shared.Vtf.createVtfFlagsArray(raw.image.flags),
-                reflectivity: raw.image.reflectivity,
-                startFrame: raw.image.start_frame,
-                bumpMapScale: raw.image.bumpmap_scale,
-                mipScale: raw.image.mip_scale,
-                compression: {
-                    method: Shared.Vtf.createVtfCompressionMethod(raw.image.compression.method),
-                    level: raw.image.compression.level,
-                },
-            },
-            resources: {
-                thumbnail: {
-                    preset: Boolean(raw.resources.thumbnail.present),
-                    format: Shared.Vtf.createVtfImageFormat(raw.resources.thumbnail.format),
-                    width: raw.resources.thumbnail.width,
-                    height: raw.resources.thumbnail.height,
-                },
-                palette: {
-                    present: Boolean(raw.resources.palette.present),
-                },
-                fallback: {
-                    present: Boolean(raw.resources.fallback.present),
-                    width: raw.resources.fallback.width,
-                    height: raw.resources.fallback.height,
-                    mips: raw.resources.fallback.mips,
-                },
-            },
-        };
-
-        return result;
+        return createVtfInfo(raw);
     },
 };
+
+function _runMaretfInfo(inputPath: string): Promise<string> {
+    const cmd = `${binary} info --info-output-mode=kv1 ${inputPath.replaceAll("/", "\\")}`;
+    return new Promise<string>((resolve, reject) => {
+        try {
+            const data: string[] = [];
+            console.log(cmd);
+            const proc = child_process.exec(
+                cmd,
+                { cwd: ConfigSystem.getAppConfig().gamePath },
+                (error, stdout, stderr) => {
+                    if (stdout) {
+                        data.push(stdout.toString());
+                    } else if (error) {
+                        reject("MareTF failed: " + error.message);
+                    } else if (stderr) {
+                        reject("MareTF failed: " + stderr);
+                    }
+                },
+            );
+            // if (proc.pid !== undefined) {
+            //     os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
+            // }
+            proc.on("exit", (code) => {
+                if (code === 0) {
+                    resolve(data.join("\n"));
+                } else {
+                    reject();
+                }
+            });
+            // proc.on("error", (e) => {
+            //     reject(e);
+            // });
+        } catch (e) {
+            if (typeof e === "string") {
+                reject(e);
+            } else {
+                reject("MareTF info exited with unknown error");
+            }
+        }
+    });
+}
 
 function _buildMateTfCreateCommand(
     inputPath: string,

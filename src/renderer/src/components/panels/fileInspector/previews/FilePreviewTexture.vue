@@ -25,6 +25,7 @@ import * as Shared from "mod_companion_shared";
 import { AppDesign } from "~/design/AppDesign.js";
 import { Logger } from "~/logger.js";
 import { Channel } from "mod_companion_shared/SharedLog.js";
+import { watchImmediate } from "@vueuse/core";
 
 const props = defineProps<{ path: string }>();
 
@@ -32,10 +33,15 @@ const loading = ref(false);
 const error = ref(false);
 const info = ref<Shared.Vtf.SharedVtfInfo | undefined>(undefined);
 
-watch(() => props.path, loadInfo);
+watchImmediate(() => props.path, loadInfo);
 
 async function loadInfo() {
+    if (loading.value) {
+        return;
+    }
+
     loading.value = true;
+    error.value = false;
     info.value = undefined;
     try {
         info.value = await window.electronAPI.vtf.getInfo(props.path);
@@ -47,8 +53,6 @@ async function loadInfo() {
         loading.value = false;
     }
 }
-
-loadInfo();
 </script>
 
 <style scoped></style>

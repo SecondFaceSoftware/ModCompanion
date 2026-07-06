@@ -224,6 +224,47 @@ export interface SharedVtfInfo {
     resources?: SharedVtfInfoResources;
 }
 
+export function createVtfInfo(raw: SharedVtfInfoRawOutput): SharedVtfInfo {
+    const result: SharedVtfInfo = {
+        format: {
+            platform: raw.format.platform,
+            version: createVtfVersion(raw.format.version_major, raw.format.version_minor),
+        },
+        image: {
+            format: createVtfImageFormat(raw.image.format),
+            dimensions: raw.image.dimensions,
+            flags: createVtfFlagsArray(raw.image.flags),
+            reflectivity: raw.image.reflectivity,
+            startFrame: raw.image.start_frame,
+            bumpMapScale: raw.image.bumpmap_scale,
+            mipScale: raw.image.mip_scale,
+            compression: {
+                method: createVtfCompressionMethod(raw.image.compression.method),
+                level: raw.image.compression.level,
+            },
+        },
+        resources: {
+            thumbnail: {
+                preset: Boolean(raw.resources.thumbnail.present),
+                format: createVtfImageFormat(raw.resources.thumbnail.format),
+                width: raw.resources.thumbnail.width,
+                height: raw.resources.thumbnail.height,
+            },
+            palette: {
+                present: Boolean(raw.resources.palette.present),
+            },
+            fallback: {
+                present: Boolean(raw.resources.fallback.present),
+                width: raw.resources.fallback.width,
+                height: raw.resources.fallback.height,
+                mips: raw.resources.fallback.mips,
+            },
+        },
+    };
+
+    return result;
+}
+
 export function buildMareTfCreateArgs(options: SharedVtfCreateOptions): string {
     let a = "";
 
