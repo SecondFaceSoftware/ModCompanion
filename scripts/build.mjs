@@ -16,6 +16,7 @@ function createMainOptions(version) {
         banner: {
             js: "const __IMPORT_META_URL__ = 'file://' + __filename;",
         },
+        sourcemap: true,
     };
 }
 
@@ -33,6 +34,7 @@ function createCliOptions(version) {
         banner: {
             js: "const __IMPORT_META_URL__ = 'file://' + __filename;",
         },
+        sourcemap: true,
     };
 }
 
@@ -58,6 +60,7 @@ async function getWorkersOptions() {
         platform: "node",
         bundle: true,
         outExtension: { ".js": ".cjs" },
+        sourcemap: true,
     };
 }
 
