@@ -48,12 +48,10 @@ export const MareTfSystem = {
         return runConverter(cmd, ConfigSystem.getAppConfig().gamePath, "MareTF");
     },
     async getVtfInfo(inputPath: string): Promise<SharedVtfInfo> {
-        const cmd = _buildMateTfInfoCommand(inputPath);
-
         const infoText = await new Promise<string>((resolve, reject) => {
             try {
                 let data = "";
-                const proc = child_process.spawn(cmd, { shell: true });
+                const proc = child_process.spawn(binary, ["info", "--info-output-mode=kv1", inputPath]);
                 proc.stdout.on("data", (o: any) => (data += o.toString()));
                 if (proc.pid !== undefined) {
                     os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
@@ -73,16 +71,17 @@ export const MareTfSystem = {
                 }
             }
         });
-        console.log(infoText);
-        Logger.debug(Shared.Log.Channel.MareTF, infoText);
+
+        if (!infoText) {
+            throw new Error("Failed to get vtf info");
+        }
 
         // maretf outputs multiple root nodes and it's easier to parse this way.
         // should probably have sourcelib output this better
         const fullKv = `"info"{\n${infoText}\n}`;
         const parsed = sourcelib.kv.KvSerializer.deserialize(sourcelib.kv.KvParser.parseText(fullKv));
-        Logger.debug(Shared.Log.Channel.MareTF, parsed);
         if (parsed.length === 0) {
-            throw new Error("Failed to parse maretf info output");
+            throw new Error("Failed to parse vtf info output");
         }
         const raw = parsed[0] as unknown as SharedVtfInfoRawOutput;
 
@@ -134,10 +133,5 @@ function _buildMateTfCreateCommand(
 ): string {
     const args = Shared.Vtf.buildMareTfCreateArgs(options);
     const cmd = `${binary} -y create ${inputPath} -o ${outputPath} ${args}`;
-    return cmd;
-}
-
-function _buildMateTfInfoCommand(inputPath: string): string {
-    const cmd = `${binary} info --info-output-mode=kv1 ${inputPath}`;
     return cmd;
 }

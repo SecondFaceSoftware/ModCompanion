@@ -1,12 +1,54 @@
 <template>
-    <MTextArea horiz-scroll>{{ info }}</MTextArea>
+    <div>
+        <template v-if="!error && !loading && info">
+            <MTextArea horiz-scroll>{{ info }}</MTextArea>
+        </template>
+        <template v-else-if="loading">
+            <div class="h-full grid place-items-center text-center">
+                <span class="flex gap-1 items-center">
+                    <UIcon :name="AppDesign.Icons.Loading" class="animate-spin" />
+                    <span>Loading...</span>
+                </span>
+            </div>
+        </template>
+        <template v-else-if="error">
+            <div class="h-full grid place-content-center place-items-center text-center gap-2">
+                <span class="block text-lg">Error loading VTF :(</span>
+                <UButton label="Try Again" size="lg" @click="loadInfo" />
+            </div>
+        </template>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { computedAsync } from "@vueuse/core";
+import * as Shared from "mod_companion_shared";
+import { AppDesign } from "~/design/AppDesign.js";
+import { Logger } from "~/logger.js";
+import { Channel } from "mod_companion_shared/SharedLog.js";
+
 const props = defineProps<{ path: string }>();
 
-const info = computedAsync(() => window.electronAPI.vtf.getInfo(props.path), undefined);
+const loading = ref(false);
+const error = ref(false);
+const info = ref<Shared.Vtf.SharedVtfInfo | undefined>(undefined);
+
+watch(() => props.path, loadInfo);
+
+async function loadInfo() {
+    loading.value = true;
+    info.value = undefined;
+    try {
+        info.value = await window.electronAPI.vtf.getInfo(props.path);
+        loading.value = true;
+    } catch (e) {
+        error.value = true;
+        Logger.warning(Channel.MareTF, "Failed to load VTF info for", props.path, e);
+    } finally {
+        loading.value = false;
+    }
+}
+
+loadInfo();
 </script>
 
 <style scoped></style>
