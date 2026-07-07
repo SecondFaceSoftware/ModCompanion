@@ -32,9 +32,11 @@ export function createModelAssetDefinition(qcPath: string, refs: Iterable<string
         }
     }
 
+    const id = qcPath.substring(ConfigSystem.getAppConfig().rootPath.length + 1);
+
     const assetDef: Shared.Asset.ModelAssetDef = {
         type: Shared.Asset.Types.Model,
-        id: qcPath,
+        id,
         contentFiles,
         displayName: deriveModelDisplayName(qcPath),
     };
