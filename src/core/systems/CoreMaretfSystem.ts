@@ -9,7 +9,6 @@ import { Logger } from "./CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { createVtfInfo, SharedVtfInfo, SharedVtfInfoRawOutput } from "mod_companion_shared/SharedVtf.js";
 import * as sourcelib from "sourcelib";
-import { Channel } from "mod_companion_shared/SharedLog.js";
 
 let binary = "";
 
@@ -68,11 +67,11 @@ export const MareTfSystem = {
 };
 
 function _runMaretfInfo(inputPath: string): Promise<string> {
-    const cmd = `${binary} info --info-output-mode=kv1 ${inputPath.replaceAll("/", "\\")}`;
+    const cmd = `${binary} info --verbose --info-output-mode=kv1 ${inputPath}`;
     return new Promise<string>((resolve, reject) => {
         try {
             const data: string[] = [];
-            console.log(cmd);
+            // console.log(cmd);
             const proc = child_process.exec(
                 cmd,
                 { cwd: ConfigSystem.getAppConfig().gamePath },
@@ -86,9 +85,9 @@ function _runMaretfInfo(inputPath: string): Promise<string> {
                     }
                 },
             );
-            // if (proc.pid !== undefined) {
-            //     os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
-            // }
+            if (proc.pid !== undefined) {
+                os.setPriority(proc.pid, os.constants.priority.PRIORITY_LOW);
+            }
             proc.on("exit", (code) => {
                 if (code === 0) {
                     resolve(data.join("\n"));
@@ -96,9 +95,9 @@ function _runMaretfInfo(inputPath: string): Promise<string> {
                     reject();
                 }
             });
-            // proc.on("error", (e) => {
-            //     reject(e);
-            // });
+            proc.on("error", (e) => {
+                reject(e);
+            });
         } catch (e) {
             if (typeof e === "string") {
                 reject(e);
