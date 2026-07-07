@@ -11,6 +11,8 @@ import { existsSync } from "fs";
 import { Logger } from "../CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { FileBrowserSystem } from "../CoreFileBrowserSystem.js";
+import * as sourcelib from "sourcelib";
+import { getGameOrContentRelativePath } from "../../helpers/CoreSourceFs.js";
 
 let assetMap: Map<Shared.Asset.AssetId, Shared.Asset.Asset> = new Map();
 let potentialAssets: Shared.Asset.Asset[] = [];
@@ -240,27 +242,51 @@ function _detectPotentialAssets(contentTree: Iterable<string>): Shared.Asset.Ass
     return assets;
 }
 
-async function _readMcaFile(filePath: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
-    const fullPath = path.join(fileRootPath, filePath);
+async function _readMcaFile(fileName: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
+    const fullPath = path.join(fileRootPath, fileName);
     const text = await fs.readFile(fullPath, "utf-8");
     const unk = JSON.parse(text);
 
     if (unk.type === undefined) {
-        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", filePath, "has no type");
+        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", fileName, "has no type");
         return undefined;
     }
     if (unk.id === undefined) {
-        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", filePath, "has no id");
+        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", fileName, "has no id");
         return undefined;
     }
     if (!Shared.Asset.isValidAssetType(unk.type)) {
-        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", filePath, "has invalid type ", unk.type);
+        Logger.warning(Shared.Log.Channel.Assets, "Asset definition file", fileName, "has invalid type ", unk.type);
         return undefined;
     }
 
     return unk;
 }
 
-async function _readQcFile(filePath: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
-    return undefined;
+async function _readQcFile(fileName: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
+    const fullPath = path.join(fileRootPath, fileName);
+    const text = await fs.readFile(fullPath, "utf-8");
+    const qcDoc = sourcelib.qc.QcParser.parseText(text);
+    const refs = sourcelib.qc.QcUtils.getAllReferencedModelInputFiles(qcDoc);
+
+    const contentFiles: string[] = [];
+    for (const ref of refs) {
+        const absRef = path.dirname(fullPath);
+        const fullRefFilePath = path.join(absRef, ref);
+        if (existsSync(fullRefFilePath)) {
+            const contentRelativeFilePath = getGameOrContentRelativePath(absRef);
+            contentFiles.push(contentRelativeFilePath);
+        }
+    }
+
+    const displayName = fileName.substring(fileName.indexOf("models/") + 7); // 7 = length of "models/"
+
+    const def: Shared.Asset.ModelAssetDef = {
+        type: Shared.Asset.Types.Model,
+        id: fullPath,
+        contentFiles,
+        displayName,
+    };
+
+    return def;
 }
