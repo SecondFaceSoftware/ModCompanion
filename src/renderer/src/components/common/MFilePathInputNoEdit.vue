@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex rounded bg-neutral-900 border border-accented inset-shadow-cave overflow-hidden hover:bg-neutral-850"
+        class="flex rounded bg-neutral-850 border border-accented inset-shadow-cave overflow-hidden hover:bg-neutral-800 transition-colors"
     >
         <UInput
             v-model="model"

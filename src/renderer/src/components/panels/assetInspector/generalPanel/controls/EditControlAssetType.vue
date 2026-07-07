@@ -1,5 +1,13 @@
 <template>
-    <USelect v-model="assetType" :items="selectItems" value-key="id" :icon="icon" class="w-full" @change="updateType" />
+    <USelect
+        v-model="assetType"
+        :items="selectItems"
+        value-key="id"
+        :icon="icon"
+        class="w-full"
+        @change="updateType"
+        :disabled="asset.isTransient"
+    />
 </template>
 
 <script setup lang="ts">

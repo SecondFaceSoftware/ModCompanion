@@ -18,25 +18,28 @@
                 field="contentFiles"
                 :base="Shared.FileBrowser.PathBases.ContentRelative"
             />
-            <EditControlAssetFileList
-                heading="Game Files"
-                :asset="asset"
-                field="gameFiles"
-                :max-items="maxGameFiles"
-                :base="Shared.FileBrowser.PathBases.GameRelative"
-            />
 
-            <UFormField label="Associated Files" class="col-span-2">
-                <EditControlAssetAssociated :asset="asset" />
-            </UFormField>
+            <template v-if="!asset.isTransient">
+                <EditControlAssetFileList
+                    heading="Game Files"
+                    :asset="asset"
+                    field="gameFiles"
+                    :max-items="maxGameFiles"
+                    :base="Shared.FileBrowser.PathBases.GameRelative"
+                />
 
-            <UFormField label="Credits" class="col-span-2">
-                <EditControlAssetCredits :asset="asset" />
-            </UFormField>
+                <UFormField label="Associated Files" class="col-span-2">
+                    <EditControlAssetAssociated :asset="asset" />
+                </UFormField>
 
-            <div>
-                <UButton label="Delete Asset" :icon="AppDesign.Icons.ActionRemove" @click="handleDelete" />
-            </div>
+                <UFormField label="Credits" class="col-span-2">
+                    <EditControlAssetCredits :asset="asset" />
+                </UFormField>
+
+                <div>
+                    <UButton label="Delete Asset" :icon="AppDesign.Icons.ActionRemove" @click="handleDelete" />
+                </div>
+            </template>
         </div>
     </MPanelRoot>
 </template>

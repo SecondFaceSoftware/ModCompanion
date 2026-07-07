@@ -3,7 +3,7 @@
         v-model="displayName"
         placeholder="(unknown)"
         class="w-full"
-        :disabled="disabled"
+        :disabled="asset.isTransient || disabled"
         @change="updateDisplayName"
     />
 </template>

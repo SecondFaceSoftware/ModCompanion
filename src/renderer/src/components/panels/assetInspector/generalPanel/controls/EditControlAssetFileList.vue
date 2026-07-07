@@ -2,18 +2,35 @@
     <UFormField ref="dropZoneRef" :label="heading" class="col-span-2">
         <template #hint />
         <div class="grid gap-1">
-            <template v-for="(file, i) in files" :key="i">
-                <MFilePathInput :model-value="file" :base="base" @change="(newText) => handleChanged(i, newText)">
-                    <UButton
-                        size="sm"
-                        variant="link"
-                        :icon="AppDesign.Icons.ActionRemove"
-                        @click="() => handleRemove(i)"
-                    />
-                </MFilePathInput>
+            <template v-if="files.length > 0">
+                <template v-for="(file, i) in files" :key="i">
+                    <template v-if="asset.isTransient">
+                        <MFilePathInputNoEdit :model-value="file" :base="base" />
+                    </template>
+                    <template v-else>
+                        <MFilePathInput
+                            :model-value="file"
+                            :base="base"
+                            @change="(newText) => handleChanged(i, newText)"
+                        >
+                            <UButton
+                                size="sm"
+                                variant="link"
+                                :icon="AppDesign.Icons.ActionRemove"
+                                @click="() => handleRemove(i)"
+                            />
+                        </MFilePathInput>
+                    </template>
+                </template>
+            </template>
+            <template v-else>
+                <div class="text-center text-muted mb-1">No Files</div>
             </template>
 
-            <div v-if="files.length < (maxItems ?? Number.MAX_VALUE)" class="grid grid-cols-[1fr_auto] gap-1">
+            <div
+                v-if="!asset.isTransient && files.length < (maxItems ?? Number.MAX_VALUE)"
+                class="grid grid-cols-[1fr_auto] gap-1"
+            >
                 <MDropArea @change="handleDrop">Drop files to add</MDropArea>
                 <UButton :icon="AppDesign.Icons.ActionAdd" class="justify-self-end" @click="handleAdd" />
             </div>

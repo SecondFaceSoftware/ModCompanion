@@ -1,6 +1,6 @@
 <template>
     <UFormField class="col-span-2">
-        <template #label><span class="text-nowrap">MCA File</span></template>
+        <template #label><span class="text-nowrap">Definition File</span></template>
         <MFilePathInputNoEdit
             :model-value="asset.defFilePath"
             disabled
