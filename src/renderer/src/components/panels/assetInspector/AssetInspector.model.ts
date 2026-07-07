@@ -1,4 +1,5 @@
 import { Reactive } from "vue";
+import * as pathe from "pathe";
 import * as Shared from "mod_companion_shared";
 import { useAssetListStore } from "~/store/AssetListStore.js";
 import { AppDesign } from "~/design/AppDesign.js";
@@ -23,7 +24,9 @@ export const AssetInspectorBehavior = {
         if (!model) {
             return "Asset Inspector";
         }
-        const assetName = useAssetListStore().getAssetById(model.assetId)?.def.displayName ?? "(unknown)";
+
+        const displayName = useAssetListStore().getAssetById(model.assetId)?.def.displayName;
+        const assetName = displayName ? pathe.basename(displayName) : "(unknown)";
         return "Asset " + assetName;
     },
     getIcon(model: AssetInspectorModel | undefined): string {
