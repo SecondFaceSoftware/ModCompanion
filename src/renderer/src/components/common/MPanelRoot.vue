@@ -16,6 +16,7 @@
 </template>
 
 <script setup lang="ts">
+// TODO: When there's no footer or header, the main content doesn't fill up the whole height
 defineProps<{
     alwaysShowScroll?: boolean;
     noScroll?: boolean;

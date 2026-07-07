@@ -1,5 +1,6 @@
 <template>
     <MPanelRoot no-scroll>
+        <template #header></template>
         <template v-if="conversionStore.conversionEvents.length > 0">
             <div class="grid grid-cols-2 gap-2 h-full">
                 <ConversionsTable :history="conversionStore.conversionEvents" />
