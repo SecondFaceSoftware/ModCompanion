@@ -19,7 +19,7 @@ export async function listMapSourceDirs(): Promise<Shared.Map.SharedMapSourceDir
 
     const dirs: Shared.Map.SharedMapSourceDir[] = [];
     for (const r of result) {
-        const fullDirPath = path.join(config.mapSourcePath, r);
+        const fullDirPath = pathe.join(config.mapSourcePath, r);
         const stat = await fs.stat(fullDirPath);
         if (!stat.isDirectory()) continue;
         if (!config.mapSourceDirs.includes(r)) continue;

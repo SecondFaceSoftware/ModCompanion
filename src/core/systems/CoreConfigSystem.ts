@@ -4,6 +4,7 @@ import os from "node:os";
 import { S3ClientConfig } from "@aws-sdk/client-s3";
 import { Logger } from "./CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
+import * as pathe from "pathe";
 
 interface ConfigFile {
     root?: string;
@@ -52,21 +53,21 @@ function _createRevolutionStandardConfig(c: ConfigFile): Shared.AppConfig.AppCon
         return undefined;
     }
 
-    const root = path.resolve(c.root);
+    const root = pathe.resolve(c.root);
     return {
         gameName: c.searchPath,
         rootPath: root,
-        contentPath: path.join(root, "content", c.searchPath),
-        gamePath: path.join(root, "game", c.searchPath),
-        gameRootPath: path.join(root, "game"),
+        contentPath: pathe.join(root, "content", c.searchPath),
+        gamePath: pathe.join(root, "game", c.searchPath),
+        gameRootPath: pathe.join(root, "game"),
 
-        textureSourcePath: path.join(root, "content", c.searchPath, "materialsrc"),
-        textureOutputPath: path.join(root, "game", c.searchPath, "materials"),
-        modelSourcePath: path.join(root, "content", c.searchPath, "models"),
-        modelOutputPath: path.join(root, "game", c.searchPath, "models"),
-        mapSourcePath: path.join(root, "content", c.searchPath, "maps"),
-        mapOutputPath: path.join(root, "game", c.searchPath, "maps"),
-        scriptsPath: path.join(root, "game", c.searchPath, "scripts"),
+        textureSourcePath: pathe.join(root, "content", c.searchPath, "materialsrc"),
+        textureOutputPath: pathe.join(root, "game", c.searchPath, "materials"),
+        modelSourcePath: pathe.join(root, "content", c.searchPath, "models"),
+        modelOutputPath: pathe.join(root, "game", c.searchPath, "models"),
+        mapSourcePath: pathe.join(root, "content", c.searchPath, "maps"),
+        mapOutputPath: pathe.join(root, "game", c.searchPath, "maps"),
+        scriptsPath: pathe.join(root, "game", c.searchPath, "scripts"),
 
         studioMdlPath: _buildBinaryPath(root, "studiomdl"),
         hlmvPath: _buildBinaryPath(root, "hlmv", true),
@@ -76,7 +77,7 @@ function _createRevolutionStandardConfig(c: ConfigFile): Shared.AppConfig.AppCon
         gameExePath: _buildBinaryPath(root, c.launcherName ?? "revolution"),
 
         vbspExePath: _buildBinaryPath(root, "vbsp"),
-        postcompilerExePath: path.join(root, "game/bin/win64/postcompiler/postcompiler.exe"),
+        postcompilerExePath: pathe.join(root, "game/bin/win64/postcompiler/postcompiler.exe"),
         vvisExePath: _buildBinaryPath(root, "vvis"),
         vradExePath: _buildBinaryPath(root, "vrad"),
 

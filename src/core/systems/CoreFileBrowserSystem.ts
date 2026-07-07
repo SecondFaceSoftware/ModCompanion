@@ -14,8 +14,9 @@ const index: Map<string, Shared.FileBrowser.FileEntry[]> = new Map();
 let dirUpdatedNotifyFunc: Shared.FileBrowser.DirUpdatedNotifyFunc | undefined = undefined;
 
 function _handleIndexMessage(result: { dir: string; entries: Shared.FileBrowser.FileEntry[] }) {
-    index.set(result.dir, result.entries);
-    dirUpdatedNotifyFunc?.(result.dir, { entries: result.entries, valid: true });
+    const dir = Shared.SourceFs.forwardSlashed(result.dir);
+    index.set(dir, result.entries);
+    dirUpdatedNotifyFunc?.(dir, { entries: result.entries, valid: true });
 }
 
 let alwaysWatcher: FSWatcher | undefined = undefined;

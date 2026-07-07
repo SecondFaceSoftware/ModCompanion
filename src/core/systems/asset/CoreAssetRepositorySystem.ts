@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import path from "path";
+import * as pathe from "pathe";
 import fs from "fs/promises";
 import { ConfigSystem } from "../CoreConfigSystem.js";
 import { AssetCreationInferResults, inferAssetCreationType } from "./CoreAssetCreateInferType.js";
@@ -12,7 +12,7 @@ import { Logger } from "../CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { FileBrowserSystem } from "../CoreFileBrowserSystem.js";
 import * as sourcelib from "sourcelib";
-import { getGameOrContentRelativePath } from "../../helpers/CoreSourceFs.js";
+import { createModelAssetDefinition } from "./CoreAssetCreateModel.js";
 
 let assetMap: Map<Shared.Asset.AssetId, Shared.Asset.Asset> = new Map();
 let potentialAssets: Shared.Asset.Asset[] = [];
@@ -92,8 +92,8 @@ export const AssetRepositorySystem = {
         let i = 0;
         do {
             mcaFileName = `new_asset_${i++}`;
-            mcaFilePath = path.join(mcaBasePath, `${mcaFileName}.mca`);
-        } while (existsSync(path.join(ConfigSystem.getAppConfig().rootPath, mcaFilePath)));
+            mcaFilePath = pathe.join(mcaBasePath, `${mcaFileName}.mca`);
+        } while (existsSync(pathe.join(ConfigSystem.getAppConfig().rootPath, mcaFilePath)));
 
         return AssetRepositorySystem.writeAssetDef(
             {
@@ -106,7 +106,7 @@ export const AssetRepositorySystem = {
     },
 
     async writeAssetDef(assetDef: Shared.Asset.AssetDef, mcaPath: string): Promise<Shared.Asset.Asset> {
-        const absoluteMcaPath = path.join(ConfigSystem.getAppConfig().rootPath, mcaPath);
+        const absoluteMcaPath = pathe.join(ConfigSystem.getAppConfig().rootPath, mcaPath);
         const payload = JSON.stringify(assetDef, undefined, 2);
         Logger.info(Shared.Log.Channel.Generic, "Writing asset", mcaPath, assetDef);
         await fs.writeFile(absoluteMcaPath, payload);
@@ -182,6 +182,8 @@ async function _buildAssets(
 
     for (const filePaths of index.values()) {
         for (const filePath of filePaths) {
+            if (!filePath.path.startsWith("content")) continue;
+
             let definition: Shared.Asset.AssetDef | undefined;
             let isTransient = false;
 
@@ -228,7 +230,7 @@ async function _buildAssets(
 function _detectPotentialAssets(contentTree: Iterable<string>): Shared.Asset.Asset[] {
     const assets: Shared.Asset.Asset[] = [];
     for (const file of contentTree) {
-        const isTexture = Shared.FileEndings.isTextureFileEnding(path.extname(file));
+        const isTexture = Shared.FileEndings.isTextureFileEnding(pathe.extname(file));
         if (isTexture) {
             if (!file.includes("_hr")) continue;
             if (AssetRepositorySystem.getAssetFromFile(file) !== undefined) continue;
@@ -243,7 +245,7 @@ function _detectPotentialAssets(contentTree: Iterable<string>): Shared.Asset.Ass
 }
 
 async function _readMcaFile(fileName: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
-    const fullPath = path.join(fileRootPath, fileName);
+    const fullPath = pathe.join(fileRootPath, fileName);
     const text = await fs.readFile(fullPath, "utf-8");
     const unk = JSON.parse(text);
 
@@ -264,29 +266,10 @@ async function _readMcaFile(fileName: string, fileRootPath: string): Promise<Sha
 }
 
 async function _readQcFile(fileName: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
-    const fullPath = path.join(fileRootPath, fileName);
-    const text = await fs.readFile(fullPath, "utf-8");
+    const fullQcPath = pathe.join(fileRootPath, fileName);
+    const text = await fs.readFile(fullQcPath, "utf-8");
     const qcDoc = sourcelib.qc.QcParser.parseText(text);
     const refs = sourcelib.qc.QcUtils.getAllReferencedModelInputFiles(qcDoc);
 
-    const contentFiles: string[] = [];
-    for (const ref of refs) {
-        const absRef = path.dirname(fullPath);
-        const fullRefFilePath = path.join(absRef, ref);
-        if (existsSync(fullRefFilePath)) {
-            const contentRelativeFilePath = getGameOrContentRelativePath(absRef);
-            contentFiles.push(contentRelativeFilePath);
-        }
-    }
-
-    const displayName = fileName.substring(fileName.indexOf("models/") + 7); // 7 = length of "models/"
-
-    const def: Shared.Asset.ModelAssetDef = {
-        type: Shared.Asset.Types.Model,
-        id: fullPath,
-        contentFiles,
-        displayName,
-    };
-
-    return def;
+    return createModelAssetDefinition(fullQcPath, refs);
 }

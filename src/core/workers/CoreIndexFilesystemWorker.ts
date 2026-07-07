@@ -13,7 +13,7 @@ async function indexFiles(startDir: string): Promise<void> {
             const fullPath = path.join(dir, p);
             const stat = await fs.stat(fullPath);
 
-            const resultPath = fullPath.substring(startDirLen);
+            const resultPath = fullPath.substring(startDirLen).replaceAll("\\", "/");
             if (stat.isFile()) {
                 entries.push({
                     name: p,
