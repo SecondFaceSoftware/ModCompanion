@@ -18,9 +18,7 @@ export const MdlInfoHelper = {
             proc.on("exit", (code: number) => {
                 if (code === 0) {
                     const kvFile = output.join("\n");
-                    const result = sourcelib.kv.KvSerializer.deserialize(sourcelib.kv.KvParser.parseText(kvFile), {
-                        detectArrays: true,
-                    });
+                    const result = sourcelib.kv.KvSerializer.deserializeText(kvFile, { detectArrays: true });
                     if (result.length !== 1) {
                         reject();
                     }

@@ -57,7 +57,7 @@ export const MareTfSystem = {
         // maretf outputs multiple root nodes and it's easier to parse this way.
         // should probably have sourcelib output this better
         const fullKv = `"info"{\n${infoText}\n}`;
-        const parsed = sourcelib.kv.KvSerializer.deserialize(sourcelib.kv.KvParser.parseText(fullKv));
+        const parsed = sourcelib.kv.KvSerializer.deserializeText(fullKv);
         if (parsed.length === 0) {
             throw new Error("Failed to parse vtf info output");
         }
