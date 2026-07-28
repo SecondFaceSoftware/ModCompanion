@@ -24,20 +24,22 @@ async function _buildAssets(
                 asset = await _scanGameFile(filePath);
             }
 
-            if (asset) {
-                const duplicateOther = assets.get(asset.def.id);
-                if (duplicateOther !== undefined) {
-                    // Logger.warning(
-                    //     Shared.Log.Channel.Assets,
-                    //     "Asset definition file",
-                    //     filePath,
-                    //     "has the same id as",
-                    //     duplicateOther.def.id,
-                    //     definition.id,
-                    //     "and will be ignored",
-                    // );
-                }
+            if (!asset) continue;
+            const duplicateOther = assets.get(asset.def.id);
+            if (duplicateOther !== undefined) {
+                // Logger.warning(
+                //     Shared.Log.Channel.Assets,
+                //     "Asset definition file",
+                //     filePath,
+                //     "has the same id as",
+                //     duplicateOther.def.id,
+                //     definition.id,
+                //     "and will be ignored",
+                // );
+                continue;
             }
+
+            assets.set(asset.def.id, asset);
         }
     }
 
@@ -72,15 +74,14 @@ async function _scanContentFile(filePath: Shared.FileBrowser.FileEntry): Promise
 
 async function _scanGameFile(filePath: Shared.FileBrowser.FileEntry): Promise<Shared.Asset.Asset | undefined> {
     if (Shared.Asset.isVmtFile(filePath.path)) {
+        const materialDef = await _readVmtFile(filePath.path, data.common.appConfig.rootPath);
+        if (!materialDef) return undefined;
         const asset: Shared.Asset.Asset = {
-            def: {
-                displayName: filePath.path,
-                id: filePath.path,
-                gameFiles:
-            },
+            def: materialDef,
             defFilePath: Shared.SourceFs.forwardSlashed(filePath.path),
             isTransient: true,
         };
+        return asset;
     }
 
     return undefined;
@@ -121,7 +122,9 @@ async function _readQcFile(fileName: string, fileRootPath: string): Promise<Shar
 async function _readVmtFile(fileName: string, fileRootPath: string): Promise<Shared.Asset.AssetDef | undefined> {
     const fullPath = pathe.join(fileRootPath, fileName);
     const text = await fs.readFile(fullPath, "utf-8");
-    const vmtDoc = sourcelib.kv.KvSerializer.deserializeText(fileName);
+    const doc = sourcelib.kv.KvSerializer.deserializeText(text);
+    const vmt = doc[0];
 
-    const def = Shared.AssetMaterial.createMaterialAssetDefinition(data.common.appConfig, fullPath);
+    const def = Shared.AssetMaterial.createMaterialAssetDefinition(data.common.appConfig, fullPath, vmt);
+    return def;
 }

@@ -1,5 +1,6 @@
 import { SharedVtfCreateOptions } from "./SharedVtf.js";
 import * as pathe from "pathe";
+import { VmtDocument } from "./SharedAssetMaterial.js";
 
 export type AssetId = string;
 export type AssetMap = Map<AssetId, Asset>;
@@ -50,7 +51,31 @@ export function getAssetTypeName(type: Type): string {
     }
 }
 
-export const ValidTypes = [Types.Texture, Types.Model];
+export function hasGameFiles(type: Type): boolean {
+    switch (type) {
+        case Types.Texture:
+        case Types.Material:
+            return true;
+        case Types.Model:
+        case Types.Unknown:
+        default:
+            return false;
+    }
+}
+
+export function hasContentFiles(type: Type): boolean {
+    switch (type) {
+        case Types.Texture:
+        case Types.Model:
+            return true;
+        case Types.Material:
+        case Types.Unknown:
+        default:
+            return false;
+    }
+}
+
+export const ValidTypes = [Types.Texture, Types.Model, Types.Material];
 export const UserSelectableTypes = [Types.Texture];
 
 export interface AssetDefFileArrays {
@@ -156,6 +181,7 @@ export interface ModelAssetDef extends AssetDef {
 
 export interface MaterialAssetDef extends AssetDef {
     type: typeof Types.Material;
+    vmtDocument?: VmtDocument;
 }
 
 export function isModelAssetDef(asset: AssetDef | undefined): asset is ModelAssetDef {

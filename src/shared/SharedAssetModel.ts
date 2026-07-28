@@ -5,8 +5,8 @@ import { ModelAssetDef, Types } from "./SharedAsset.js";
 import { forwardSlashed } from "./SharedSourceFs.js";
 
 function _disassembleModelName(contentFile: string): { sub: string; name: string } {
-    const materialsrc = "models";
-    const start = contentFile.indexOf(materialsrc) + materialsrc.length + 1;
+    const typeDir = "models";
+    const start = contentFile.indexOf(typeDir) + typeDir.length + 1;
     const sub = contentFile.substring(start);
     const name = filename(sub) ?? pathe.basename(sub);
 
@@ -22,8 +22,8 @@ function _deriveModelDisplayName(contentFile: string): string {
 export function createModelAssetDefinition(config: AppConfig, qcPath: string, refs: Iterable<string>): ModelAssetDef {
     const stripStart = config.contentPath.length + 1;
     const contentFiles: string[] = [];
+    const absRef = pathe.dirname(qcPath);
     for (const ref of refs) {
-        const absRef = pathe.dirname(qcPath);
         const fullRefFilePath = pathe.join(absRef, ref);
         const stripped = fullRefFilePath.substring(stripStart);
         contentFiles.push(stripped);

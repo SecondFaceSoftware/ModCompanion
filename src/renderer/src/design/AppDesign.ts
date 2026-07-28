@@ -2,9 +2,9 @@ import * as Shared from "mod_companion_shared";
 
 export const Icons = {
     Asset: "mingcute:traffic-cone-fill",
-    Material: "tdesign:highlight-1",
     Model: "mingcute:box-3-fill",
     Texture: "mingcute:pic-fill",
+    Material: "mingcute:balloon-2-fill",
 
     Dot: "lucide:dot",
     Check: "mingcute:check-line",
@@ -133,6 +133,8 @@ export function getAssetTypeIcon(type: Shared.Asset.Type): string {
             return Icons.Texture;
         case Shared.Asset.Types.Model:
             return Icons.Model;
+        case Shared.Asset.Types.Material:
+            return Icons.Material;
         case Shared.Asset.Types.Unknown:
         default:
             return Icons.Asset;
@@ -144,6 +146,8 @@ export function getAssetTypeTextColor(type: Shared.Asset.Type): string {
             return "text-blue-400";
         case Shared.Asset.Types.Model:
             return "text-pink-400";
+        case Shared.Asset.Types.Material:
+            return "text-orange-400";
         case Shared.Asset.Types.Unknown:
         default:
             return "text-neutral-500";
@@ -157,6 +161,9 @@ export function getAssetTypeName(type: Shared.Asset.Type) {
         }
         case Shared.Asset.Types.Texture: {
             return "Texture";
+        }
+        case Shared.Asset.Types.Material: {
+            return "Material";
         }
         default:
         case Shared.Asset.Types.Unknown: {

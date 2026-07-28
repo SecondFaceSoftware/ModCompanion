@@ -12,14 +12,16 @@
                 <EditControlAssetDisplayName :asset="asset" />
             </UFormField>
 
-            <EditControlAssetFileList
-                heading="Content Files"
-                :asset="asset"
-                field="contentFiles"
-                :base="Shared.FileBrowser.PathBases.ContentRelative"
-            />
+            <template v-if="Shared.Asset.hasContentFiles(asset.def.type)">
+                <EditControlAssetFileList
+                    heading="Content Files"
+                    :asset="asset"
+                    field="contentFiles"
+                    :base="Shared.FileBrowser.PathBases.ContentRelative"
+                />
+            </template>
 
-            <template v-if="!asset.isTransient">
+            <template v-if="Shared.Asset.hasGameFiles(asset.def.type)">
                 <EditControlAssetFileList
                     heading="Game Files"
                     :asset="asset"
@@ -27,7 +29,8 @@
                     :max-items="maxGameFiles"
                     :base="Shared.FileBrowser.PathBases.GameRelative"
                 />
-
+            </template>
+            <template v-if="!asset.isTransient">
                 <UFormField label="Associated Files" class="col-span-2">
                     <EditControlAssetAssociated :asset="asset" />
                 </UFormField>
