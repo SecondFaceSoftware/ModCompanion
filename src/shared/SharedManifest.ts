@@ -1,6 +1,7 @@
 import * as AppConfig from "./SharedAppConfig.js";
 import * as Asset from "./SharedAsset.js";
 import * as AssetModel from "./SharedAssetModel.js";
+import * as AssetMaterial from "./SharedAssetMaterial.js";
 import * as AssetGroup from "./SharedAssetGroup.js";
 import * as ChamberSignConfig from "./SharedChamberSignConfig.js";
 import * as Conversion from "./SharedConversion.js";
@@ -27,6 +28,7 @@ export {
     AppConfig,
     Asset,
     AssetModel,
+    AssetMaterial,
     AssetGroup,
     ChamberSignConfig,
     Conversion,

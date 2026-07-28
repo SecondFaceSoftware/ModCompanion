@@ -6,6 +6,7 @@ export type AssetMap = Map<AssetId, Asset>;
 
 export const McaFileExt = ".mca"; // Mod Companion Asset
 export const QcFileExt = ".qc";
+export const VmtFileExt = ".vmt";
 
 export function isMcaFile(filePath: string): boolean {
     return pathe.extname(filePath).toLowerCase() === McaFileExt;
@@ -15,10 +16,15 @@ export function isQcFile(filePath: string): boolean {
     return pathe.extname(filePath).toLowerCase() === QcFileExt;
 }
 
+export function isVmtFile(filePath: string): boolean {
+    return pathe.extname(filePath).toLowerCase() === VmtFileExt;
+}
+
 export const Types = {
     Unknown: "unknown",
     Texture: "texture",
     Model: "model",
+    Material: "material",
 } as const;
 export type Type = (typeof Types)[keyof typeof Types];
 
@@ -33,6 +39,9 @@ export function getAssetTypeName(type: Type): string {
         }
         case Types.Model: {
             return "Model";
+        }
+        case Types.Material: {
+            return "Material";
         }
         case Types.Unknown:
         default: {
@@ -143,6 +152,10 @@ export function isTextureAsset(asset: Asset | undefined): asset is TextureAsset 
 
 export interface ModelAssetDef extends AssetDef {
     type: typeof Types.Model;
+}
+
+export interface MaterialAssetDef extends AssetDef {
+    type: typeof Types.Material;
 }
 
 export function isModelAssetDef(asset: AssetDef | undefined): asset is ModelAssetDef {
