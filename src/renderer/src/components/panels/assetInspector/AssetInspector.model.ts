@@ -27,7 +27,7 @@ export const AssetInspectorBehavior = {
 
         const displayName = useAssetListStore().getAssetById(model.assetId)?.def.displayName;
         const assetName = displayName ? pathe.basename(displayName) : "(unknown)";
-        return "Asset " + assetName;
+        return assetName;
     },
     getIcon(model: AssetInspectorModel | undefined): string {
         return AppDesign.Icons.Panel_AssetInspector;
