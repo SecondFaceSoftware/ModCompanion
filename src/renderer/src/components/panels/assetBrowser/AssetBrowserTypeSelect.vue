@@ -1,6 +1,6 @@
 <template>
     <USelect
-        v-model="selected"
+        v-model="model"
         :items="items"
         value-key="id"
         multiple
@@ -14,17 +14,13 @@
 import { AppDesign, getAssetTypeIcon } from "~/design/AppDesign.js";
 import * as Shared from "mod_companion_shared";
 
+const model = defineModel<Shared.Asset.Type[]>({ default: [] });
+
 const items = Shared.Asset.ValidTypes.map((k) => ({
     id: k,
     label: Shared.Asset.getAssetTypeName(k),
     icon: getAssetTypeIcon(k),
 }));
-const selected = ref([]);
-// todo: reimplement type filter
-// const selected = ref<Shared.Asset.Type[]>(listStore.typeFilter);
-// watch(selected, (value) => {
-//     listStore.typeFilter = value;
-// });
 </script>
 
 <style scoped></style>

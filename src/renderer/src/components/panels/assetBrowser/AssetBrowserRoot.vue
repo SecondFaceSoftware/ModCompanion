@@ -9,7 +9,7 @@
                     class="grow"
                     autofocus
                 />
-                <AssetBrowserTypeSelect />
+                <AssetBrowserTypeSelect v-model="model.typeFilter" />
                 <UButtonGroup>
                     <UTooltip text="Expand All">
                         <UButton :icon="AppDesign.Icons.ExpandVertical" @click="table?.expandAll()" />
