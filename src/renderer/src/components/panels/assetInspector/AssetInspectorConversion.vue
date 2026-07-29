@@ -1,7 +1,14 @@
 <template>
     <div class="flex gap-1">
         <MConversionStateBadge :state="state" />
-        <UButton label="Convert" size="sm" :trailing-icon="AppDesign.Icons.ActionConvertAsset" @click="handleClick" />
+        <template v-if="state !== Shared.Conversion.State.NotConvertible">
+            <UButton
+                label="Convert"
+                size="sm"
+                :trailing-icon="AppDesign.Icons.ActionConvertAsset"
+                @click="handleClick"
+            />
+        </template>
     </div>
 </template>
 

@@ -9,6 +9,7 @@ export enum State {
     Finished = "finished",
     Failed = "failed",
     NoChange = "no_change",
+    NotConvertible = "not_convertible",
 }
 
 export function getConversionStateName(state: State): string {
@@ -27,6 +28,8 @@ export function getConversionStateName(state: State): string {
             return "Failed";
         case State.NoChange:
             return "No Change";
+        case State.NotConvertible:
+            return "Not Convertible";
         case State.Unknown:
         default:
             return "Unknown";
@@ -48,6 +51,7 @@ export function getConversionStateColor(state: State): string {
         case State.Pending:
         case State.PendingForced:
         case State.Unknown:
+        case State.NotConvertible:
         default: {
             return "neutral";
         }

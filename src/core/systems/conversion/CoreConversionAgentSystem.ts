@@ -81,6 +81,10 @@ export const ConversionAgentSystem = {
     },
     async initStates(map: Map<Shared.Asset.AssetId, Shared.Asset.Asset>) {
         for (const asset of map.values()) {
+            if (!_isConvertible(asset.def)) {
+                _setState(asset.def.id, Shared.Conversion.State.NotConvertible);
+                continue;
+            }
             if (!_isValidAsset(asset.def) || !_doContentFilesExist(asset.def)) {
                 _setState(asset.def.id, Shared.Conversion.State.Invalid);
                 continue;
@@ -151,6 +155,11 @@ async function _startConversion(id: Shared.Asset.AssetId): Promise<string | unde
         _setState(id, Shared.Conversion.State.Unknown);
         return undefined;
     }
+
+    if (!_isConvertible(asset?.def)) {
+        return undefined;
+    }
+
     const startTime = new Date();
     ConversionEventSystem.pushNewEvent(asset.def.id, startTime, previousState);
     _setState(id, Shared.Conversion.State.InProgress);
@@ -210,6 +219,13 @@ function _isValidAsset(asset: Shared.Asset.AssetDef): boolean {
         default:
             return false;
     }
+}
+
+function _isConvertible(asset: Shared.Asset.AssetDef): boolean {
+    if (asset.type === Shared.Asset.Types.Texture) return true;
+    if (asset.type === Shared.Asset.Types.Model) return true;
+
+    return false;
 }
 
 function _doContentFilesExist(asset: Shared.Asset.AssetDef): boolean {

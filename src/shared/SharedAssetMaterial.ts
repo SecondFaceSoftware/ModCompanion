@@ -7,7 +7,7 @@ export type VmtDocument = {};
 function _deriveMaterialDisplayName(vmtFile: string): string {
     const typeDir = "materials";
     const start = vmtFile.indexOf(typeDir) + typeDir.length + 1;
-    return forwardSlashed(vmtFile.substring(start));
+    return forwardSlashed(vmtFile.substring(start)).replace(".vmt", "");
 }
 
 export function createMaterialAssetDefinition(
