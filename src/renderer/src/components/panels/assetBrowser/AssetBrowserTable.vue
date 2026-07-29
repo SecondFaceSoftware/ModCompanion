@@ -108,23 +108,26 @@ const entries = computed(() => {
     const assetGroups = assetGroupsStore.groups;
     const assetIdsInGroups: Shared.Asset.AssetId[] = [];
 
-    // Add groups first
     const result: AssetBrowserEntry[] = [];
-    for (const assetGroup of assetGroups.values()) {
-        const searchTerm = model.value.searchTerm;
-        if (searchTerm) {
-            const passesSearch = assetGroup.def.displayName.includes(searchTerm);
-            if (!passesSearch) {
-                continue;
+
+    // Add groups first
+    if (!model.value.typeFilter || model.value.typeFilter.length === 0) {
+        for (const assetGroup of assetGroups.values()) {
+            const searchTerm = model.value.searchTerm;
+            if (searchTerm) {
+                const passesSearch = assetGroup.def.displayName.includes(searchTerm);
+                if (!passesSearch) {
+                    continue;
+                }
             }
+
+            result.push({
+                type: AssetBrowserEntryTypes.Group,
+                group: assetGroup,
+            });
+
+            assetIdsInGroups.push(...assetGroup.def.assets);
         }
-
-        result.push({
-            type: AssetBrowserEntryTypes.Group,
-            group: assetGroup,
-        });
-
-        assetIdsInGroups.push(...assetGroup.def.assets);
     }
 
     // Add remaining ungrouped asset
