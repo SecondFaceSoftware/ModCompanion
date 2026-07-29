@@ -46,6 +46,7 @@ import { useAssetsFilter } from "~/composables/useFilter.js";
 import { usePanelsStore } from "~/store/PanelsStore.js";
 import { GlobalComponentNames } from "~/helper/GlobalComponents.js";
 import { AssetInspectorModel } from "~/components/panels/assetInspector/AssetInspector.model.js";
+import { FileInspectorModel } from "~/components/panels/fileInspector/FileInspector.model.js";
 
 const listStore = useAssetListStore();
 const conversionStore = useAssetConversionStore();
@@ -224,6 +225,14 @@ function handleActiveChanged(entry: AssetBrowserEntry | undefined): void {
     if (isAssetBrowserAssetEntry(entry)) {
         activeId.value = entry.assetDef.id;
         activateGroup(undefined);
+
+        panelsStore.spawnTemporaryPanel<AssetInspectorModel>(
+            GlobalComponentNames.AssetInspector,
+            {
+                assetId: entry.assetDef.id,
+            },
+            "right",
+        );
     } else if (isAssetBrowserGroupEntry(entry)) {
         activateGroup(entry.group.id);
         activeId.value = undefined;
@@ -389,10 +398,9 @@ function handleEntryActivated(entry: AssetBrowserEntry): void {
     if (isAssetBrowserGroupEntry(entry)) {
         toggleCollapsed(entry.group.id);
     } else {
-        panelsStore.spawnTemporaryPanel<AssetInspectorModel>(
+        panelsStore.openInspector(
             GlobalComponentNames.AssetInspector,
-            { assetId: entry.assetDef.id },
-            "right",
+            (i) => panelsStore.getModel<AssetInspectorModel>(i.params?.panelId)?.assetId === entry.assetDef.id,
         );
     }
 }

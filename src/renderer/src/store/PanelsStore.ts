@@ -206,6 +206,20 @@ export const usePanelsStore = defineStore("panels", () => {
         return panelsOfSameType;
     }
 
+    function openInspector(
+        panelName: PanelComponentName,
+        existingInspectorPredicate: (panel: IDockviewPanel) => boolean,
+    ) {
+        // When double clicking a file that's already open as a temporary editor, make it non-temporary
+        const inspectors = getPanels(panelName);
+        const existingInspector = inspectors?.find(existingInspectorPredicate);
+        if (existingInspector) {
+            const panelId = existingInspector!.params!.panelId;
+            focus(panelId);
+            makeNonTemporary(panelId);
+        }
+    }
+
     function focus(panelId: string): void {
         api.value?.getPanel(panelId)?.focus();
     }
@@ -216,6 +230,7 @@ export const usePanelsStore = defineStore("panels", () => {
         spawnPanel,
         spawnPanelAtSimilar,
         spawnTemporaryPanel,
+        openInspector,
         getModel,
         makeNonTemporary,
         makeUnsaved,

@@ -342,16 +342,10 @@ function handleActivated(entry: Shared.FileBrowser.FileEntry, event?: KeyboardEv
         const fullPath = pathe.join(getAppConfig().rootPath, entry.path);
         window.electronAPI.fileBrowser.open(fullPath);
     } else {
-        // When double clicking a file that's already open as a temporary editor, make it non-temporary
-        const inspectors = panelsStore.getPanels(GlobalComponentNames.FileInspector);
-        const existingInspector = inspectors?.find(
-            (i) => usePanelsStore().getModel<FileInspectorModel>(i.params?.panelId)?.file === entry.path,
+        panelsStore.openInspector(
+            GlobalComponentNames.FileInspector,
+            (i) => panelsStore.getModel<FileInspectorModel>(i.params?.panelId)?.file === entry.path,
         );
-        if (existingInspector) {
-            const panelId = existingInspector!.params!.panelId;
-            panelsStore.focus(panelId);
-            panelsStore.makeNonTemporary(panelId);
-        }
     }
 }
 
