@@ -9,29 +9,29 @@ export function useWorkerThreadData<K extends Shared.Workers.WorkerFile>(): Shar
     return data;
 }
 
-export function useWorkerThreadMessages<K extends Shared.Workers.WorkerFile>(): Shared.Workers.AppWorkerMessages<
-    Shared.Workers.WorkerDoneMessages[K],
-    Shared.Workers.WorkerPostMessages[K]
+export function useWorkerThreadResponse<K extends Shared.Workers.WorkerFile>(): Shared.Workers.AppWorkerResponses<
+    Shared.Workers.WorkerDoneResponses[K],
+    Shared.Workers.WorkerPostResponses[K]
 > {
     function sendLog(channel: Shared.Log.Channel, type: Shared.Log.Type, data: any[]) {
-        const message: Shared.Workers.WorkerMessageLog = {
-            type: Shared.Workers.MessageType.Log,
+        const message: Shared.Workers.WorkerResponseLog = {
+            type: Shared.Workers.ResponseType.Log,
             payload: { data, channel, time: new Date(), type },
         };
         worker_threads.parentPort?.postMessage(message);
     }
 
-    function sendDone(payload: Shared.Workers.WorkerDoneMessages[K]) {
-        const message: Shared.Workers.WorkerMessageDone<Shared.Workers.WorkerDoneMessages[K]> = {
-            type: Shared.Workers.MessageType.Done,
+    function sendDone(payload: Shared.Workers.WorkerDoneResponses[K]) {
+        const message: Shared.Workers.WorkerResponseDone<Shared.Workers.WorkerDoneResponses[K]> = {
+            type: Shared.Workers.ResponseType.Done,
             payload,
         };
         worker_threads.parentPort?.postMessage(message);
     }
 
-    function sendPost(payload: Shared.Workers.WorkerPostMessages[K]) {
-        const message: Shared.Workers.WorkerMessagePost<Shared.Workers.WorkerPostMessages[K]> = {
-            type: Shared.Workers.MessageType.Post,
+    function sendPost(payload: Shared.Workers.WorkerPostResponses[K]) {
+        const message: Shared.Workers.WorkerResponsePost<Shared.Workers.WorkerPostResponses[K]> = {
+            type: Shared.Workers.ResponseType.Post,
             payload,
         };
         worker_threads.parentPort?.postMessage(message);

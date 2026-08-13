@@ -1,10 +1,10 @@
 import fs from "fs/promises";
 import exifreader from "exifreader";
 import * as Shared from "mod_companion_shared";
-import { useWorkerThreadData, useWorkerThreadMessages } from "../helpers/CoreWorkerHelper.js";
+import { useWorkerThreadData, useWorkerThreadResponse } from "../helpers/CoreWorkerHelper.js";
 
 const data = useWorkerThreadData<typeof Shared.Workers.WorkerFile.ImageMeta>();
-const messages = useWorkerThreadMessages<typeof Shared.Workers.WorkerFile.ImageMeta>();
+const messages = useWorkerThreadResponse<typeof Shared.Workers.WorkerFile.ImageMeta>();
 
 runImageMetaWorker(data.args.filePath).then((result) => messages.done(result));
 

@@ -20,8 +20,8 @@ export const WorkerSystem = {
     createWorker<K extends Shared.Workers.WorkerFile>(
         workerFile: K,
         workerArgs: Shared.Workers.WorkerArgs[K],
-        doneCallback?: (payload: Shared.Workers.WorkerDoneMessages[K]) => void,
-        postCallback?: (payload: Shared.Workers.WorkerPostMessages[K]) => void,
+        doneCallback?: (payload: Shared.Workers.WorkerDoneResponses[K]) => void,
+        postCallback?: (payload: Shared.Workers.WorkerPostResponses[K]) => void,
     ): worker_threads.Worker {
         const data: AppWorkerData<Shared.Workers.WorkerArgs[K]> = {
             args: workerArgs,
@@ -31,39 +31,39 @@ export const WorkerSystem = {
         };
 
         const workerStartFile = pathe.join(getRootDir(), "core", "workers", workerFile + ".cjs");
-        const worker = new worker_threads.Worker(workerStartFile, {
+        const workerThread = new worker_threads.Worker(workerStartFile, {
             workerData: data,
             // execArgv: ["--inspect"], // enable if needed for debugging
         });
 
-        workerList.push(worker);
+        workerList.push(workerThread);
 
-        worker.on("exit", () => {
-            const index = workerList.indexOf(worker);
+        workerThread.on("exit", () => {
+            const index = workerList.indexOf(workerThread);
             if (index >= 0) {
                 workerList.splice(index, 1);
             }
         });
 
-        worker.on("message", (data: Shared.Workers.WorkerMessage<Shared.Workers.MessageType, any>) => {
-            if (data.type === Shared.Workers.MessageType.Log) {
+        workerThread.on("message", (data: Shared.Workers.WorkerResponse<Shared.Workers.ResponseType, any>) => {
+            if (data.type === Shared.Workers.ResponseType.Log) {
                 Logger.processLog(data.payload, true);
-            } else if (data.type === Shared.Workers.MessageType.Done) {
-                doneCallback?.(data.payload as Shared.Workers.WorkerDoneMessages[K]);
-            } else if (data.type === Shared.Workers.MessageType.Post) {
-                postCallback?.(data.payload as Shared.Workers.WorkerPostMessages[K]);
+            } else if (data.type === Shared.Workers.ResponseType.Done) {
+                doneCallback?.(data.payload as Shared.Workers.WorkerDoneResponses[K]);
+            } else if (data.type === Shared.Workers.ResponseType.Post) {
+                postCallback?.(data.payload as Shared.Workers.WorkerPostResponses[K]);
             }
         });
 
-        return worker;
+        return workerThread;
     },
     createResultWorker<K extends Shared.Workers.WorkerFile>(
         workerFile: K,
         workerArgs: Shared.Workers.WorkerArgs[K],
-        postCallback?: (payload: Shared.Workers.WorkerPostMessages[K]) => void,
-    ): Promise<Shared.Workers.WorkerDoneMessages[K] | undefined> {
+        postCallback?: (payload: Shared.Workers.WorkerPostResponses[K]) => void,
+    ): Promise<Shared.Workers.WorkerDoneResponses[K] | undefined> {
         return new Promise((resolve) => {
-            let result: Shared.Workers.WorkerDoneMessages[K] | undefined = undefined;
+            let result: Shared.Workers.WorkerDoneResponses[K] | undefined = undefined;
             const worker = WorkerSystem.createWorker(
                 workerFile,
                 workerArgs,

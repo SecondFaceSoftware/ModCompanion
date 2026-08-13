@@ -77,7 +77,17 @@ const panelsStore = usePanelsStore();
 const searchTerm = defineModel<string>("search");
 const currentDir = defineModel<string>("dir");
 
-const searchEntries = computed(() => useFileFilter(fileBrowserStore.fsEntries, searchTerm.value, 1000));
+watch(
+    () => fileBrowserStore.fsEntries,
+    (value, oldValue) => {
+        console.log(value, oldValue);
+    },
+);
+
+const searchEntries = computed(() => {
+    console.log(fileBrowserStore.fsEntries);
+    return useFileFilter(fileBrowserStore.fsEntries, searchTerm.value, 1000);
+});
 const entries = computed<Shared.FileBrowser.FileEntry[]>(() => {
     let result;
     if (searchTerm.value) {
@@ -91,6 +101,8 @@ const entries = computed<Shared.FileBrowser.FileEntry[]>(() => {
             result = e;
         }
     }
+
+    console.log(result);
 
     return Shared.FileBrowser.sortFileEntries(result);
 });

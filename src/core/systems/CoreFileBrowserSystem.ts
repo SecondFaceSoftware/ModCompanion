@@ -1,4 +1,3 @@
-import chokidar, { FSWatcher } from "chokidar";
 import { ConfigSystem } from "./CoreConfigSystem.js";
 import * as pathe from "pathe";
 import fs from "fs/promises";
@@ -6,12 +5,9 @@ import { Logger } from "./CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { createEvent } from "../helpers/CoreEventHelper.js";
 import { WorkerSystem } from "./CoreWorkerSystem.js";
-
-let watcher: FSWatcher | undefined;
+import worker_threads from "node:worker_threads";
 
 const index: Map<string, Shared.FileBrowser.FileEntry[]> = new Map();
-
-let dirUpdatedNotifyFunc: Shared.FileBrowser.DirUpdatedNotifyFunc | undefined = undefined;
 
 function _handleIndexMessage(result: Shared.FileBrowser.FileIndexMessage) {
     const dir = Shared.SourceFs.forwardSlashed(result.dir);
@@ -19,9 +15,11 @@ function _handleIndexMessage(result: Shared.FileBrowser.FileIndexMessage) {
     dirUpdatedNotifyFunc?.(dir, { entries: result.entries, valid: true });
 }
 
-let alwaysWatcher: FSWatcher | undefined = undefined;
+let fileWatcherWorker: worker_threads.Worker | undefined = undefined;
+
 const indexDoneEvent = createEvent<Map<string, Shared.FileBrowser.FileEntry[]>>();
 const fileChangedEvent = createEvent<string>();
+let dirUpdatedNotifyFunc: Shared.FileBrowser.DirUpdatedNotifyFunc | undefined = undefined;
 
 export const FileBrowserSystem = {
     initSystem(notifyFunc?: Shared.FileBrowser.DirUpdatedNotifyFunc, noWatchers = false) {
@@ -29,20 +27,19 @@ export const FileBrowserSystem = {
         this.indexFiles();
 
         if (!noWatchers) {
-            const config = ConfigSystem.getAppConfig();
-            const alwaysWatchedPaths = [
-                config.textureOutputPath,
-                pathe.join(config.scriptsPath, Shared.FileNames.chamberSignConfig),
-            ];
-
-            for (const p of alwaysWatchedPaths) {
-                Logger.info(Shared.Log.Channel.FileBrowser, "Registering always watched path", p);
-            }
-
-            alwaysWatcher = chokidar.watch(alwaysWatchedPaths, { ignoreInitial: true, awaitWriteFinish: true });
-            alwaysWatcher.on("add", _add);
-            alwaysWatcher.on("change", _change);
-            alwaysWatcher.on("unlink", _delete);
+            fileWatcherWorker = WorkerSystem.createWorker(
+                Shared.Workers.WorkerFile.FileWatcher,
+                {},
+                undefined,
+                (payload) => {
+                    if (payload.fileChanged) {
+                        fileChangedEvent.call(payload.fileChanged);
+                    }
+                    if (payload.dirUpdate) {
+                        dirUpdatedNotifyFunc?.(payload.dirUpdate.dir, payload.dirUpdate.entries);
+                    }
+                },
+            );
         }
 
         return true;
@@ -57,7 +54,7 @@ export const FileBrowserSystem = {
     },
 
     async updateOpenedDirs(dirs: string[]) {
-        return _recreateWatcher(dirs);
+        fileWatcherWorker?.postMessage(dirs);
     },
 
     getIndex(): Map<string, Shared.FileBrowser.FileEntry[]> {
@@ -65,10 +62,6 @@ export const FileBrowserSystem = {
     },
 
     async listFiles(dirPath: string, resultBaseRoot?: string): Promise<Shared.FileBrowser.FileEntries> {
-        if (!Shared.SourceFs.isProjectPath(dirPath, ConfigSystem.getAppConfig().rootPath)) {
-            return { valid: false, entries: [] };
-        }
-
         let paths: string[] = [];
         try {
             paths = await fs.readdir(dirPath);
@@ -135,61 +128,3 @@ export const FileBrowserSystem = {
         });
     },
 };
-
-async function _change(filePath: string): Promise<void> {
-    Logger.info(Shared.Log.Channel.FileBrowser, "CHANGE", filePath);
-    const dir = pathe.dirname(filePath);
-
-    fileChangedEvent.call(filePath);
-
-    const result = await FileBrowserSystem.listFiles(dir);
-
-    let finalDir = dir.substring(ConfigSystem.getAppConfig().rootPath.length);
-    if (!finalDir) {
-        finalDir = "/";
-    }
-    dirUpdatedNotifyFunc?.(finalDir, result);
-}
-
-async function _delete(filePath: string): Promise<void> {
-    Logger.info(Shared.Log.Channel.FileBrowser, "DELETED", filePath);
-}
-
-async function _add(filePath: string): Promise<void> {
-    Logger.info(Shared.Log.Channel.FileBrowser, "ADDED", filePath);
-}
-
-async function _recreateWatcher(dirs: string[]) {
-    if (watcher) {
-        await watcher.close();
-    }
-
-    const rootPath = ConfigSystem.getAppConfig().rootPath;
-    const fullDirs = dirs.map((d) => pathe.join(rootPath, d));
-    const timeStart = new Date().getTime();
-
-    const fullDirsConcat = fullDirs.join(", ");
-    Logger.info(Shared.Log.Channel.FileBrowser, "Watching", fullDirsConcat);
-
-    watcher = chokidar.watch(fullDirs, {
-        ignoreInitial: true,
-        awaitWriteFinish: true,
-        depth: 0,
-    });
-
-    watcher.on("add", _add);
-    watcher.on("change", _change);
-    watcher.on("unlink", _delete);
-    watcher.on("ready", () => {
-        const timeEnd = new Date().getTime();
-        const durationMillis = timeEnd - timeStart;
-        Logger.info(
-            Shared.Log.Channel.FileBrowser,
-            "File watcher for",
-            fullDirsConcat,
-            "ready in",
-            durationMillis,
-            "ms",
-        );
-    });
-}

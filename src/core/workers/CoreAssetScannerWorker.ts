@@ -2,10 +2,10 @@ import * as Shared from "mod_companion_shared";
 import * as pathe from "pathe";
 import fs from "node:fs/promises";
 import * as sourcelib from "sourcelib";
-import { useWorkerThreadData, useWorkerThreadMessages } from "../helpers/CoreWorkerHelper.js";
+import { useWorkerThreadData, useWorkerThreadResponse } from "../helpers/CoreWorkerHelper.js";
 
 const data = useWorkerThreadData<typeof Shared.Workers.WorkerFile.AssetScanner>();
-const messages = useWorkerThreadMessages<typeof Shared.Workers.WorkerFile.AssetScanner>();
+const messages = useWorkerThreadResponse<typeof Shared.Workers.WorkerFile.AssetScanner>();
 
 _buildAssets(data.args.index).then((result) => messages.done(result));
 
@@ -137,7 +137,7 @@ async function _readVmtFile(fileName: string, fileRootPath: string): Promise<Sha
     const fullPath = pathe.join(fileRootPath, fileName);
     const text = await fs.readFile(fullPath, "utf-8");
     const doc = sourcelib.kv.KvSerializer.deserializeText(text);
-    const vmt = doc[0];
+    const vmt = doc[0] as Shared.AssetMaterial.VmtDocument;
 
     const def = Shared.AssetMaterial.createMaterialAssetDefinition(data.common.appConfig, fullPath, vmt);
     return def;
