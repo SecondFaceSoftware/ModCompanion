@@ -16,6 +16,7 @@ import * as Launchers from "./SharedLaunchers.js";
 import * as Log from "./SharedLog.js";
 import * as Map from "./SharedMap.js";
 import * as MdlInfo from "./SharedMdlInfoReport.js";
+import * as Paths from "./SharedPaths.js";
 import * as PlayPauseStop from "./SharedPlayPauseStopState.js";
 import * as SourceFs from "./SharedSourceFs.js";
 import * as String from "./SharedString.js";
@@ -44,6 +45,7 @@ export {
     Log,
     Map,
     MdlInfo,
+    Paths,
     PlayPauseStop,
     SourceFs,
     String,

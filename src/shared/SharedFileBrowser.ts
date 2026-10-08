@@ -1,6 +1,3 @@
-import { AppConfig } from "./SharedAppConfig.js";
-import * as pathe from "pathe";
-
 export interface FileEntry {
     name: string;
     path: string;
@@ -45,30 +42,4 @@ export function sortFileEntries(entries: FileEntries): FileEntry[] {
             return x.name.localeCompare(y.name);
         }
     });
-}
-
-export const PathBases = {
-    Absolute: 0,
-    RootRelative: 1,
-    GameRelative: 2,
-    ContentRelative: 3,
-} as const;
-export type PathBase = (typeof PathBases)[keyof typeof PathBases];
-
-export function getBasePath(base: PathBase | undefined, config: AppConfig): string {
-    switch (base) {
-        case PathBases.RootRelative:
-            return config.rootPath;
-        case PathBases.GameRelative:
-            return config.gamePath;
-        case PathBases.ContentRelative:
-            return config.contentPath;
-        case PathBases.Absolute:
-        default:
-            return "";
-    }
-}
-
-export function makeAbsolute(path: string, base: PathBase | undefined, config: AppConfig): string {
-    return pathe.join(getBasePath(base, config), path);
 }

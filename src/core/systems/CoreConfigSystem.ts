@@ -121,7 +121,6 @@ function _buildBinaryPath(root: string, binaryName: string, proton?: boolean): s
         return pathe.join(root, "game/bin/win64", binaryName + ".exe");
     }
 
-    Logger.info(Shared.Log.Channel.MainSystems, "Unsupported operating system platform", platform);
     return pathe.join(root, binaryName);
 }
 

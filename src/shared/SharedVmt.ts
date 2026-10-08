@@ -106,6 +106,7 @@ export function isMaybeMraoMap(fileNameWithoutExit: string) {
     return false;
 }
 
+// TODO: Replace with path api
 export function rootRelativeToMaterialPath(vtfPath: string): string {
     const ext = pathe.extname(vtfPath);
     const result = vtfPath.replace(ext, "");
