@@ -103,8 +103,12 @@
  * -------------------------------------------------------------------------- */
 
 :root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: var(--color-magenta-400);
+  --vp-home-hero-name-color: black;
+  /*--vp-home-hero-name-background: var(--color-magenta-400);*/
+}
+
+.dark {
+  --vp-home-hero-name-color: white;
 }
 /**
  * Component: Custom Block
@@ -117,3 +121,28 @@
   --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
 }
 
+
+.image-container .image-src {
+  max-width: unset;
+  max-height: unset;
+}
+
+.heading .name {
+  text-shadow: 2px 3px 0px var(--color-magenta-100), 6px 8px 8px rgb(0 0 0 / 0.1);
+  font-family: "DynaPuff", "Inter", system-ui;
+  font-weight: 700;
+}
+
+.dark .heading .name {
+  text-shadow: 2px 3px 0px var(--color-magenta-200), 6px 8px 8px rgb(0 0 0 / 0.5);
+}
+
+.heading .text {
+  font-size: 1.5rem;
+  font-family: "DynaPuff", "Inter", system-ui;
+  font-weight: 400;
+}
+
+.VPButton.medium {
+  border-radius: 0.75rem !important;
+}

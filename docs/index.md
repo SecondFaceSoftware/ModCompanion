@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "MOD COMPANION"
-  text: "Source Engine Modder's Best Friend"
-  tagline: "A standalone app that integrates into your Source Engine game to help you automate tedious tasks in a nice and tidy UI."
+  text: "A Modder's Best Friend <3"
+  tagline: "Automation and asset creation tool for Source&nbsp;Engine"
   image:
     src: /utylity.png
     alt: Utylity
@@ -35,7 +35,7 @@ features:
   - title: Map Compile Time Visualization
     details: Identify problematic maps that compile longer than they should
   - title: Map Cloud Compilation
-    details: Build your maps on a dedicated map compile machine and download the BSP files when they're ready. Especially useful for non-mappers to always stay up-to-date
+    details: Build your maps on a dedicated map compile machine and download the BSP files when they're ready
   - title: Deployment
     details: Identify problematic maps that compile longer than they should
 ---
