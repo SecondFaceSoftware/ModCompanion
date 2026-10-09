@@ -7,7 +7,7 @@ hero:
   text: "A Modder's Best Friend <3"
   tagline: "Automation and asset creation tool for Source&nbsp;Engine"
   image:
-    src: /utylity.png
+    src: /img/utylity.png
     alt: Utylity
   actions:
     - theme: brand
