@@ -1,12 +1,14 @@
 <template>
     <div class="text-xs select-none font-semibold text-magenta-900">
-        <div v-if="artifactCloudStore.connected" class="flex gap-1 items-center">
-            <UIcon :name="AppDesign.Icons.NetworkConnected" />
-            <span>Cloud Connected</span>
+        <div v-if="artifactCloudStore.connected">
+            <UTooltip text="Cloud Connected">
+                <UIcon class="size-4" :name="AppDesign.Icons.NetworkConnected" />
+            </UTooltip>
         </div>
-        <div v-else class="flex gap-1 items-center">
-            <UIcon :name="AppDesign.Icons.NetworkDisconnected" />
-            <span>Cloud not reachable</span>
+        <div v-else>
+            <UTooltip text="Cloud not reachable">
+                <UIcon class="size-4" :name="AppDesign.Icons.NetworkDisconnected" />
+            </UTooltip>
         </div>
     </div>
 </template>
