@@ -163,6 +163,12 @@ declare global {
                 getInfo: (absFilePath: string) => Promise<Shared.Vtf.SharedVtfInfo | undefined>;
                 getExtract: (absFilePath: string) => Promise<string>;
             };
+
+            task: {
+                subscribeStartTask: (callback: (task: Shared.Task.Task) => void) => void;
+                subscribeUpdateTask: (callback: (taskId: Shared.Task.TaskId, quantity: number) => void) => void;
+                subscribeEndTask: (callback: (taskId: Shared.Task.TaskId) => void) => void;
+            };
         };
     }
 }

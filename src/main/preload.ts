@@ -205,4 +205,20 @@ contextBridge.exposeInMainWorld("electronAPI", {
         getInfo: (absFilePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfInfoQuery, absFilePath),
         getExtract: (absFilePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfExtractQuery, absFilePath),
     },
+
+    task: {
+        subscribeStartTask: (callback: (task: Shared.Task.Task) => void) =>
+            ipcRenderer.on(Shared.Ipc.Channels.TaskStart, (e: IpcRendererEvent, task: Shared.Task.Task) =>
+                callback(task),
+            ),
+        subscribeUpdateTask: (callback: (taskId: Shared.Task.TaskId, quantity: number) => void) =>
+            ipcRenderer.on(
+                Shared.Ipc.Channels.TaskStart,
+                (e: IpcRendererEvent, taskId: Shared.Task.TaskId, quantity: number) => callback(taskId, quantity),
+            ),
+        subscribeEndTask: (callback: (taskId: Shared.Task.TaskId) => void) =>
+            ipcRenderer.on(Shared.Ipc.Channels.TaskEnd, (e: IpcRendererEvent, taskId: Shared.Task.TaskId) =>
+                callback(taskId),
+            ),
+    },
 });

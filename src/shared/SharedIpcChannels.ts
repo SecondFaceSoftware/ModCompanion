@@ -85,5 +85,9 @@ export const Channels = {
 
     LogSendFromRenderer: "log_send_from_renderer",
     LogSendFromMain: "log_send_from_main",
+
+    TaskStart: "task_start",
+    TaskUpdate: "task_update",
+    TaskEnd: "task_end",
 } as const;
 export type Channel = (typeof Channels)[keyof typeof Channels];

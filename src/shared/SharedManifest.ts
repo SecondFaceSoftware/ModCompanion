@@ -9,6 +9,7 @@ import * as Conversion from "./SharedConversion.js";
 import * as FileBrowser from "./SharedFileBrowser.js";
 import * as FileEndings from "./SharedFileEndings.js";
 import * as FileNames from "./SharedFileNames.js";
+import * as GameInterop from "./SharedGameInterop.js";
 import * as ImageMeta from "./SharedImageMetaReport.js";
 import * as Ipc from "./SharedIpcChannels.js";
 import * as Launchers from "./SharedLaunchers.js";
@@ -17,8 +18,8 @@ import * as Map from "./SharedMap.js";
 import * as MdlInfo from "./SharedMdlInfoReport.js";
 import * as PlayPauseStop from "./SharedPlayPauseStopState.js";
 import * as SourceFs from "./SharedSourceFs.js";
-import * as GameInterop from "./SharedGameInterop.js";
 import * as String from "./SharedString.js";
+import * as Task from "./SharedTask.js";
 import * as Timing from "./SharedTiming.js";
 import * as Vmt from "./SharedVmt.js";
 import * as Vtf from "./SharedVtf.js";
@@ -36,6 +37,7 @@ export {
     FileBrowser,
     FileEndings,
     FileNames,
+    GameInterop,
     ImageMeta,
     Ipc,
     Launchers,
@@ -44,8 +46,8 @@ export {
     MdlInfo,
     PlayPauseStop,
     SourceFs,
-    GameInterop,
     String,
+    Task,
     Timing,
     Vmt,
     Vtf,

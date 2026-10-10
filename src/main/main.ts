@@ -14,6 +14,7 @@ import {
     notifyGameInteropDisconnected,
     notifyGameInteropLog,
 } from "./api/MainGameInteropApi.js";
+import { TaskApi } from "./api/MainTaskApi.js";
 
 type SystemInitFunction = () => Promise<boolean> | boolean;
 type SystemShutdownFunction = () => Promise<void> | void;
@@ -67,6 +68,15 @@ const systems: System[] = [
     { name: "ArtifactCloud", initFunction: Core.ArtifactCloudSystem.initSystem },
     { name: "HotReload", initFunction: Core.HotReloadSystem.initSystem },
     { name: "Workers", initFunction: Core.WorkerSystem.initSystem, shutdownFunction: Core.WorkerSystem.deinitSystem },
+    {
+        name: "Tasks",
+        initFunction: () =>
+            Core.TaskSystem.initSystem({
+                startTaskFunc: TaskApi.notifyStartTask,
+                updateTaskFunc: TaskApi.notifyUpdateTask,
+                endTaskFunc: TaskApi.notifyEndTask,
+            }),
+    },
     { name: "Materials", initFunction: Core.MaterialSystem.initSystem },
 ];
 

@@ -3,12 +3,13 @@ import { AssetGroupsSystem } from "./systems/CoreAssetGroupsSystem.js";
 import { AssetWatcherSystem } from "./systems/CoreAssetWatcherSystem.js";
 import { ConfigSystem } from "./systems/CoreConfigSystem.js";
 import { FileBrowserSystem } from "./systems/CoreFileBrowserSystem.js";
+import { GameInteropSystem } from "./systems/CoreGameInteropSystem.js";
 import { HotReloadSystem } from "./systems/CoreHotReloadSystem.js";
 import { Logger } from "./systems/CoreLogSystem.js";
 import { MaterialSystem } from "./systems/CoreMaterialSystem.js";
 import { MapCompileSystem } from "./systems/CoreMapCompileSystem.js";
 import { MareTfSystem } from "./systems/CoreMaretfSystem.js";
-import { GameInteropSystem } from "./systems/CoreGameInteropSystem.js";
+import { TaskSystem } from "./systems/CoreTaskSystem.js";
 import { WorkerSystem } from "./systems/CoreWorkerSystem.js";
 
 import { ConversionAgentSystem } from "./systems/conversion/CoreConversionAgentSystem.js";
@@ -35,12 +36,13 @@ export {
     AssetWatcherSystem,
     ConfigSystem,
     FileBrowserSystem,
+    GameInteropSystem,
     HotReloadSystem,
     Logger,
     MaterialSystem,
     MapCompileSystem,
     MareTfSystem,
-    GameInteropSystem,
+    TaskSystem,
     WorkerSystem,
     ConversionAgentSystem,
     ConversionChecksumSystem,
