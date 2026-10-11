@@ -168,6 +168,7 @@ declare global {
                 subscribeStartTask: (callback: (task: Shared.Task.Task) => void) => void;
                 subscribeUpdateTask: (callback: (taskId: Shared.Task.TaskId, quantity: number) => void) => void;
                 subscribeEndTask: (callback: (taskId: Shared.Task.TaskId) => void) => void;
+                createFakeTask: () => void;
             };
         };
     }

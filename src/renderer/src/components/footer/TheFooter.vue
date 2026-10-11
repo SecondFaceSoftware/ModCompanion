@@ -8,8 +8,8 @@
                 <FooterLog />
             </div>
             <div class="flex items-center gap-1">
+                <FooterTasks />
                 <FooterArtifactCloudStatus />
-                <USeparator orientation="vertical" />
                 <template v-if="assetListStore.refreshing">
                     <FooterAssetScanProgress />
                 </template>

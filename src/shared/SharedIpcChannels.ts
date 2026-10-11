@@ -89,5 +89,6 @@ export const Channels = {
     TaskStart: "task_start",
     TaskUpdate: "task_update",
     TaskEnd: "task_end",
+    TaskCreateFake: "task_create_fake",
 } as const;
 export type Channel = (typeof Channels)[keyof typeof Channels];

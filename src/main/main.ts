@@ -26,6 +26,7 @@ interface System {
 const systems: System[] = [
     { name: "Log", initFunction: () => Core.Logger.initSystem(notifyLogFromMain) },
     { name: "Config", initFunction: Core.ConfigSystem.initConfigSystem },
+    { name: "Api", initFunction: initApiSystem },
     { name: "FileBrowser", initFunction: () => Core.FileBrowserSystem.initSystem(FileBrowserApi.notifyDirUpdated) },
     {
         name: "AssetRepository",
@@ -38,7 +39,6 @@ const systems: System[] = [
                 scanProgressFunc: AssetRepositoryApi.notifyScanProgress,
             }),
     },
-    { name: "Api", initFunction: initApiSystem },
     { name: "Window", initFunction: () => WindowSystem.initSystem(_stopSystems) },
     {
         name: "MapCompile",

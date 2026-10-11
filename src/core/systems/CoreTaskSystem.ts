@@ -1,4 +1,5 @@
 import * as Shared from "mod_companion_shared";
+import * as Core from "../CoreManifest.js";
 
 let notifyStartTaskFunc: ((task: Shared.Task.Task) => void) | undefined = undefined;
 let notifyUpdateTaskFunc: ((taskId: Shared.Task.TaskId, quantity: number) => void) | undefined = undefined;
@@ -29,5 +30,21 @@ export const TaskSystem = {
 
     endTask(taskId: Shared.Task.TaskId) {
         notifyEndTaskFunc?.(taskId);
+    },
+
+    createFakeTask() {
+        const countGoal = 9;
+        Core.TaskSystem.startTask({ taskId: Shared.Task.TaskIds.Fake, quantityGoal: countGoal });
+
+        let counter = 0;
+        const interval = setInterval(() => {
+            counter += 1;
+
+            Core.TaskSystem.updateTask(Shared.Task.TaskIds.Fake, counter);
+            if (counter === countGoal) {
+                clearInterval(interval);
+                Core.TaskSystem.endTask(Shared.Task.TaskIds.Fake);
+            }
+        }, 300);
     },
 };

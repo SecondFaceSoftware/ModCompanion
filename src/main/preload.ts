@@ -213,12 +213,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
             ),
         subscribeUpdateTask: (callback: (taskId: Shared.Task.TaskId, quantity: number) => void) =>
             ipcRenderer.on(
-                Shared.Ipc.Channels.TaskStart,
+                Shared.Ipc.Channels.TaskUpdate,
                 (e: IpcRendererEvent, taskId: Shared.Task.TaskId, quantity: number) => callback(taskId, quantity),
             ),
         subscribeEndTask: (callback: (taskId: Shared.Task.TaskId) => void) =>
             ipcRenderer.on(Shared.Ipc.Channels.TaskEnd, (e: IpcRendererEvent, taskId: Shared.Task.TaskId) =>
                 callback(taskId),
             ),
+        createFakeTask: () => ipcRenderer.send(Shared.Ipc.Channels.TaskCreateFake),
     },
 });

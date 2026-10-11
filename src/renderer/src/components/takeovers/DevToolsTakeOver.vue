@@ -14,6 +14,10 @@
                     <MTextArea class="w-200">{{ cfgString }}</MTextArea>
                 </template>
             </UCollapsible>
+
+            <UFormField label="Tasks">
+                <UButton label="Create Fake Task" @click="handleCreateFakeTask" />
+            </UFormField>
         </div>
     </TakeOver>
 </template>
@@ -28,6 +32,10 @@ const cfgString = ref("");
 configInitializedEvent.on((payload) => {
     cfgString.value = JSON.stringify(payload, null, 4);
 });
+
+function handleCreateFakeTask() {
+    window.electronAPI.task.createFakeTask();
+}
 </script>
 
 <style scoped></style>
