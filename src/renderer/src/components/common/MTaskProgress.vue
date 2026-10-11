@@ -2,8 +2,10 @@
     <div class="flex gap-2 text-xs text-magenta-900 items-center px-2">
         <UIcon :name="AppDesign.Icons.Loading" class="animate-spin" />
         <span class="text-nowrap">{{ Shared.Task.TaskNames[props.task.taskId] }}</span>
-        <UProgress v-model="quantity" :max="props.task.quantityGoal" class="w-25 transition-none" />
-        <span class="tabular-nums">{{ quantity }}/{{ task.quantityGoal }}</span>
+        <UProgress v-model="quantity" :max="props.task.quantityGoal ?? 0" class="w-25 transition-none" />
+        <span v-if="props.task.quantityGoal !== null" class="tabular-nums">
+            {{ quantity }}/{{ task.quantityGoal }}
+        </span>
     </div>
 </template>
 
@@ -16,7 +18,10 @@ const taskStore = useTaskStore();
 
 const props = defineProps<{ task: Shared.Task.Task }>();
 
-const quantity = computed(() => taskStore.tasksQuantities.get(props.task.taskId));
+// UProgress progress value "null" shows an indeterminate animation https://ui3.nuxt.com/components/progress#indeterminate
+const quantity = computed(() =>
+    props.task.quantityGoal === null ? null : taskStore.tasksQuantities.get(props.task.taskId),
+);
 </script>
 
 <style scoped></style>

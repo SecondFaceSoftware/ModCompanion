@@ -7,6 +7,11 @@ import * as Shared from "mod_companion_shared";
 export function registerFgdApi(): boolean {
     ipcMain.handle(Shared.Ipc.Channels.FgdBuild, () => {
         return new Promise<boolean>((resolve) => {
+            Core.TaskSystem.startTask({
+                taskId: Shared.Task.TaskIds.BuildFgd,
+                quantityGoal: null,
+            });
+
             const cmd = `python content/revolution/fgd_builder/unify_fgd.py exp revolution srctools -o "game/revolution/revolution2.fgd"`;
             const cwd = Core.ConfigSystem.getAppConfig().rootPath;
             const proc = child_process.exec(cmd, { cwd }, (error, stdout, stderr) => {
@@ -22,6 +27,7 @@ export function registerFgdApi(): boolean {
             });
             proc.on("exit", (code) => {
                 resolve(code === 0);
+                Core.TaskSystem.endTask(Shared.Task.TaskIds.BuildFgd);
             });
         });
     });
