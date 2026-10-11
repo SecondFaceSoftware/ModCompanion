@@ -35,8 +35,8 @@ export const AssetRepositorySystem = {
 
         const index = fileIndex ?? FileBrowserSystem.getIndex();
 
+        TaskSystem.startTask({ taskId: Shared.Task.TaskIds.AssetScan, quantityGoal: index.size });
         const { millis } = await Shared.Timing.timeMillisAsync(async () => {
-            TaskSystem.startTask({ taskId: Shared.Task.TaskIds.AssetScan, quantityGoal: index.size });
             const result = await WorkerSystem.createResultWorker(
                 Shared.Workers.WorkerFile.AssetScanner,
                 { index },
@@ -44,7 +44,6 @@ export const AssetRepositorySystem = {
                     TaskSystem.updateTask(Shared.Task.TaskIds.AssetScan, payload.progressNow);
                 },
             );
-            TaskSystem.endTask(Shared.Task.TaskIds.AssetScan);
 
             if (result) {
                 assetMap = result;
@@ -52,6 +51,7 @@ export const AssetRepositorySystem = {
                 Logger.warning(Shared.Log.Channel.Assets, "Failed to scan assets");
             }
         });
+        TaskSystem.endTask(Shared.Task.TaskIds.AssetScan);
 
         Logger.info(Shared.Log.Channel.Assets, "Asset scan done. Found", assetMap.size, "assets in", millis, "ms");
         assetRescanNotifyFunc?.({ assets: assetMap, totalTimeMillis: millis });
