@@ -3,6 +3,7 @@
         <UIcon :name="AppDesign.Icons.Loading" class="animate-spin" />
         <span class="text-nowrap">{{ Shared.Task.TaskNames[props.task.taskId] }}</span>
         <UProgress v-model="quantity" :max="props.task.quantityGoal" class="w-25 transition-none" />
+        <span class="tabular-nums">{{ quantity }}/{{ task.quantityGoal }}</span>
     </div>
 </template>
 

@@ -42,7 +42,6 @@ export const Channels = {
     AssetUpdated: "asset_updated",
     AssetForceRescan: "asset_force_rescan",
     AssetNavigateToId: "asset_navigate_to_id",
-    AssetScanProgressEvent: "asset_scan_progress",
     AssetCreate: "asset_create",
     AssetCreateEmpty: "asset_create_empty",
     AssetUpdate: "asset_update",

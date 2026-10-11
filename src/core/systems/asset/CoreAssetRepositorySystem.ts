@@ -12,18 +12,14 @@ import { Logger } from "../CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { FileBrowserSystem } from "../CoreFileBrowserSystem.js";
 import { WorkerSystem } from "../CoreWorkerSystem.js";
+import { TaskSystem } from "../CoreTaskSystem.js";
 
 let assetMap: Shared.Asset.AssetMap = new Map();
 
 let assetRescanNotifyFunc: Shared.Asset.AssetRescanNotifyFunc | undefined = undefined;
-let assetScanProgressFunc: Shared.Asset.AssetScanProgressNotifyFunc | undefined = undefined;
 export const AssetRepositorySystem = {
-    initSystem(funcs?: {
-        scanFunc?: Shared.Asset.AssetRescanNotifyFunc;
-        scanProgressFunc?: Shared.Asset.AssetScanProgressNotifyFunc;
-    }): boolean {
+    initSystem(funcs?: { scanFunc?: Shared.Asset.AssetRescanNotifyFunc }): boolean {
         assetRescanNotifyFunc = funcs?.scanFunc;
-        assetScanProgressFunc = funcs?.scanProgressFunc;
         FileBrowserSystem.getIndexDoneEvent()?.on((payload) => {
             AssetRepositorySystem.scan(payload);
         });
@@ -34,21 +30,22 @@ export const AssetRepositorySystem = {
         return assetMap;
     },
 
-    async scan(index?: Map<string, Shared.FileBrowser.FileEntry[]>): Promise<void> {
+    async scan(fileIndex?: Map<string, Shared.FileBrowser.FileEntry[]>): Promise<void> {
         Logger.info(Shared.Log.Channel.Assets, "Scanning assets...");
 
-        const fileIndex = index ?? FileBrowserSystem.getIndex();
+        const index = fileIndex ?? FileBrowserSystem.getIndex();
 
         const { millis } = await Shared.Timing.timeMillisAsync(async () => {
+            TaskSystem.startTask({ taskId: Shared.Task.TaskIds.AssetScan, quantityGoal: index.size });
             const result = await WorkerSystem.createResultWorker(
                 Shared.Workers.WorkerFile.AssetScanner,
-                {
-                    index: fileIndex,
-                },
+                { index },
                 (payload) => {
-                    assetScanProgressFunc?.(payload.progressNorm);
+                    TaskSystem.updateTask(Shared.Task.TaskIds.AssetScan, payload.progressNow);
                 },
             );
+            TaskSystem.endTask(Shared.Task.TaskIds.AssetScan);
+
             if (result) {
                 assetMap = result;
             } else {

@@ -36,7 +36,6 @@ const systems: System[] = [
                     AssetRepositoryApi.notifyAssetsRescanned(event);
                     Core.MaterialSystem.buildMaterialTextureIndex(event.assets);
                 },
-                scanProgressFunc: AssetRepositoryApi.notifyScanProgress,
             }),
     },
     { name: "Window", initFunction: () => WindowSystem.initSystem(_stopSystems) },

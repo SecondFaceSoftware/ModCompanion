@@ -51,7 +51,7 @@ async function _buildAssets(
 }
 
 function _postProgress(progressTotal: number, progressNow: number) {
-    messages.post({ progressNorm: progressNow / progressTotal });
+    messages.post({ progressNow, progressTotal });
 }
 
 async function _scanContentFile(filePath: Shared.FileBrowser.FileEntry): Promise<Shared.Asset.Asset | undefined> {

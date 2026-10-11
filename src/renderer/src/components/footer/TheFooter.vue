@@ -10,12 +10,7 @@
             <div class="flex items-center gap-1">
                 <FooterTasks />
                 <FooterArtifactCloudStatus />
-                <template v-if="assetListStore.refreshing">
-                    <FooterAssetScanProgress />
-                </template>
-                <template v-else>
-                    <FooterConversionStatus />
-                </template>
+                <FooterConversionStatus />
             </div>
         </div>
     </div>
@@ -24,10 +19,6 @@
 <script setup lang="ts">
 import FooterConversionStatus from "~/components/footer/FooterConversionStatus.vue";
 import FooterLog from "~/components/footer/FooterLog.vue";
-import { useAssetListStore } from "~/store/AssetListStore.js";
-import FooterAssetScanProgress from "~/components/footer/FooterAssetScanProgress.vue";
-
-const assetListStore = useAssetListStore();
 </script>
 
 <style scoped></style>

@@ -94,7 +94,8 @@ export interface AssetScannerWorkerArgs {
 }
 export type AssetScannerWorkerDoneMessage = AssetMap;
 export interface AssetScannerWorkerPostMessage {
-    progressNorm: number;
+    progressNow: number;
+    progressTotal: number;
 }
 
 // ---
