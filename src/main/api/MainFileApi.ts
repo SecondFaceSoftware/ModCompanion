@@ -8,14 +8,16 @@ import * as Core from "mod_companion_core";
 export function registerFileApi(): boolean {
     ipcMain.handle(
         Shared.Ipc.Channels.FileReadString,
-        async (
-            event: Electron.IpcMainInvokeEvent,
-            filePath: string,
-            base?: Shared.FileBrowser.PathBase,
-        ): Promise<string | undefined> => {
+        async (event: Electron.IpcMainInvokeEvent, path: Shared.Paths.Path): Promise<string | undefined> => {
+            const fullPath = Shared.Paths.transformPathBase(
+                path,
+                Shared.Paths.PathBases.Absolute,
+                Core.ConfigSystem.getAppConfig(),
+            );
+            if (!fullPath) return;
+
             try {
-                const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, Core.ConfigSystem.getAppConfig());
-                return await fs.readFile(fullPath, "utf-8");
+                return await fs.readFile(fullPath.path, "utf-8");
             } catch (e) {
                 return undefined;
             }
@@ -26,35 +28,42 @@ export function registerFileApi(): boolean {
         Shared.Ipc.Channels.FileWriteString,
         async (
             event: Electron.IpcMainInvokeEvent,
-            filePath: string,
+            path: Shared.Paths.Path,
             data:
                 | string
                 | NodeJS.ArrayBufferView
                 | Iterable<string | NodeJS.ArrayBufferView>
                 | AsyncIterable<string | NodeJS.ArrayBufferView>
                 | Stream,
-            base?: Shared.FileBrowser.PathBase,
         ): Promise<void> => {
-            const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, Core.ConfigSystem.getAppConfig());
-            Core.Logger.info(Shared.Log.Channel.FileBrowser, "Writing to ", fullPath);
-            return fs.writeFile(fullPath, data);
+            const fullPath = Shared.Paths.transformPathBase(
+                path,
+                Shared.Paths.PathBases.Absolute,
+                Core.ConfigSystem.getAppConfig(),
+            );
+            if (!fullPath) return;
+
+            Core.Logger.info(Shared.Log.Channel.FileBrowser, "Writing to", fullPath.path);
+            return fs.writeFile(fullPath.path, data);
         },
     );
 
     ipcMain.handle(
         Shared.Ipc.Channels.FileDelete,
-        async (
-            event: Electron.IpcMainInvokeEvent,
-            filePath: string,
-            base?: Shared.FileBrowser.PathBase,
-        ): Promise<boolean> => {
-            const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, Core.ConfigSystem.getAppConfig());
+        async (event: Electron.IpcMainInvokeEvent, path: Shared.Paths.Path): Promise<boolean> => {
+            const fullPath = Shared.Paths.transformPathBase(
+                path,
+                Shared.Paths.PathBases.Absolute,
+                Core.ConfigSystem.getAppConfig(),
+            );
+            if (!fullPath) return false;
+
             try {
-                Core.Logger.info(Shared.Log.Channel.FileBrowser, "Deleting", fullPath);
-                await fs.rm(fullPath);
+                Core.Logger.info(Shared.Log.Channel.FileBrowser, "Deleting", fullPath.path);
+                await fs.rm(fullPath.path);
                 return true;
             } catch (e) {
-                Core.Logger.warning(Shared.Log.Channel.FileBrowser, "Failed to delete", fullPath);
+                Core.Logger.warning(Shared.Log.Channel.FileBrowser, "Failed to delete", fullPath.path);
                 return false;
             }
         },
@@ -62,9 +71,15 @@ export function registerFileApi(): boolean {
 
     ipcMain.handle(
         Shared.Ipc.Channels.FileExists,
-        (event: Electron.IpcMainInvokeEvent, filePath: string, base?: Shared.FileBrowser.PathBase): boolean => {
-            const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, Core.ConfigSystem.getAppConfig());
-            return existsSync(fullPath);
+        (event: Electron.IpcMainInvokeEvent, path: Shared.Paths.Path): boolean => {
+            const fullPath = Shared.Paths.transformPathBase(
+                path,
+                Shared.Paths.PathBases.Absolute,
+                Core.ConfigSystem.getAppConfig(),
+            );
+            if (!fullPath) return false;
+
+            return existsSync(fullPath.path);
         },
     );
 

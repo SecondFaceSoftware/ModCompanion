@@ -137,7 +137,7 @@ export function getFileInspectorFromType(fileType: FileType): FileInspectors {
     }
 }
 
-export type FileInspectorComponent = DefineComponent<{ path: string }, any, any>;
+export type FileInspectorComponent = DefineComponent<{ path: Shared.Paths.Path }, any, any>;
 
 export function getFileInspectorComponent(inspector: FileInspectors): FileInspectorComponent | undefined {
     switch (inspector) {

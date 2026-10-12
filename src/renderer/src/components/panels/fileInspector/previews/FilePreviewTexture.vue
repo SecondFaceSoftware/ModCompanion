@@ -30,7 +30,7 @@ import { Logger } from "~/logger.js";
 import { Channel } from "mod_companion_shared/SharedLog.js";
 import { watchImmediate } from "@vueuse/core";
 
-const props = defineProps<{ path: string }>();
+const props = defineProps<{ path: Shared.Paths.Path }>();
 
 const loading = ref(false);
 const error = ref(false);

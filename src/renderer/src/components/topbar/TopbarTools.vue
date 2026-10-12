@@ -48,8 +48,7 @@ const itemsTools = computed<DropdownMenuItem[][]>(() => [
                     label: "Project Root",
                     onSelect() {
                         window.electronAPI.fileBrowser.browseTo(
-                            getAppConfig().rootPath,
-                            Shared.FileBrowser.PathBases.Absolute,
+                            Shared.Paths.createPath("", Shared.Paths.PathBases.Root),
                         );
                     },
                 },

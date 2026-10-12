@@ -1,30 +1,38 @@
 import * as pathe from "pathe";
 import * as os from "node:os";
 import * as child_process from "node:child_process";
-import { existsSync } from "fs";
-import { ConfigSystem } from "../systems/CoreConfigSystem.js";
 import { Logger } from "../systems/CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import fs from "fs/promises";
 import { Stats } from "node:fs";
+import * as Core from "../CoreManifest.js";
 
-export async function browseTo(filePath: string, base?: Shared.FileBrowser.PathBase): Promise<void> {
-    const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, ConfigSystem.getAppConfig());
+export async function browseTo(path: Shared.Paths.Path): Promise<void> {
+    const fullPath = Shared.Paths.transformPathBase(
+        path,
+        Shared.Paths.PathBases.Absolute,
+        Core.ConfigSystem.getAppConfig(),
+    );
+    if (!fullPath) {
+        Logger.warning(Shared.Log.Channel.FileBrowser, "Cannot browse, the path didn't resolve", path);
+        return;
+    }
+
     let command: string | undefined = undefined;
 
-    const stat = await _tryStat(fullPath);
+    const stat = await _tryStat(fullPath.path);
 
     if (!stat) {
         Logger.info(
             Shared.Log.Channel.FileBrowser,
             "Browsing to path that doesn't exist, opening containing directory",
-            fullPath,
+            fullPath.path,
         );
-        command = _getBrowseToDirectoryCommand(pathe.dirname(fullPath));
+        command = _getBrowseToDirectoryCommand(pathe.dirname(fullPath.path));
     } else if (!stat.isFile()) {
-        command = _getBrowseToDirectoryCommand(fullPath);
+        command = _getBrowseToDirectoryCommand(fullPath.path);
     } else {
-        command = _getBrowseToFileSelectCommand(fullPath);
+        command = _getBrowseToFileSelectCommand(fullPath.path);
     }
 
     if (command === undefined) {
@@ -107,24 +115,37 @@ function _getBrowseToDirectoryCommand(dirPath: string): string | undefined {
     return undefined;
 }
 
-export async function getFileEntry(
-    filePath: string,
-    base?: Shared.FileBrowser.PathBase,
-): Promise<Shared.FileBrowser.FileEntry | undefined> {
-    const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, ConfigSystem.getAppConfig());
+export async function getFileEntry(path: Shared.Paths.Path): Promise<Shared.FileBrowser.FileEntry | undefined> {
+    const fullPath = Shared.Paths.transformPathBase(
+        path,
+        Shared.Paths.PathBases.Absolute,
+        Core.ConfigSystem.getAppConfig(),
+    );
+    if (!fullPath) {
+        Logger.warning(Shared.Log.Channel.FileBrowser, `Cannot get file entry. Path didn't resolve`, path);
+        return;
+    }
 
     try {
-        const stat = await fs.stat(fullPath);
+        const stat = await fs.stat(fullPath?.path);
         if (!stat) return undefined;
 
-        return { path: fullPath, fileSize: stat.size, isFile: true, name: pathe.basename(filePath) };
+        return { path: fullPath.path, fileSize: stat.size, isFile: true, name: pathe.basename(fullPath.path) };
     } catch (e) {
         return undefined;
     }
 }
 
-export function openFile(filePath: string, base?: Shared.FileBrowser.PathBase): void {
-    const fullPath = Shared.FileBrowser.makeAbsolute(filePath, base, ConfigSystem.getAppConfig());
+export function openFile(path: Shared.Paths.Path): void {
+    const fullPath = Shared.Paths.transformPathBase(
+        path,
+        Shared.Paths.PathBases.Absolute,
+        Core.ConfigSystem.getAppConfig(),
+    );
+    if (!fullPath) {
+        Logger.warning(Shared.Log.Channel.FileBrowser, `Cannot open file. Path didn't resolve`, path);
+        return;
+    }
     const platform = os.platform();
 
     let command = "";
@@ -147,13 +168,20 @@ export function openFile(filePath: string, base?: Shared.FileBrowser.PathBase): 
     });
 }
 
-export function executeFile(file: string, base?: Shared.FileBrowser.PathBase): void {
-    const p = Shared.FileBrowser.makeAbsolute(file, base, ConfigSystem.getAppConfig());
-
-    Logger.info(Shared.Log.Channel.FileBrowser, "Executing file", p);
+export function executeFile(path: Shared.Paths.Path): void {
+    const fullPath = Shared.Paths.transformPathBase(
+        path,
+        Shared.Paths.PathBases.Absolute,
+        Core.ConfigSystem.getAppConfig(),
+    );
+    if (!fullPath) {
+        Logger.warning(Shared.Log.Channel.FileBrowser, `Cannot execute file. Path didn't resolve`, path);
+        return;
+    }
+    Logger.info(Shared.Log.Channel.FileBrowser, "Executing file", fullPath.path);
 
     try {
-        child_process.execFile(p, { shell: true }, (error, stdout, stderr) => {
+        child_process.execFile(fullPath.path, { shell: true }, (error, stdout, stderr) => {
             if (error) {
                 Logger.warning(Shared.Log.Channel.FileBrowser, error);
             }

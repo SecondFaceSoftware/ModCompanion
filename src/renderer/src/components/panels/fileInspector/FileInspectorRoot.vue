@@ -63,7 +63,12 @@ import { usePanelsStore } from "~/store/PanelsStore.js";
 
 const panelsStore = usePanelsStore();
 const props = defineProps<{ file: string; panelId: string }>();
-const fullPath = computed(() => pathe.join(getAppConfig().rootPath, props.file));
+
+const filePath = computed(() => Shared.Paths.createPath(props.file, Shared.Paths.PathBases.Root));
+
+const fullPath = computed(
+    () => Shared.Paths.transformPathBase(filePath.value, Shared.Paths.PathBases.Absolute, getAppConfig())?.path,
+);
 const fileName = computed(() => pathe.basename(props.file));
 const fileType = computed(() => getFileType(fileName.value));
 const fileInspector = computed(() => getFileInspectorFromType(fileType.value));
@@ -91,21 +96,14 @@ function handleHasChanged(changed: boolean): void {
     panelsStore.makeUnsaved(props.panelId, changed);
 }
 
-const entry = computedAsync(
-    () => window.electronAPI.fileBrowser.getFileEntry(props.file, Shared.FileBrowser.PathBases.RootRelative),
-    undefined,
-);
+const entry = computedAsync(() => window.electronAPI.fileBrowser.getFileEntry(filePath.value), undefined);
 
 function handleExplore() {
-    if (fullPath.value) {
-        window.electronAPI.fileBrowser.browseTo(fullPath.value);
-    }
+    window.electronAPI.fileBrowser.browseTo(filePath.value);
 }
 
 function handleOpen() {
-    if (fullPath.value) {
-        window.electronAPI.fileBrowser.open(fullPath.value);
-    }
+    window.electronAPI.fileBrowser.open(filePath.value);
 }
 
 function handleSave() {

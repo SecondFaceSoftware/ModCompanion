@@ -10,4 +10,4 @@ Paths come in different forms and are useful depending on the context
 | Content Relative | materialsrc/carpet/office_carpet.png                        | Stored in assets. Similar to game relative                                                                                    | 
 | Material Path    | carpet/office_carpet.vmt                                    | Used in material contexts                                                                                                     |
 
-The type `Shared.FileBrowser.PathBases` can be used to differentiate between different paths
+The type `Shared.Paths.PathBases` can be used to differentiate between different paths

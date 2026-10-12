@@ -1,5 +1,6 @@
 export interface FileEntry {
     name: string;
+    /** Always root relative. Not using path api because there are a lot of instances of FileEntry which all have the same path base */
     path: string;
     isFile: boolean;
     fileSize?: number;

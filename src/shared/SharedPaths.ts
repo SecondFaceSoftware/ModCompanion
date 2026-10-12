@@ -1,28 +1,31 @@
 import { AppConfig } from "./SharedAppConfig.js";
 import * as pathe from "pathe";
+import { filename } from "pathe/utils";
 import { forwardSlashed, getRootRelativePath } from "./SharedSourceFs.js";
 
 export const PathBases = {
     Absolute: 0,
-    RootRelative: 1,
-    GameRelative: 2,
-    ContentRelative: 3,
+    Root: 1,
+    Game: 2,
+    Content: 3,
     GameMaterial: 4,
+    GameMaps: 5,
+    ContentMaps: 6,
 } as const;
 export type PathBase = (typeof PathBases)[keyof typeof PathBases];
 
-export interface Path<Base extends PathBase> {
+export interface Path {
     path: string;
-    base: Base;
+    base: PathBase;
 }
 
 export function getBasePrefixPath(base: PathBase | undefined, config: AppConfig): string {
     switch (base) {
-        case PathBases.RootRelative:
+        case PathBases.Root:
             return config.rootPath;
-        case PathBases.GameRelative:
+        case PathBases.Game:
             return config.gamePath;
-        case PathBases.ContentRelative:
+        case PathBases.Content:
             return config.contentPath;
         case PathBases.Absolute:
         default:
@@ -30,42 +33,51 @@ export function getBasePrefixPath(base: PathBase | undefined, config: AppConfig)
     }
 }
 
-export function createPath<Base extends PathBase>(path: string, base: Base): Path<Base> {
+export function createPath<Base extends PathBase>(path: string, base: Base): Path {
     return { path, base };
 }
 
-export function transformPathBase<InputBase extends PathBase, OutputBase extends PathBase>(
-    inputPath: Path<InputBase>,
+export function transformPathBase<OutputBase extends PathBase>(
+    inputPath: Path,
     targetBase: OutputBase,
     config: AppConfig,
-): Path<OutputBase> | undefined {
+): Path | undefined {
     const rootRelative = _transformPathToRootRelative(inputPath, config);
     if (rootRelative === undefined) return undefined;
 
     switch (targetBase) {
         case PathBases.Absolute: {
-            return createPath(pathe.join(config.rootPath, rootRelative.path), PathBases.Absolute) as Path<OutputBase>;
+            return createPath(pathe.join(config.rootPath, rootRelative.path), PathBases.Absolute);
         }
-        case PathBases.RootRelative: {
-            return rootRelative as Path<OutputBase>;
+        case PathBases.Root: {
+            return rootRelative;
         }
-        case PathBases.GameRelative: {
+        case PathBases.Game: {
             return createPath(
                 rootRelative.path.substring(pathe.join("game", config.gameName).length + 1),
-                PathBases.GameRelative,
-            ) as Path<OutputBase>;
+                PathBases.Game,
+            );
         }
-        case PathBases.ContentRelative: {
+        case PathBases.Content: {
             return createPath(
                 rootRelative.path.substring(pathe.join("content", config.gameName).length + 1),
-                PathBases.ContentRelative,
-            ) as Path<OutputBase>;
+                PathBases.Content,
+            );
         }
         case PathBases.GameMaterial: {
+            return createPath(_transformRootRelativeToGameMaterial(rootRelative.path), PathBases.GameMaterial);
+        }
+        case PathBases.GameMaps: {
             return createPath(
-                _transformRootRelativeToGameMaterial(rootRelative.path),
-                PathBases.GameMaterial,
-            ) as Path<OutputBase>;
+                rootRelative.path.substring(pathe.join("game", config.gameName, "maps").length + 1),
+                PathBases.GameMaps,
+            );
+        }
+        case PathBases.ContentMaps: {
+            return createPath(
+                rootRelative.path.substring(pathe.join("content", config.gameName, "maps").length + 1),
+                PathBases.ContentMaps,
+            );
         }
         default: {
             return undefined;
@@ -73,29 +85,40 @@ export function transformPathBase<InputBase extends PathBase, OutputBase extends
     }
 }
 
-export function stripExtension<Base extends PathBase>(path: Path<Base>): Path<Base> {
+export function stripExtension(path: Path): Path {
     const ext = pathe.extname(path.path);
     if (ext.length === 0) return path;
     const pathWithoutExt = pathe.normalizeString(path.path.substring(0, path.path.lastIndexOf(ext)), true);
     return createPath(pathWithoutExt, path.base);
 }
 
-function _transformPathToRootRelative<InputBase extends PathBase>(
-    inputPath: Path<InputBase>,
-    config: AppConfig,
-): Path<typeof PathBases.RootRelative> | undefined {
+export function getBspPathFromVmfPath(vmfPath: Path): Path {
+    const mapName = filename(vmfPath.path);
+    const bspName = mapName + ".bsp";
+
+    const bspPath = createPath(bspName, PathBases.GameMaps);
+    return bspPath;
+}
+
+function _transformPathToRootRelative(inputPath: Path, config: AppConfig): Path | undefined {
     switch (inputPath.base) {
         case PathBases.Absolute: {
-            return { path: getRootRelativePath(inputPath.path, config.rootPath), base: PathBases.RootRelative };
+            return createPath(getRootRelativePath(inputPath.path, config.rootPath), PathBases.Root);
         }
-        case PathBases.RootRelative: {
-            return inputPath as Path<typeof PathBases.RootRelative>;
+        case PathBases.Root: {
+            return inputPath;
         }
-        case PathBases.GameRelative: {
-            return { path: pathe.join("game", config.gameName, inputPath.path), base: PathBases.RootRelative };
+        case PathBases.Game: {
+            return createPath(pathe.join("game", config.gameName, inputPath.path), PathBases.Root);
         }
-        case PathBases.ContentRelative: {
-            return { path: pathe.join("content", config.gameName, inputPath.path), base: PathBases.RootRelative };
+        case PathBases.Content: {
+            return createPath(pathe.join("content", config.gameName, inputPath.path), PathBases.Root);
+        }
+        case PathBases.GameMaps: {
+            return createPath(pathe.join("game", config.gameName, "maps", inputPath.path), PathBases.Root);
+        }
+        case PathBases.ContentMaps: {
+            return createPath(pathe.join("content", config.gameName, "maps", inputPath.path), PathBases.Root);
         }
         default: {
             return undefined;

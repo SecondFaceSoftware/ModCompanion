@@ -22,14 +22,13 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     fileBrowser: {
         listFiles: (dirPath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.FileBrowser_ListFilesQuery, dirPath),
-        getFileEntry: (filePath: string, base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.FileBrowser_FileEntryQuery, filePath, base),
-        execute: (filePath: string | string[], base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_ExecuteAction, filePath, base),
-        browseTo: (filePath: string, base: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_BrowseToFileAction, filePath, base),
-        open: (filePath: string, base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_OpenAction, filePath, base),
+        getFileEntry: (path: Shared.Paths.Path) =>
+            ipcRenderer.invoke(Shared.Ipc.Channels.FileBrowser_FileEntryQuery, path),
+        execute: (path: Shared.Paths.Path | Shared.Paths.Path[]) =>
+            ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_ExecuteAction, path),
+        browseTo: (path: Shared.Paths.Path) =>
+            ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_BrowseToFileAction, path),
+        open: (path: Shared.Paths.Path) => ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_OpenAction, path),
         updateOpenedDirs: (dirs: string[]) =>
             ipcRenderer.send(Shared.Ipc.Channels.FileBrowser_UpdateOpenedDirsAction, dirs),
         subscribeDirUpdated: (callback: (dir: string, entries: Shared.FileBrowser.FileEntries) => void) =>
@@ -45,22 +44,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
     },
 
     file: {
-        readString: (filePath: string, base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.FileReadString, filePath, base),
+        readString: (path: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.FileReadString, path),
         writeString: (
-            filePath: string,
+            path: Shared.Paths.Path,
             data:
                 | string
                 | NodeJS.ArrayBufferView
                 | Iterable<string | NodeJS.ArrayBufferView>
                 | AsyncIterable<string | NodeJS.ArrayBufferView>
                 | Stream,
-            base?: Shared.FileBrowser.PathBase,
-        ) => ipcRenderer.invoke(Shared.Ipc.Channels.FileWriteString, filePath, data, base),
-        delete: (filePath: string, base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.FileDelete, filePath, base),
-        exists: (filePath: string, base?: Shared.FileBrowser.PathBase) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.FileExists, filePath, base),
+        ) => ipcRenderer.invoke(Shared.Ipc.Channels.FileWriteString, path, data),
+        delete: (path: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.FileDelete, path),
+        exists: (path: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.FileExists, path),
     },
 
     config: {
@@ -109,10 +104,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
         subscribeNavigateToHash: (callback: (assetHash: string) => void) =>
             ipcRenderer.on(Shared.Ipc.Channels.AssetNavigateToId, (e: IpcRendererEvent, assetHash: string) =>
                 callback(assetHash),
-            ),
-        subscribeScanProgress: (callback: (progressNorm: number) => void) =>
-            ipcRenderer.on(Shared.Ipc.Channels.AssetScanProgressEvent, (e: IpcRendererEvent, progressNorm: number) =>
-                callback(progressNorm),
             ),
         createAsset: (primaryFile: string, otherFiles: string[]) =>
             ipcRenderer.invoke(Shared.Ipc.Channels.AssetCreate, primaryFile, otherFiles),
@@ -198,12 +189,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
     },
 
     mdl: {
-        info: (filePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.MdlInfoGet, filePath),
+        info: (filePath: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.MdlInfoGet, filePath),
     },
 
     vtf: {
-        getInfo: (absFilePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfInfoQuery, absFilePath),
-        getExtract: (absFilePath: string) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfExtractQuery, absFilePath),
+        getInfo: (filePath: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfInfoQuery, filePath),
+        getExtract: (filePath: Shared.Paths.Path) => ipcRenderer.invoke(Shared.Ipc.Channels.VtfExtractQuery, filePath),
     },
 
     task: {
