@@ -6,7 +6,7 @@
         @wheel="handleWheel"
     >
         <div class="absolute w-full h-full checkerboard" />
-        <img :src="src" class="origin-top-left" :style="transformStyle" draggable="false" />
+        <MCanvas :setup="createImageViewer" class="h-full w-full" />
         <div
             class="pt-4 opacity-25 hover:opacity-100 transition-opacity absolute bottom-0 left-0 right-0 flex justify-center from-transparent to-neutral-950 bg-linear-to-b"
         >
@@ -16,12 +16,12 @@
                     variant="subtle"
                     @click="handleResetTransform"
                 />
-                <!--                <UButtonGroup>-->
-                <!--                    <UButton label="R" variant="subtle" />-->
-                <!--                    <UButton label="G" variant="subtle" />-->
-                <!--                    <UButton label="B" variant="subtle" />-->
-                <!--                    <UButton label="A" variant="subtle" />-->
-                <!--                </UButtonGroup>-->
+                <UButtonGroup>
+                    <UButton label="R" variant="subtle" />
+                    <UButton label="G" variant="subtle" />
+                    <UButton label="B" variant="subtle" />
+                    <UButton label="A" variant="subtle" />
+                </UButtonGroup>
             </div>
         </div>
     </div>
@@ -30,6 +30,7 @@
 <script setup lang="ts">
 import { useMouse, useMousePressed } from "@vueuse/core";
 import { AppDesign } from "~/design/AppDesign.js";
+import { Canvas, CanvasSettings, createCanvas } from "~/canvas/Canvas.js";
 
 const props = defineProps<{ src: string }>();
 
@@ -50,6 +51,26 @@ watch(() => props.src, reset);
 const transformStyle = computed(
     () => `transform: translate(${transformX.value}px, ${transformY.value}px) scale(${zoom.value})`,
 );
+
+const image = computed(() => {
+    const img = new Image();
+    img.src = props.src;
+    return img;
+});
+
+function createImageViewer(ctx: CanvasRenderingContext2D, settings: CanvasSettings): Canvas<unknown> {
+    return createCanvas(ctx, settings, (setupContext) => {
+        setupContext.onDraw((state) => {
+            ctx.clearRect(0, 0, state.width, state.height);
+            ctx.drawImage(image.value, 0, 0, state.width, state.height);
+
+            // Debug thing
+            // ctx.fillStyle = "deepskyblue";
+            // ctx.fillRect(0, 0, state.width / 2, state.height / 2);
+            // ctx.fillRect(state.width / 2, state.height / 2, state.width / 2, state.height / 2);
+        });
+    });
+}
 
 const dragArea = useTemplateRef("dragArea");
 const { x, y } = useMouse();
