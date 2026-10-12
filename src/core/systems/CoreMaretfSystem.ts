@@ -48,9 +48,17 @@ export const MareTfSystem = {
 
         return runConverter(cmd, ConfigSystem.getAppConfig().gamePath, "MareTF");
     },
-    async getVtfInfo(inputPath: string): Promise<SharedVtfInfo> {
-        const infoText = await _runMaretfInfo(inputPath);
+    async getVtfInfo(inputPath: Shared.Paths.Path): Promise<SharedVtfInfo> {
+        const absFilePath = Shared.Paths.transformPathBase(
+            inputPath,
+            Shared.Paths.PathBases.Absolute,
+            ConfigSystem.getAppConfig(),
+        );
+        if (!absFilePath) {
+            throw new Error(`VTF File path didn't resolve ${inputPath}`);
+        }
 
+        const infoText = await _runMaretfInfo(absFilePath.path);
         if (!infoText) {
             throw new Error("Failed to get vtf info");
         }
@@ -65,8 +73,17 @@ export const MareTfSystem = {
         const raw = parsed[0] as unknown as SharedVtfInfoRawOutput;
         return createVtfInfo(raw);
     },
-    async getVtfExtract(inputPath: string): Promise<string> {
-        return _runMaretfExtract(inputPath);
+    async getVtfExtract(inputPath: Shared.Paths.Path): Promise<string> {
+        const absFilePath = Shared.Paths.transformPathBase(
+            inputPath,
+            Shared.Paths.PathBases.Absolute,
+            ConfigSystem.getAppConfig(),
+        );
+        if (!absFilePath) {
+            throw new Error(`VTF File path didn't resolve ${inputPath}`);
+        }
+
+        return _runMaretfExtract(absFilePath.path);
     },
 };
 

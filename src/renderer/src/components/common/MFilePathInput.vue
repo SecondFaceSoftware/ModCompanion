@@ -1,5 +1,5 @@
 <template>
-    <MAcceptDrop v-model="model" @change="emit('change', model ?? '')">
+    <MAcceptDrop @change="handleDrop">
         <template #default="{ isOverDropZone }">
             <div
                 class="flex rounded bg-neutral-900 border border-accented inset-shadow-cave overflow-hidden hover:bg-neutral-850"
@@ -20,9 +20,9 @@
                         class="w-full"
                         variant="none"
                         size="sm"
-                        @change="emit('change', model ?? '')"
+                        @change="emit('change', model)"
                     />
-                    <MFilePathInputActions :path="fullFilePath" />
+                    <MFilePathInputActions :path="model" />
                     <slot name="default" />
                 </template>
             </div>
@@ -36,14 +36,16 @@ import { getAppConfig } from "~/renderer-config.js";
 import * as Shared from "mod_companion_shared";
 import MFilePathInputActions from "~/components/common/MFilePathInputActions.vue";
 
-const model = defineModel<string>({ required: false });
+const model = defineModel<Shared.Paths.Path>({ required: false });
 const emit = defineEmits<{ change: [string] }>();
 
-const props = defineProps<{ placeholder?: string; base?: Shared.FileBrowser.PathBase }>();
+const props = defineProps<{ placeholder?: string }>();
 
 const { isDragging } = useGlobalDragging();
-
-const fullFilePath = computed(() => Shared.FileBrowser.makeAbsolute(model.value ?? "", props.base, getAppConfig()));
+function handleDrop(dropped: string) {
+    emit("change", dropped);
+    model.value = dropped;
+}
 </script>
 
 <style scoped></style>

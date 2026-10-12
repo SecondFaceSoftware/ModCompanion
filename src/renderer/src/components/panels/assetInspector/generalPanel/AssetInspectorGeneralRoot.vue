@@ -17,7 +17,7 @@
                     heading="Content Files"
                     :asset="asset"
                     field="contentFiles"
-                    :base="Shared.FileBrowser.PathBases.ContentRelative"
+                    :base="Shared.Paths.PathBases.Content"
                 />
             </template>
 
@@ -27,7 +27,7 @@
                     :asset="asset"
                     field="gameFiles"
                     :max-items="maxGameFiles"
-                    :base="Shared.FileBrowser.PathBases.GameRelative"
+                    :base="Shared.Paths.PathBases.Game"
                 />
             </template>
             <template v-if="!asset.isTransient">

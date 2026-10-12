@@ -22,14 +22,14 @@ import { openMapInGame, openMapInHammer } from "~/helper/LauncherHelper.js";
 import { getAppConfig } from "~/renderer-config.js";
 import * as pathe from "pathe";
 
-const props = defineProps<{ path: string }>();
+const props = defineProps<{ path: Shared.Paths.Path }>();
 
 function handleEdit(): void {
-    openMapInHammer(pathe.join(getAppConfig().rootPath, props.path));
+    openMapInHammer(props.path);
 }
 
 function handlePlay(): void {
-    openMapInGame(props.path);
+    openMapInGame(props.path.path);
 }
 </script>
 

@@ -247,7 +247,8 @@ const items = computed<ContextMenuItem[][]>(() => {
                 icon: AppDesign.Icons.ActionLaunchFile,
                 disabled: !allFiles,
                 onSelect() {
-                    window.electronAPI.fileBrowser.open(pathsArray, Shared.FileBrowser.PathBases.RootRelative);
+                    const paths = pathsArray.map((p) => Shared.Paths.createPath(p, Shared.Paths.PathBases.Root));
+                    window.electronAPI.fileBrowser.open(paths);
                 },
             },
             {
@@ -255,7 +256,9 @@ const items = computed<ContextMenuItem[][]>(() => {
                 icon: AppDesign.Icons.ActionBrowseToFolder,
                 disabled: entries.length !== 1,
                 onSelect() {
-                    window.electronAPI.fileBrowser.browseTo(entries[0].path, Shared.FileBrowser.PathBases.RootRelative);
+                    window.electronAPI.fileBrowser.browseTo(
+                        Shared.Paths.createPath(entries[0].path, Shared.Paths.PathBases.Root),
+                    );
                 },
             },
         ],
@@ -329,7 +332,7 @@ function handleDeleteShortcut(): void {
 async function deleteFiles(files: Iterable<string>): Promise<void> {
     const promises: Promise<boolean>[] = [];
     for (const sel of files) {
-        promises.push(window.electronAPI.file.delete(sel, Shared.FileBrowser.PathBases.RootRelative));
+        promises.push(window.electronAPI.file.delete(Shared.Paths.createPath(sel, Shared.Paths.PathBases.Root)));
     }
     await Promise.allSettled(promises);
     refresh();
@@ -346,8 +349,7 @@ function handleActivated(entry: Shared.FileBrowser.FileEntry, event?: KeyboardEv
     }
 
     if (event?.shiftKey) {
-        const fullPath = pathe.join(getAppConfig().rootPath, entry.path);
-        window.electronAPI.fileBrowser.open(fullPath);
+        window.electronAPI.fileBrowser.open(Shared.Paths.createPath(entry.path, Shared.Paths.PathBases.Root));
     } else {
         panelsStore.openInspector(
             GlobalComponentNames.FileInspector,

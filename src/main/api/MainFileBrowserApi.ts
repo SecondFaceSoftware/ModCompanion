@@ -10,31 +10,27 @@ export const FileBrowserApi = {
     register(): boolean {
         ipcMain.on(
             Shared.Ipc.Channels.FileBrowser_BrowseToFileAction,
-            (event: Electron.IpcMainEvent, filePath: string, base?: Shared.FileBrowser.PathBase): void => {
-                Core.FileBrowseHelper.browseTo(filePath, base);
+            (event: Electron.IpcMainEvent, path: Shared.Paths.Path): Promise<void> => {
+                return Core.FileBrowseHelper.browseTo(path);
             },
         );
 
         ipcMain.handle(
             Shared.Ipc.Channels.FileBrowser_FileEntryQuery,
-            (
-                event: Electron.IpcMainInvokeEvent,
-                filePath: string,
-                base?: Shared.FileBrowser.PathBase,
-            ): Promise<FileEntry | undefined> => {
-                return Core.FileBrowseHelper.getFileEntry(filePath, base);
+            (event: Electron.IpcMainInvokeEvent, path: Shared.Paths.Path): Promise<FileEntry | undefined> => {
+                return Core.FileBrowseHelper.getFileEntry(path);
             },
         );
 
         ipcMain.on(
             Shared.Ipc.Channels.FileBrowser_OpenAction,
-            (event: Electron.IpcMainEvent, filePath: string | string[], base?: Shared.FileBrowser.PathBase): void => {
-                if (Array.isArray(filePath)) {
-                    for (const p of filePath) {
-                        Core.FileBrowseHelper.openFile(p, base);
+            (event: Electron.IpcMainEvent, path: Shared.Paths.Path[] | Shared.Paths.Path): void => {
+                if (Array.isArray(path)) {
+                    for (const p of path) {
+                        Core.FileBrowseHelper.openFile(p);
                     }
                 } else {
-                    Core.FileBrowseHelper.openFile(filePath, base);
+                    Core.FileBrowseHelper.openFile(path);
                 }
             },
         );
@@ -51,13 +47,13 @@ export const FileBrowserApi = {
 
         ipcMain.on(
             Shared.Ipc.Channels.FileBrowser_ExecuteAction,
-            (event: Electron.IpcMainEvent, filePath: string | string[], base?: Shared.FileBrowser.PathBase): void => {
-                if (Array.isArray(filePath)) {
-                    for (const file of filePath) {
-                        Core.FileBrowseHelper.executeFile(file, base);
+            (event: Electron.IpcMainEvent, path: Shared.Paths.Path[] | Shared.Paths.Path): void => {
+                if (Array.isArray(path)) {
+                    for (const p of path) {
+                        Core.FileBrowseHelper.executeFile(p);
                     }
                 } else {
-                    Core.FileBrowseHelper.executeFile(filePath, base);
+                    Core.FileBrowseHelper.executeFile(path);
                 }
             },
         );

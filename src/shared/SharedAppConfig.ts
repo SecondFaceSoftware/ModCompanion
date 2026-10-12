@@ -65,7 +65,16 @@ export interface AppConfig {
      * */
     scriptsPath: string;
 
+    /**
+     * Path to the map source folder
+     * Represents: <repo>/content/<search_path>/maps
+     * */
     mapSourcePath: string;
+
+    /**
+     * Path to the map output folder
+     * Represents: <repo>/game/<search_path>/maps
+     * */
     mapOutputPath: string;
 
     studioMdlPath: string;

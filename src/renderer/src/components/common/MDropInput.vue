@@ -1,5 +1,5 @@
 <template>
-    <MAcceptDrop v-model="model" @change="emit('change', model ?? '')">
+    <MAcceptDrop v-model="model" @change="handleDrop">
         <template #default="{ isOverDropZone }">
             <template v-if="isDragging">
                 <div class="rounded bg-neutral-900 border border-accented inset-shadow-cave overflow-hidden">
@@ -35,6 +35,11 @@ const model = defineModel<string>({ required: false });
 const emit = defineEmits<{ change: [string] }>();
 defineProps<{ placeholder?: string }>();
 const { isDragging } = useGlobalDragging();
+
+function handleDrop(dropped: string) {
+    emit("change", dropped);
+    model.value = dropped;
+}
 </script>
 
 <style scoped></style>

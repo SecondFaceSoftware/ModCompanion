@@ -17,7 +17,7 @@ import { VerticalTableItem } from "~/components/common/MVerticalTable.model.js";
 import MVerticalTable from "~/components/common/MVerticalTable.vue";
 import * as Shared from "mod_companion_shared";
 
-const props = defineProps<{ path: string }>();
+const props = defineProps<{ path: Shared.Paths.Path }>();
 
 const info = ref<Shared.MdlInfo.SharedMdlInfoReport | undefined>();
 

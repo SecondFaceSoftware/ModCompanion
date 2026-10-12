@@ -5,7 +5,7 @@
             <template v-if="files.length > 0">
                 <template v-for="(file, i) in files" :key="i">
                     <template v-if="asset.isTransient">
-                        <MFilePathInputNoEdit :model-value="file" :base="base" />
+                        <MFilePathInputNoEdit :path="Shared.Paths.createPath(file, base)" />
                     </template>
                     <template v-else>
                         <MFilePathInput
@@ -50,7 +50,7 @@ const props = defineProps<{
     field: keyof Shared.Asset.AssetDefFileArrays;
     maxItems?: number;
     heading: string;
-    base: Shared.FileBrowser.PathBase;
+    base: Shared.Paths.PathBase;
 }>();
 
 const inj = inject(AssetInspectorGeneralInjectKey);

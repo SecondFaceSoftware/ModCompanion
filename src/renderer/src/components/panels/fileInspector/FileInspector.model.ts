@@ -5,6 +5,7 @@ import { EventHandler } from "~/composables/useEvent.js";
 import { PanelShortcuts } from "~/composables/usePanelShortcuts.js";
 
 export interface FileInspectorModel extends PanelModel {
+    /** Root relative. File inspector has no concept of bases. It always stores root relative bases, so no need to use Path here */
     file: string;
 }
 

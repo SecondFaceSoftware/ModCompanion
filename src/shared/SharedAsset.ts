@@ -147,7 +147,6 @@ export interface AssetRescanEvent {
 }
 
 export type AssetRescanNotifyFunc = (event: AssetRescanEvent) => void;
-export type AssetScanProgressNotifyFunc = (progressNorm: number) => void;
 
 export interface AssetAddedEvent {
     assets: Asset[];

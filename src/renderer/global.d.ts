@@ -22,14 +22,14 @@ declare global {
 
             fileBrowser: {
                 listFiles: (dirPath: string) => Promise<Shared.FileBrowser.FileEntries>;
-                getFileEntry: (filePath: string, base?: Shared.FileBrowser.PathBase) => Promise<FileEntry | undefined>;
-                browseTo: (filePath: string, base?: Shared.FileBrowser.PathBase) => void;
+                getFileEntry: (path: Shared.Paths.Path) => Promise<FileEntry | undefined>;
+                browseTo: (path: Shared.Paths.Path) => void;
 
                 /**
                  * Open one or more files with their default application. To execute a binaries, use launchFile
                  * @see execute
                  * */
-                open: (filePath: string | string[], base?: Shared.FileBrowser.PathBase) => void;
+                open: (path: Shared.Paths.Path[] | Shared.Paths.Path) => void;
 
                 updateOpenedDirs: (dirs: string[]) => void;
 
@@ -37,7 +37,7 @@ declare global {
                  * Launches one or more executables. To open a file with its default application, use openFile
                  * @see open
                  */
-                execute: (filePath: string | string[], base?: Shared.FileBrowser.PathBase) => void;
+                execute: (path: Shared.Paths.Path[] | Shared.Paths.Path) => void;
                 subscribeDirUpdated: (
                     callback: (dir: string, entries: Shared.FileBrowser.FileEntries) => void,
                 ) => IpcRenderer;
@@ -47,19 +47,18 @@ declare global {
             };
 
             file: {
-                readString: (filePath: string, base?: Shared.FileBrowser.PathBase) => Promise<string | undefined>;
+                readString: (path: Shared.Paths.Path) => Promise<string | undefined>;
                 writeString: (
-                    filePath: string,
+                    path: Shared.Paths.Path,
                     data:
                         | string
                         | NodeJS.ArrayBufferView
                         | Iterable<string | NodeJS.ArrayBufferView>
                         | AsyncIterable<string | NodeJS.ArrayBufferView>
                         | Stream,
-                    base?: Shared.FileBrowser.PathBase,
                 ) => Promise<void>;
-                delete: (filePath: string, base?: Shared.FileBrowser.PathBase) => Promise<boolean>;
-                exists: (filePath: string, base?: Shared.FileBrowser.PathBase) => Promise<boolean>;
+                delete: (path: Shared.Paths.Path) => Promise<boolean>;
+                exists: (path: Shared.Paths.Path) => Promise<boolean>;
             };
 
             config: {
@@ -83,7 +82,6 @@ declare global {
                 subscribeAdded: (callback: (event: Shared.Asset.AssetAddedEvent) => void) => IpcRenderer;
                 subscribeUpdated: (callback: (event: Shared.Asset.AssetUpdatedEvent) => void) => IpcRenderer;
                 subscribeNavigateToHash: (callback: (assetHash: string) => void) => IpcRenderer;
-                subscribeScanProgress: (callback: (progressNorm: number) => void) => IpcRenderer;
                 createAsset: (
                     primaryFile: string,
                     otherFiles: string[],
@@ -156,12 +154,12 @@ declare global {
             };
 
             mdl: {
-                info: (filePath: string) => Promise<Shared.MdlInfo.SharedMdlInfoReport>;
+                info: (filePath: Shared.Paths.Path) => Promise<Shared.MdlInfo.SharedMdlInfoReport>;
             };
 
             vtf: {
-                getInfo: (absFilePath: string) => Promise<Shared.Vtf.SharedVtfInfo | undefined>;
-                getExtract: (absFilePath: string) => Promise<string>;
+                getInfo: (filePath: Shared.Paths.Path) => Promise<Shared.Vtf.SharedVtfInfo | undefined>;
+                getExtract: (filePath: Shared.Paths.Path) => Promise<string>;
             };
 
             task: {

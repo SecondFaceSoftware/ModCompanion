@@ -15,7 +15,7 @@ import { watchDeep } from "@vueuse/core";
 import * as _ from "lodash";
 import { FileInspectorBehavior } from "~/components/panels/fileInspector/FileInspector.model.js";
 
-const props = defineProps<{ path: string }>();
+const props = defineProps<{ path: Shared.Paths.Path }>();
 
 const emit = defineEmits<{ hasChanged: [boolean] }>();
 
@@ -24,10 +24,7 @@ const model = ref<Shared.ChamberSignConfig.SharedChamberSignConfig | undefined>(
 watch(
     () => props.path,
     async () => {
-        const fileContents = await window.electronAPI.file.readString(
-            props.path,
-            Shared.FileBrowser.PathBases.Absolute,
-        );
+        const fileContents = await window.electronAPI.file.readString(props.path);
         if (!fileContents) {
             return;
         }
@@ -60,11 +57,7 @@ watchDeep(model, (newValue, oldModel) => {
 
 async function save() {
     if (model.value) {
-        await window.electronAPI.file.writeString(
-            props.path,
-            JSON.stringify(model.value, null, 4),
-            Shared.FileBrowser.PathBases.Absolute,
-        );
+        await window.electronAPI.file.writeString(props.path, JSON.stringify(model.value, null, 4));
         savedModel.value = structuredClone(toRaw(model.value));
         emit("hasChanged", false);
     }

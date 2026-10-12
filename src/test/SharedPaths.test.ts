@@ -41,37 +41,37 @@ const testConfig: AppConfig = {
 test("Transform root relative to game relative", () => {
     expect(
         Paths.transformPathBase(
-            Paths.createPath("game/revolution/scripts/test.txt", Paths.PathBases.RootRelative),
-            Paths.PathBases.GameRelative,
+            Paths.createPath("game/revolution/scripts/test.txt", Paths.PathBases.Root),
+            Paths.PathBases.Game,
             testConfig,
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.GameRelative>>({
+    ).toEqual<Paths.Path>({
         path: "scripts/test.txt",
-        base: Paths.PathBases.GameRelative,
+        base: Paths.PathBases.Game,
     });
 });
 
 test("Transform root relative to content relative", () => {
     expect(
         Paths.transformPathBase(
-            Paths.createPath("content/revolution/materialsrc/lity.png", Paths.PathBases.RootRelative),
-            Paths.PathBases.ContentRelative,
+            Paths.createPath("content/revolution/materialsrc/lity.png", Paths.PathBases.Root),
+            Paths.PathBases.Content,
             testConfig,
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.ContentRelative>>({
+    ).toEqual<Paths.Path>({
         path: "materialsrc/lity.png",
-        base: Paths.PathBases.ContentRelative,
+        base: Paths.PathBases.Content,
     });
 });
 
 test("Transform root relative to absolute", () => {
     expect(
         Paths.transformPathBase(
-            Paths.createPath("content/revolution/materialsrc/lity.png", Paths.PathBases.RootRelative),
+            Paths.createPath("content/revolution/materialsrc/lity.png", Paths.PathBases.Root),
             Paths.PathBases.Absolute,
             testConfig,
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.Absolute>>({
+    ).toEqual<Paths.Path>({
         path: "S:/Git/PortalRevolution2/content/revolution/materialsrc/lity.png",
         base: Paths.PathBases.Absolute,
     });
@@ -80,11 +80,11 @@ test("Transform root relative to absolute", () => {
 test("Transform root relative to game material - top level", () => {
     expect(
         Paths.transformPathBase(
-            Paths.createPath("game/revolution/materials/lity.vtf", Paths.PathBases.RootRelative),
+            Paths.createPath("game/revolution/materials/lity.vtf", Paths.PathBases.Root),
             Paths.PathBases.GameMaterial,
             testConfig,
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.GameMaterial>>({
+    ).toEqual<Paths.Path>({
         path: "lity.vtf",
         base: Paths.PathBases.GameMaterial,
     });
@@ -93,11 +93,11 @@ test("Transform root relative to game material - top level", () => {
 test("Transform root relative to game material - nested", () => {
     expect(
         Paths.transformPathBase(
-            Paths.createPath("game/revolution/materials/icons/lg/lity.vtf", Paths.PathBases.RootRelative),
+            Paths.createPath("game/revolution/materials/icons/lg/lity.vtf", Paths.PathBases.Root),
             Paths.PathBases.GameMaterial,
             testConfig,
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.GameMaterial>>({
+    ).toEqual<Paths.Path>({
         path: "icons/lg/lity.vtf",
         base: Paths.PathBases.GameMaterial,
     });
@@ -108,30 +108,30 @@ test("Transform root relative to game material - nested", () => {
 test("Strip single extension", () => {
     expect(
         Paths.stripExtension(
-            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.vtf", Paths.PathBases.RootRelative),
+            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.vtf", Paths.PathBases.Root),
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.RootRelative>>({
+    ).toEqual<Paths.Path>({
         path: "game/revolution/materials/grass/grassy_grass_01",
-        base: Paths.PathBases.RootRelative,
+        base: Paths.PathBases.Root,
     });
 });
 
 test("Strip extension on path with one more dot", () => {
     expect(
         Paths.stripExtension(
-            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.test.vtf", Paths.PathBases.RootRelative),
+            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.test.vtf", Paths.PathBases.Root),
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.RootRelative>>({
+    ).toEqual<Paths.Path>({
         path: "game/revolution/materials/grass/grassy_grass_01.test",
-        base: Paths.PathBases.RootRelative,
+        base: Paths.PathBases.Root,
     });
     expect(
         Paths.stripExtension(
-            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.vtf.vtf", Paths.PathBases.RootRelative),
+            Paths.createPath("game/revolution/materials/grass/grassy_grass_01.vtf.vtf", Paths.PathBases.Root),
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.RootRelative>>({
+    ).toEqual<Paths.Path>({
         path: "game/revolution/materials/grass/grassy_grass_01.vtf",
-        base: Paths.PathBases.RootRelative,
+        base: Paths.PathBases.Root,
     });
 });
 
@@ -140,30 +140,25 @@ test("Strip extension on path with multiple dots", () => {
         Paths.stripExtension(
             Paths.createPath(
                 "game/revolution/materials/grass/grassy_grass_01.test.vtf.test.bla.vtf",
-                Paths.PathBases.RootRelative,
+                Paths.PathBases.Root,
             ),
         ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.RootRelative>>({
+    ).toEqual<Paths.Path>({
         path: "game/revolution/materials/grass/grassy_grass_01.test.vtf.test.bla",
-        base: Paths.PathBases.RootRelative,
+        base: Paths.PathBases.Root,
     });
 });
 
 test("Strip extension when it doesnt exist", () => {
-    const originalPath = Paths.createPath(
-        "game/revolution/materials/grass/grassy_grass_01",
-        Paths.PathBases.RootRelative,
-    );
+    const originalPath = Paths.createPath("game/revolution/materials/grass/grassy_grass_01", Paths.PathBases.Root);
     expect(Paths.stripExtension(originalPath)).toBe(originalPath); // Intentionally check that it's the exact same object
 });
 
 test("Strip extension on dot file", () => {
     expect(
-        Paths.stripExtension(
-            Paths.createPath("game/revolution/materials/grass/.gitignore", Paths.PathBases.RootRelative),
-        ),
-    ).toEqual<Paths.Path<typeof Paths.PathBases.RootRelative>>({
+        Paths.stripExtension(Paths.createPath("game/revolution/materials/grass/.gitignore", Paths.PathBases.Root)),
+    ).toEqual<Paths.Path>({
         path: "game/revolution/materials/grass", // This is expected behavior for node path extensions
-        base: Paths.PathBases.RootRelative,
+        base: Paths.PathBases.Root,
     });
 });

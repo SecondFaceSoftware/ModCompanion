@@ -8,7 +8,6 @@
 import { useDropZone } from "@vueuse/core";
 import { handleDrop } from "~/helper/DragDropData.js";
 
-const model = defineModel<string>({ required: false });
 const emit = defineEmits<{ change: [string] }>();
 defineSlots<{
     default(props: { isOverDropZone: boolean }): any;
@@ -18,7 +17,6 @@ const dropZoneRef = ref<HTMLDivElement>();
 async function onDrop(files: File[] | null, event: DragEvent) {
     const p = await handleDrop(files, event);
     if (p !== undefined) {
-        model.value = p;
         emit("change", p);
     }
 }

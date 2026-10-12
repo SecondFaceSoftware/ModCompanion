@@ -3,12 +3,7 @@
         <UIcon :name="entry.icon" />
         <span>{{ entry.name }}</span>
     </div>
-    <MFilePathInput
-        v-model="file"
-        class="grow"
-        :base="Shared.FileBrowser.PathBases.RootRelative"
-        @change="emit('updated', file)"
-    />
+    <MFilePathInput v-model="file" class="grow" :base="Shared.Paths.PathBases.Root" @change="emit('updated', file)" />
 </template>
 
 <script setup lang="ts">

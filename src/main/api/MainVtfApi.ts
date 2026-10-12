@@ -6,15 +6,15 @@ export const VtfApi = {
     register(): boolean {
         ipcMain.handle(
             Shared.Ipc.Channels.VtfInfoQuery,
-            (event: Electron.IpcMainInvokeEvent, absFilePath: string): Promise<Shared.Vtf.SharedVtfInfo> => {
-                return Core.MareTfSystem.getVtfInfo(absFilePath);
+            (event: Electron.IpcMainInvokeEvent, filePath: Shared.Paths.Path): Promise<Shared.Vtf.SharedVtfInfo> => {
+                return Core.MareTfSystem.getVtfInfo(filePath);
             },
         );
 
         ipcMain.handle(
             Shared.Ipc.Channels.VtfExtractQuery,
-            (event: Electron.IpcMainInvokeEvent, absFilePath: string): Promise<string> => {
-                return Core.MareTfSystem.getVtfExtract(absFilePath);
+            (event: Electron.IpcMainInvokeEvent, filePath: Shared.Paths.Path): Promise<string> => {
+                return Core.MareTfSystem.getVtfExtract(filePath);
             },
         );
 
