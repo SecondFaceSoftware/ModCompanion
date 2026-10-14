@@ -1,7 +1,11 @@
 import { computed, Ref } from "vue";
 import * as Shared from "mod_companion_shared";
 
-export function useFilter<T>(items: Ref<T[]>, accessorFunc: (item: T) => string, filter: Ref<string>) {
+export function useFilter<T>(
+    items: Ref<T[]>,
+    accessorFunc: (item: T) => string,
+    filter: Ref<string>,
+): ComputedRef<T[]> {
     return computed(() => {
         if (filter.value === "") {
             return items.value;

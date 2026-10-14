@@ -4,12 +4,25 @@ import { filename } from "pathe/utils";
 import { forwardSlashed, getRootRelativePath } from "./SharedSourceFs.js";
 
 export const PathBases = {
+    // Absolute file path that can be anywhere on the machine
     Absolute: 0,
+
+    // Relative to <root>
     Root: 1,
+
+    // Relative to <root>/game/<searchpath>
     Game: 2,
+
+    // Relative to <root>/content/<searchpath>
     Content: 3,
+
+    // Relative to <root>/game/<searchpath>/materials
     GameMaterial: 4,
+
+    // Relative to <root>/game/<searchpath>/maps
     GameMaps: 5,
+
+    // Relative to <root>/content/<searchpath>/maps
     ContentMaps: 6,
 } as const;
 export type PathBase = (typeof PathBases)[keyof typeof PathBases];
@@ -35,6 +48,11 @@ export function getBasePrefixPath(base: PathBase | undefined, config: AppConfig)
 
 export function createPath<Base extends PathBase>(path: string, base: Base): Path {
     return { path, base };
+}
+
+/** @returns The file's name without extension */
+export function getFileName(path: Path): string | undefined {
+    return filename(path.path);
 }
 
 export function transformPathBase<OutputBase extends PathBase>(
@@ -85,6 +103,10 @@ export function transformPathBase<OutputBase extends PathBase>(
     }
 }
 
+export function getExtension(path: Path): string {
+    return pathe.extname(path.path);
+}
+
 export function stripExtension(path: Path): Path {
     const ext = pathe.extname(path.path);
     if (ext.length === 0) return path;
@@ -92,7 +114,18 @@ export function stripExtension(path: Path): Path {
     return createPath(pathWithoutExt, path.base);
 }
 
-export function getBspPathFromVmfPath(vmfPath: Path): Path {
+export function addExtension(path: Path, ext: string): Path {
+    return createPath(path.path + ext, path.base);
+}
+
+export function changeExtension(path: Path, ext: string): Path {
+    return addExtension(stripExtension(path), ext);
+}
+
+export function getBspPathFromVmfPath(vmfPath: Path): Path | undefined {
+    if (vmfPath.base === PathBases.GameMaps && getExtension(vmfPath) === ".bsp") return vmfPath;
+    if (vmfPath.base !== PathBases.ContentMaps) return undefined;
+
     const mapName = filename(vmfPath.path);
     const bspName = mapName + ".bsp";
 

@@ -64,10 +64,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     map: {
         listSourceDirs: () => ipcRenderer.invoke(Shared.Ipc.Channels.MapListSourceDirs),
-        enqueue: (mapPaths: string[]) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueEnqueue, mapPaths),
-        subscribeQueueUpdated: (callback: (maps: string[]) => void) =>
-            ipcRenderer.on(Shared.Ipc.Channels.MapQueueUpdated, (e: IpcRendererEvent, maps: string[]) =>
-                callback(maps),
+        enqueue: (mapPaths: Shared.Paths.Path[]) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueEnqueue, mapPaths),
+        subscribeQueueUpdated: (callback: (mapPaths: Shared.Paths.Path[]) => void) =>
+            ipcRenderer.on(Shared.Ipc.Channels.MapQueueUpdated, (e: IpcRendererEvent, mapPaths: Shared.Paths.Path[]) =>
+                callback(mapPaths),
             ),
         cancelQueue: () => ipcRenderer.send(Shared.Ipc.Channels.MapQueueCancel),
         pauseQueue: (paused: boolean) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueSetPaused, paused),
@@ -81,8 +81,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
                 Shared.Ipc.Channels.MapCompileProgress,
                 (e: IpcRendererEvent, event: Shared.Map.CompileProgressEvent) => callback(event),
             ),
-        createTimeReport: (maps: string[]) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.MapCreateTimeReport, maps) as Promise<Shared.Map.TimeReport>,
+        createTimeReport: (mapPaths: Shared.Paths.Path[]) =>
+            ipcRenderer.invoke(Shared.Ipc.Channels.MapCreateTimeReport, mapPaths) as Promise<Shared.Map.TimeReport>,
     },
 
     asset: {

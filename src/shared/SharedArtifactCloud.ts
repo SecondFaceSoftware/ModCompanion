@@ -1,3 +1,5 @@
+import { Path } from "./SharedPaths.js";
+
 export interface MapInfo {
     objectKey: string;
     size: number;
@@ -5,5 +7,5 @@ export interface MapInfo {
 }
 
 export interface ListAllMapsReport {
-    maps: Map<string, MapInfo[]>;
+    maps: Map<Path, MapInfo[]>;
 }

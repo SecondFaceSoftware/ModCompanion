@@ -28,7 +28,7 @@ const table = useTemplateRef("table");
 
 const columns = computed(() => (timeReportStore.showReport ? reportColumns : listColumns));
 
-const listColumns: DataTableColumn<string>[] = [
+const listColumns: DataTableColumn<Shared.Paths.Path>[] = [
     {
         id: "name",
         label: "Name",
@@ -79,7 +79,7 @@ const listColumns: DataTableColumn<string>[] = [
     },
 ];
 
-const reportColumns: DataTableColumn<string>[] = [
+const reportColumns: DataTableColumn<Shared.Paths.Path>[] = [
     {
         id: "name",
         label: "Name",
@@ -87,7 +87,7 @@ const reportColumns: DataTableColumn<string>[] = [
         cell: (entry) =>
             h(MapsDataGridTimeReportBarCell, {
                 mapPath: entry,
-                displayName: listStore.mapDisplayList.get(entry) ?? entry,
+                displayName: listStore.mapDisplayList.get(entry) ?? Shared.Paths.getFileName(entry) ?? entry.path,
             }),
     },
     {
@@ -122,7 +122,7 @@ const reportColumns: DataTableColumn<string>[] = [
     },
 ];
 
-function handleActiveChanged(map: string | undefined): void {
+function handleActiveChanged(map: Shared.Paths.Path | undefined): void {
     listStore.selectMap(map);
 }
 

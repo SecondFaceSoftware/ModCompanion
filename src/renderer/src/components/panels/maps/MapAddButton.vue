@@ -22,7 +22,8 @@ const items = computed(() => {
     const menu = mapDirs.value.map<DropdownMenuItem>((d) => ({
         label: d.dirName,
         children: d.vmfNames.map<DropdownMenuItem>((m) => {
-            const fullPath = pathe.join(d.dirName, m);
+            const fullPathStr = pathe.join(d.dirName, m);
+            const fullPath = Shared.Paths.createPath(fullPathStr, Shared.Paths.PathBases.ContentMaps);
             return {
                 label: filename(m),
                 type: "checkbox",

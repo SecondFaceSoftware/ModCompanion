@@ -4,10 +4,11 @@
 </template>
 
 <script setup lang="ts">
+import * as Shared from "mod_companion_shared";
 import { useMapTimeReportStore } from "~/store/MapTimeReportStore.js";
 import { computed } from "vue";
 
-const props = defineProps<{ mapPath: string }>();
+const props = defineProps<{ mapPath: Shared.Paths.Path }>();
 
 const timeReportStore = useMapTimeReportStore();
 

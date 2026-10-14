@@ -51,13 +51,12 @@ export const ArtifactCloudSystem = {
                 return undefined;
             }
 
-            const mapsMap = new Map<string, Shared.ArtifactCloud.MapInfo[]>();
+            const mapsMap = new Map<Shared.Paths.Path, Shared.ArtifactCloud.MapInfo[]>();
             for (const content of contents) {
                 if (content.Size === undefined || content.LastModified === undefined || content.Key === undefined)
                     continue;
 
-                const mapName = filename(content.Key);
-                if (mapName === undefined) continue;
+                const mapPath = Shared.Paths.createPath(content.Key, Shared.Paths.PathBases.ContentMaps);
 
                 const entry: Shared.ArtifactCloud.MapInfo = {
                     size: content.Size,
@@ -65,10 +64,10 @@ export const ArtifactCloudSystem = {
                     objectKey: content.Key,
                 };
 
-                if (!mapsMap.has(mapName)) {
-                    mapsMap.set(mapName, [entry]);
+                if (!mapsMap.has(mapPath)) {
+                    mapsMap.set(mapPath, [entry]);
                 } else {
-                    mapsMap.get(mapName)?.push(entry);
+                    mapsMap.get(mapPath)?.push(entry);
                 }
             }
 
@@ -79,9 +78,40 @@ export const ArtifactCloudSystem = {
             return { maps: mapsMap };
         });
     },
-    async downloadMap(objectKey: string, mapName: string): Promise<boolean> {
+    async downloadMap(objectKey: string, mapPath: Shared.Paths.Path): Promise<boolean> {
+        const config = ConfigSystem.getAppConfig();
+        const absMapPath = Shared.Paths.transformPathBase(mapPath, Shared.Paths.PathBases.Absolute, config);
+        if (!absMapPath) {
+            Logger.warning(
+                Shared.Log.Channel.ArtifactCloud,
+                "Failed to download map because the map path didn't resolve to an absolute path",
+            );
+            return false;
+        }
+
+        const bspPath = Shared.Paths.getBspPathFromVmfPath(absMapPath);
+        if (!bspPath) {
+            Logger.warning(
+                Shared.Log.Channel.ArtifactCloud,
+                "Failed to download map because",
+                absMapPath,
+                "doesn't map to a valid bsp path",
+            );
+            return false;
+        }
+        const absBspPath = Shared.Paths.transformPathBase(bspPath, Shared.Paths.PathBases.Absolute, config);
+        if (!absBspPath) {
+            Logger.warning(
+                Shared.Log.Channel.ArtifactCloud,
+                "Failed to download map because",
+                absMapPath,
+                "doesn't resolve to an absolute path",
+            );
+            return false;
+        }
+
         const result = await _useS3(async (client, bucket): Promise<boolean> => {
-            Logger.info(Shared.Log.Channel.ArtifactCloud, `Downloading map object ${objectKey} to ${mapName}`);
+            Logger.info(Shared.Log.Channel.ArtifactCloud, `Downloading map object ${objectKey} to ${absMapPath.path}`);
             const response = await client.getObject({ Bucket: bucket, Key: objectKey });
             const s3Stream = response.Body as NodeJS.ReadableStream;
             if (!s3Stream) {
@@ -96,17 +126,13 @@ export const ArtifactCloudSystem = {
                 );
             }
 
-            const fullPath = pathe.join(
-                ConfigSystem.getAppConfig().mapOutputPath,
-                pathe.basename(mapName).replace(".vmf", ".bsp"),
-            );
             try {
-                await fs.rm(fullPath);
+                await fs.rm(absBspPath.path);
             } catch (e) {
                 // ignore. probably just doesn't exist
             }
 
-            const writeStream = createWriteStream(fullPath);
+            const writeStream = createWriteStream(absBspPath.path);
             await pipeline(s3Stream, writeStream);
             Logger.info(Shared.Log.Channel.ArtifactCloud, `Download complete`);
             return true;

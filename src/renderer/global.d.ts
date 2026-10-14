@@ -67,13 +67,13 @@ declare global {
 
             map: {
                 listSourceDirs: () => Promise<Shared.Map.SharedMapSourceDir[]>;
-                enqueue: (mapPaths: string[]) => void;
-                subscribeQueueUpdated: (callback: (queue: string[]) => void) => IpcRenderer;
+                enqueue: (mapPaths: Shared.Paths.Path[]) => void;
+                subscribeQueueUpdated: (callback: (queue: Shared.Paths.Path[]) => void) => IpcRenderer;
                 cancelQueue: () => void;
                 pauseQueue: (paused: boolean) => void;
                 subscribeCompileLog: (callback: (event: Shared.Map.CompileLogEvent) => void) => IpcRenderer;
                 subscribeCompileProgress: (callback: (event: Shared.Map.CompileProgressEvent) => void) => IpcRenderer;
-                createTimeReport: (maps: string[]) => Promise<Shared.Map.TimeReport>;
+                createTimeReport: (mapPaths: Shared.Paths.Path[]) => Promise<Shared.Map.TimeReport>;
             };
 
             asset: {
@@ -145,7 +145,7 @@ declare global {
             artifactCloud: {
                 isConnected: () => Promise<boolean>;
                 listAllMaps: () => Promise<Shared.ArtifactCloud.ListAllMapsReport | undefined>;
-                downloadMap: (artifactKey: string, mapPath: string) => Promise<boolean>;
+                downloadMap: (artifactKey: string, mapPath: Shared.Paths.Path) => Promise<boolean>;
             };
 
             log: {

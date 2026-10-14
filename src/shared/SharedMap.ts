@@ -1,3 +1,5 @@
+import { Path } from "./SharedPaths.js";
+
 export enum CompileStep {
     VBsp,
     Post,
@@ -14,29 +16,34 @@ export enum CompileState {
 }
 
 export interface CompileLogEvent {
-    mapPath: string;
+    mapPath: Path;
     step: CompileStep;
     message: string;
     isError: boolean;
 }
 
-export type QueueUpdatedNotifyFunc = (maps: string[]) => void;
+export type QueueUpdatedNotifyFunc = (mapPaths: Path[]) => void;
 
 export type CompileLogNotifyFunc = (event: CompileLogEvent) => void;
 
 export interface CompileProgressEvent {
-    mapPath: string;
+    mapPath: Path;
     step: CompileStep;
     state: CompileState;
 }
 
 export type CompileProgressNotifyFunc = (event: CompileProgressEvent) => void;
 
-export type SharedMapPresets = Record<string, string[]>;
+export type MapPresets = Record<string, Path[]>;
+
+export interface TimeReportMapStep {
+    map: Path;
+    step: CompileStep;
+}
 
 export interface TimeReport {
-    maps: Map<string, number>;
-    totals: Map<string, number>;
+    maps: Map<TimeReportMapStep, number>;
+    totals: Map<Path, number>;
 }
 
 export interface SharedMapSourceDir {
