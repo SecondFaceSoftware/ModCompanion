@@ -1,5 +1,4 @@
 import { ipcMain } from "electron";
-import * as pathe from "pathe";
 import fs from "fs/promises";
 import { existsSync } from "fs";
 import * as sourcelib from "sourcelib";
@@ -8,7 +7,9 @@ import * as Core from "mod_companion_core";
 import * as Shared from "mod_companion_shared";
 
 export function registerMapTimeReportApi(): boolean {
-    ipcMain.handle(Shared.Ipc.Channels.MapCreateTimeReport, (e, maps: string[]) => _createTimeReport(maps));
+    ipcMain.handle(Shared.Ipc.Channels.MapCreateTimeReport, (e, mapPaths: Shared.Paths.Path[]) =>
+        _createTimeReport(mapPaths),
+    );
     return true;
 }
 
@@ -31,33 +32,46 @@ function _getReportExtension(step: Shared.Map.CompileStep) {
     }
 }
 
-async function _createTimeReport(maps: string[]): Promise<Shared.Map.TimeReport> {
-    const config = Core.ConfigSystem.getAppConfig();
-
-    const srcPath = config.mapSourcePath;
-
+async function _createTimeReport(mapPaths: Shared.Paths.Path[]): Promise<Shared.Map.TimeReport> {
     const report: Shared.Map.TimeReport = {
-        maps: new Map<string, number>(),
-        totals: new Map<string, number>(),
+        maps: new Map(),
+        totals: new Map(),
     };
 
-    for (const map of maps) {
+    for (const mapPath of mapPaths) {
+        const absMapPath = Shared.Paths.transformPathBase(
+            mapPath,
+            Shared.Paths.PathBases.Absolute,
+            Core.ConfigSystem.getAppConfig(),
+        );
+        if (!absMapPath) {
+            Core.Logger.warning(
+                Shared.Log.Channel.MapCompile,
+                "Cannot create time report for map",
+                mapPath,
+                "because the path failed to resolve as an absolute path",
+            );
+            continue;
+        }
+
         for (const step of reportExtensions) {
             const extension = _getReportExtension(step);
             if (!extension) continue;
 
-            const reportPath = pathe.join(srcPath, map.replace(".vmf", extension));
+            const absReportPath = Shared.Paths.changeExtension(absMapPath, extension);
 
-            if (!existsSync(reportPath)) continue;
+            if (!existsSync(absReportPath.path)) continue;
 
-            const logContents = await fs.readFile(reportPath, { encoding: "utf-8" });
+            const logContents = await fs.readFile(absReportPath.path, { encoding: "utf-8" });
             const seconds = _getCompileTimeSeconds(logContents);
             if (seconds === undefined) continue;
 
-            report.maps.set(map + step, seconds);
+            const key: Shared.Map.TimeReportMapStep = { map: mapPath, step };
 
-            const mapTotal = report.totals.get(map) ?? 0;
-            report.totals.set(map, mapTotal + seconds);
+            report.maps.set(key, seconds);
+
+            const mapTotal = report.totals.get(mapPath) ?? 0;
+            report.totals.set(mapPath, mapTotal + seconds);
         }
     }
 

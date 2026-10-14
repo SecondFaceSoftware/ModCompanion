@@ -5,7 +5,7 @@
         <template #content>
             <div class="p-2 grid gap-1">
                 <UButton
-                    v-for="(maps, name) in presetsStore.presets"
+                    v-for="[name, maps] in presetsStore.presets"
                     :key="name"
                     class="grid grid-cols-3 items-start text-start"
                     @click="handleClickPreset(maps)"
@@ -21,14 +21,15 @@
 <script setup lang="ts">
 import { useMapPresetsStore } from "~/store/MapPresetsStore.js";
 import { useMapListStore } from "~/store/MapListStore.js";
+import * as Shared from "mod_companion_shared";
 
 const listStore = useMapListStore();
 const presetsStore = useMapPresetsStore();
 
 const open = ref(false);
 
-function handleClickPreset(maps: string[]) {
-    listStore.mapList = maps;
+function handleClickPreset(mapPaths: Shared.Paths.Path[]) {
+    listStore.mapList = mapPaths;
     open.value = false;
 }
 </script>

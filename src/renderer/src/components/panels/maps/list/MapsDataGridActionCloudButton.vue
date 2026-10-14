@@ -46,27 +46,20 @@
 </template>
 
 <script setup lang="ts">
+import * as Shared from "mod_companion_shared";
 import { AppDesign } from "~/design/AppDesign.js";
 import { useArtifactCloudStore } from "~/store/ArtifactCloudStore.js";
-import { filename } from "pathe/utils";
 import { fileSize } from "humanize-plus";
 import { MapInfo } from "mod_companion_shared/SharedArtifactCloud.js";
 
-const props = defineProps<{ mapPath: string; disabled?: boolean }>();
+const props = defineProps<{ mapPath: Shared.Paths.Path; disabled?: boolean }>();
 const open = ref(false);
 
 const artifactCloudStore = useArtifactCloudStore();
 
 const downloadPromise = computed(() => artifactCloudStore.activeDownloads.get(props.mapPath));
 
-const maps = computed(() => {
-    const n = filename(props.mapPath);
-    if (n) {
-        return artifactCloudStore.mapsList.get(n) ?? [];
-    } else {
-        return [];
-    }
-});
+const maps = computed(() => artifactCloudStore.mapsList.get(props.mapPath) ?? []);
 const tooltip = computed(() =>
     maps.value.length > 0
         ? `Download latest (${maps.value[0].dateModified.toDateString()}) ${fileSize(maps.value[0].size)}`

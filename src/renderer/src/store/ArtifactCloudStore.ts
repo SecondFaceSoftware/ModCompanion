@@ -1,12 +1,11 @@
 import { defineStore } from "pinia";
 import { useMapListStore } from "~/store/MapListStore.js";
-import { filename } from "pathe/utils";
 import * as Shared from "mod_companion_shared";
 
 export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
     const connected = ref(false);
-    const mapsList = ref<Map<string, Shared.ArtifactCloud.MapInfo[]>>(new Map());
-    const activeDownloads = reactive<Map<string, Promise<boolean>>>(new Map());
+    const mapsList = ref<Map<Shared.Paths.Path, Shared.ArtifactCloud.MapInfo[]>>(new Map());
+    const activeDownloads = reactive<Map<Shared.Paths.Path, Promise<boolean>>>(new Map());
 
     async function checkAlive() {
         connected.value = await window.electronAPI.artifactCloud.isConnected();
@@ -26,7 +25,7 @@ export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
         }
     }
 
-    async function downloadMap(mapPath: string, objectKey: string): Promise<boolean> {
+    async function downloadMap(mapPath: Shared.Paths.Path, objectKey: string): Promise<boolean> {
         const promise = window.electronAPI.artifactCloud
             .downloadMap(objectKey, mapPath)
             .finally(() => activeDownloads.delete(mapPath));
@@ -34,15 +33,16 @@ export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
         return promise;
     }
 
-    function downloadAll(): void {
+    function downloadAll(): Promise<PromiseSettledResult<boolean>[]> {
+        const promises: Promise<boolean>[] = [];
         for (const map of useMapListStore().mapList) {
-            const m = filename(map);
-            if (!m) continue;
-            const meta = mapsList.value.get(m);
+            const meta = mapsList.value.get(map);
             if (!meta || meta.length === 0) continue;
 
-            downloadMap(map, meta[0].objectKey);
+            promises.push(downloadMap(map, meta[0].objectKey));
         }
+
+        return Promise.allSettled(promises);
     }
 
     return { connected, downloadMap, downloadAll, refresh, mapsList, activeDownloads };

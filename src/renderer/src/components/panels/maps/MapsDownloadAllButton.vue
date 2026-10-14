@@ -1,5 +1,5 @@
 <template>
-    <UButton label="Download All" :disabled="downloading" @click="artifactCloudStore.downloadAll()">
+    <UButton label="Download All" :disabled="downloading" @click="handlePressed">
         <template #leading>
             <template v-if="downloading">
                 <UIcon :name="AppDesign.Icons.Loading" class="size-5 animate-spin" />
@@ -18,6 +18,10 @@ import { useArtifactCloudStore } from "~/store/ArtifactCloudStore.js";
 const artifactCloudStore = useArtifactCloudStore();
 
 const downloading = computed(() => artifactCloudStore.activeDownloads.size > 0);
+
+function handlePressed() {
+    artifactCloudStore.downloadAll();
+}
 </script>
 
 <style scoped></style>

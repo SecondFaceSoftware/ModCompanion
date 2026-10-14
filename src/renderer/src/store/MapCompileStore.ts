@@ -5,17 +5,16 @@ import * as Shared from "mod_companion_shared";
 
 export const useMapCompileStore = defineStore("map-compile", () => {
     const state = ref<Shared.PlayPauseStop.State>(Shared.PlayPauseStop.State.Stopped);
-    const progress = reactive(new Map<string, Shared.Map.CompileState>());
+    const progress = reactive(new Map<Shared.Map.TimeReportMapStep, Shared.Map.CompileState>());
 
-    function compileNow(mapPath: string) {
+    function compileNow(mapPath: Shared.Paths.Path) {
         if (state.value !== Shared.PlayPauseStop.State.Stopped) return;
 
         window.electronAPI.map.enqueue([mapPath]);
     }
 
     window.electronAPI.map.subscribeCompileProgress((event) => {
-        const key = event.mapPath + event.step;
-        progress.set(key, event.state);
+        progress.set({ map: event.mapPath, step: event.step }, event.state);
     });
 
     watch(state, (newState, oldState) => {

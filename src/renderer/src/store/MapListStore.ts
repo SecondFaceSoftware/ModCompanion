@@ -1,32 +1,34 @@
+import * as Shared from "mod_companion_shared";
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { useRememberStringArray, useRememberWorkspaceRef } from "~/composables/useRemember.js";
+import { useRememberArray, useRememberWorkspaceRef } from "~/composables/useRemember.js";
 import { useFilter } from "~/composables/useFilter.js";
 import { useMapDisplayNames } from "~/composables/useMapDisplayNames.js";
 
 export const useMapListStore = defineStore("map-list", () => {
-    const mapList = useRememberStringArray(ref<string[]>([]), "map-list");
+    const mapList = useRememberArray(ref<Shared.Paths.Path[]>([]), "map-list");
     const searchTerm = useRememberWorkspaceRef(ref<string>(""), "map-search");
-    const filteredMapList = useFilter<string>(mapList, (item) => item.toLowerCase(), searchTerm);
-    const selectedMap = ref<string | undefined>();
-    const mapQueue = ref<string[]>([]);
+    const filteredMapList = useFilter(mapList, (item) => item.path.toLowerCase(), searchTerm);
+    const selectedMap = ref<Shared.Paths.Path | undefined>();
+    const mapQueue = ref<Shared.Paths.Path[]>([]);
     const mapDisplayList = computed(() => useMapDisplayNames(mapList.value));
 
-    function selectMap(mapPath: string | undefined) {
+    // Pass undefined to deselect
+    function selectMap(mapPath: Shared.Paths.Path | undefined) {
         selectedMap.value = mapPath;
     }
 
-    function isMapInList(mapName: string): boolean {
-        return mapList.value.includes(mapName);
+    function isMapInList(mapPath: Shared.Paths.Path): boolean {
+        return mapList.value.includes(mapPath);
     }
 
-    function addMap(mapName: string): void {
-        if (isMapInList(mapName)) return;
-
-        mapList.value.push(mapName);
+    function addMap(mapPath: Shared.Paths.Path): void {
+        if (!isMapInList(mapPath)) {
+            mapList.value.push(mapPath);
+        }
     }
 
-    function removeMap(mapPath: string): void {
+    function removeMap(mapPath: Shared.Paths.Path): void {
         const idx = mapList.value.indexOf(mapPath);
         if (idx < 0) return;
 

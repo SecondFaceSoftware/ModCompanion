@@ -83,6 +83,14 @@ export function useRememberWorkspaceReactiveMap<V extends object>(map: Reactive<
 }
 
 export function useRememberStringArray<T extends string>(ref: Ref<T[]>, keyName: string): Ref<T[], T[]> {
+    return useRememberArray(ref, keyName, (obj) => !obj.some((m) => typeof m !== "string"));
+}
+
+export function useRememberArray<T>(
+    ref: Ref<T[]>,
+    keyName: string,
+    validationFunc?: (obj: any[]) => boolean,
+): Ref<T[], T[]> {
     watchDeep(ref, (r) => localStorage.setItem(keyName, JSON.stringify(r)));
 
     const arrStr = localStorage.getItem(keyName);
@@ -95,12 +103,10 @@ export function useRememberStringArray<T extends string>(ref: Ref<T[]>, keyName:
         return ref;
     }
 
-    const somethingNotString = arrAny.some((m) => typeof m !== "string");
-    if (somethingNotString) {
-        console.warn(`Loading ${keyName} from local storage failed: Some array items are not string`);
+    if (!validationFunc?.(arrAny)) {
+        console.warn(`Loading ${keyName} from local storage failed: Object validation failed`);
         return ref;
     }
-
     ref.value = arrAny as T[];
     return ref;
 }

@@ -15,7 +15,7 @@ export function registerArtifactCloudApi(): boolean {
     );
     ipcMain.handle(
         Shared.Ipc.Channels.ArtifactCloud_DownloadMap,
-        async (e, artifactKey: string, mapPath: string): Promise<boolean> => {
+        async (e, artifactKey: string, mapPath: Shared.Paths.Path): Promise<boolean> => {
             return await Core.ArtifactCloudSystem.downloadMap(artifactKey, mapPath);
         },
     );

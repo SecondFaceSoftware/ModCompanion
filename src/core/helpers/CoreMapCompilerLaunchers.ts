@@ -6,13 +6,13 @@ import { Logger } from "../systems/CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 
 export type MapCompilerAction = (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ) => Promise<boolean>;
 
 export const runVBsp: MapCompilerAction = (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
@@ -21,7 +21,7 @@ export const runVBsp: MapCompilerAction = (
 };
 
 export const runVVis: MapCompilerAction = (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
@@ -30,7 +30,7 @@ export const runVVis: MapCompilerAction = (
 };
 
 export const runVRad: MapCompilerAction = (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
@@ -39,7 +39,7 @@ export const runVRad: MapCompilerAction = (
 };
 
 export const runPostcompiler: MapCompilerAction = (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
@@ -48,38 +48,65 @@ export const runPostcompiler: MapCompilerAction = (
 };
 
 export const runDone: MapCompilerAction = async (
-    mapPath: string,
+    mapPath: Shared.Paths.Path,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    const sourceBsp = pathe.extname(mapPath) === ".vmf" ? mapPath.replace(".vmf", ".bsp") : mapPath + ".bsp";
-    const outBsp = pathe.basename(sourceBsp);
-    const from = pathe.join(config.mapSourcePath, sourceBsp);
-    const to = pathe.join(config.mapOutputPath, outBsp);
+    const from = Shared.Paths.changeExtension(mapPath, ".bsp");
+    const to = Shared.Paths.getBspPathFromVmfPath(mapPath);
+    if (!to) {
+        Logger.warning(
+            Shared.Log.Channel.MapCompile,
+            "Cannot run compiler action because",
+            from,
+            "doesn't map to a valid bsp path",
+        );
+        return false;
+    }
+
+    const absFrom = Shared.Paths.transformPathBase(from, Shared.Paths.PathBases.Absolute, config);
+    const absTo = Shared.Paths.transformPathBase(to, Shared.Paths.PathBases.Absolute, config);
+
+    if (!absFrom || !absTo) {
+        Logger.warning(
+            Shared.Log.Channel.MapCompile,
+            "Cannot run compiler action because",
+            from,
+            to,
+            "don't map to absolute paths",
+        );
+        return false;
+    }
+
+    const absFromPath = absFrom.path;
+    const absToPath = absTo.path;
 
     try {
-        await fs.copyFile(from, to);
-        onStdOut?.(`Copied file ${from} ${to}`);
+        await fs.copyFile(absFromPath, absToPath);
+        onStdOut?.(`Copied file ${absFromPath} ${absToPath}`);
         return true;
     } catch {
-        onStdErr?.(`Failed to copy file ${from} ${to}`);
+        onStdErr?.(`Failed to copy file ${absFromPath} ${absToPath}`);
         return false;
     }
 };
 
-function _runMapCompiler(
-    mapPath: string,
+async function _runMapCompiler(
+    mapPath: Shared.Paths.Path,
     exePath: string,
     args: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> {
     const config = ConfigSystem.getAppConfig();
-    const map = pathe.join(config.mapSourcePath, mapPath);
+    const absMapPath = Shared.Paths.transformPathBase(mapPath, Shared.Paths.PathBases.Absolute, config);
+    if (!absMapPath) {
+        return false;
+    }
     const cwd = pathe.join(config.rootPath, "game");
 
-    return _runCommand(exePath, [...args.split(" "), map], cwd, onStdOut, onStdErr);
+    return _runCommand(exePath, [...args.split(" "), absMapPath.path], cwd, onStdOut, onStdErr);
 }
 
 function _runCommand(
