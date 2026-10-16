@@ -1,6 +1,6 @@
 import * as Shared from "mod_companion_shared";
 
-export function openMca(asset: Shared.Asset.Asset): void {
+export function openDefinition(asset: Shared.Asset.Asset): void {
     const p = asset.defFilePath;
     if (!p) return;
     window.electronAPI.fileBrowser.open(Shared.Paths.createPath(p, Shared.Paths.PathBases.Root));

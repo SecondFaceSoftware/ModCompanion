@@ -24,7 +24,7 @@ import { useAssetListStore } from "~/store/AssetListStore.js";
 import { DataTableColumn } from "~/components/common/dataTable/MDataTable.model.js";
 import { useAssetConversionStore } from "~/store/AssetConversionStore.js";
 import { ContextMenuItem } from "@nuxt/ui/components/ContextMenu.vue.js";
-import { exploreToDefinition, openAssociatedFile, openMca } from "~/helper/AssetHelper.js";
+import { exploreToDefinition, openAssociatedFile, openDefinition } from "~/helper/AssetHelper.js";
 import AssetBrowserCellAssetName from "~/components/panels/assetBrowser/AssetBrowserCellAssetName.vue";
 import AssetBrowserCellConverted from "~/components/panels/assetBrowser/AssetBrowserCellConverted.vue";
 import { useAssetGroupsStore } from "~/store/AssetGroupsStore.js";
@@ -355,9 +355,9 @@ const items = computed(() => {
 
                 options.push([
                     {
-                        label: "Open .mca",
+                        label: "Open definition",
                         onSelect() {
-                            openMca(sel);
+                            openDefinition(sel);
                         },
                         icon: AppDesign.Icons.ActionOpenFileDefinition,
                     },
