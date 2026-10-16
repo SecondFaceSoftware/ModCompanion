@@ -35,7 +35,7 @@
         <div class="grid grid-cols-1 grid-rows-1 gap-2 h-full">
             <component
                 :is="getFileInspectorComponent(fileInspector)"
-                :path="fullPath"
+                :path="absFilePath"
                 @has-changed="handleHasChanged"
             />
         </div>
@@ -66,8 +66,8 @@ const props = defineProps<{ file: string; panelId: string }>();
 
 const filePath = computed(() => Shared.Paths.createPath(props.file, Shared.Paths.PathBases.Root));
 
-const fullPath = computed(
-    () => Shared.Paths.transformPathBase(filePath.value, Shared.Paths.PathBases.Absolute, getAppConfig())?.path,
+const absFilePath = computed(() =>
+    Shared.Paths.transformPathBase(filePath.value, Shared.Paths.PathBases.Absolute, getAppConfig()),
 );
 const fileName = computed(() => pathe.basename(props.file));
 const fileType = computed(() => getFileType(fileName.value));
@@ -107,7 +107,7 @@ function handleOpen() {
 }
 
 function handleSave() {
-    if (fullPath.value) {
+    if (absFilePath.value) {
         saveEvent.call();
     }
 }
