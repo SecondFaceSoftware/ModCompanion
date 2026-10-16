@@ -36,7 +36,7 @@
                         <AssetInspectorTextureHotspotEditorFlags :flags="selectedRectFlags" @changed="handleChanged" />
                     </UFormField>
                     <UFormField label="Grid">
-                        <div class="flex gap-4 items-start">
+                        <div class="grid gap-4">
                             <UButtonGroup>
                                 <UButton
                                     label="8"
