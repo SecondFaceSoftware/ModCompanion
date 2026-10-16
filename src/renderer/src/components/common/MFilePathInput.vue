@@ -22,7 +22,7 @@
                         size="sm"
                         @change="emit('change', model)"
                     />
-                    <MFilePathInputActions :path="model" />
+                    <MFilePathInputActions :path="modelPath" />
                     <slot name="default" />
                 </template>
             </div>
@@ -32,19 +32,28 @@
 
 <script setup lang="ts">
 import { useGlobalDragging } from "~/composables/useGlobalDragging.js";
-import { getAppConfig } from "~/renderer-config.js";
 import * as Shared from "mod_companion_shared";
 import MFilePathInputActions from "~/components/common/MFilePathInputActions.vue";
+import { getAppConfig } from "~/renderer-config.js";
 
-const model = defineModel<Shared.Paths.Path>({ required: false });
+const model = defineModel<string>({ required: true });
 const emit = defineEmits<{ change: [string] }>();
 
-const props = defineProps<{ placeholder?: string }>();
+const modelPath = computed(() => Shared.Paths.createPath(model.value, props.base));
+
+const props = defineProps<{ placeholder?: string; base: Shared.Paths.PathBase }>();
 
 const { isDragging } = useGlobalDragging();
-function handleDrop(dropped: string) {
-    emit("change", dropped);
-    model.value = dropped;
+function handleDrop(droppedText: string) {
+    const pathBase = Shared.Paths.guessPathBase(droppedText, getAppConfig());
+    if (pathBase !== undefined) {
+        const path = Shared.Paths.createPath(droppedText, pathBase);
+        const pathInTargetBase = Shared.Paths.transformPathBase(path, props.base, getAppConfig());
+        if (pathInTargetBase) {
+            emit("change", pathInTargetBase.path);
+            model.value = pathInTargetBase.path;
+        }
+    }
 }
 </script>
 
