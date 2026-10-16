@@ -133,6 +133,21 @@ export function getBspPathFromVmfPath(vmfPath: Path): Path | undefined {
     return bspPath;
 }
 
+export function guessPathBase(pathString: string, config: AppConfig): PathBase | undefined {
+    if (pathString.startsWith(config.rootPath)) {
+        return PathBases.Absolute;
+    }
+
+    if (
+        pathString.startsWith(pathe.join("game", config.gameName)) ||
+        pathString.startsWith(pathe.join("content", config.gameName))
+    ) {
+        return PathBases.Root;
+    }
+
+    return undefined;
+}
+
 function _transformPathToRootRelative(inputPath: Path, config: AppConfig): Path | undefined {
     switch (inputPath.base) {
         case PathBases.Absolute: {
