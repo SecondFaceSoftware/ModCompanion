@@ -41,7 +41,15 @@ export function registerFileApi(): boolean {
                 Shared.Paths.PathBases.Absolute,
                 Core.ConfigSystem.getAppConfig(),
             );
-            if (!fullPath) return;
+            if (!fullPath) {
+                Core.Logger.warning(
+                    Shared.Log.Channel.FileBrowser,
+                    "Failed to write",
+                    path,
+                    "because the path didn't resolve to an absolute path",
+                );
+                return;
+            }
 
             Core.Logger.info(Shared.Log.Channel.FileBrowser, "Writing to", fullPath.path);
             return fs.writeFile(fullPath.path, data);
@@ -56,7 +64,15 @@ export function registerFileApi(): boolean {
                 Shared.Paths.PathBases.Absolute,
                 Core.ConfigSystem.getAppConfig(),
             );
-            if (!fullPath) return false;
+            if (!fullPath) {
+                Core.Logger.warning(
+                    Shared.Log.Channel.FileBrowser,
+                    "Failed to delete",
+                    path,
+                    "because the path didn't resolve to an absolute path",
+                );
+                return false;
+            }
 
             try {
                 Core.Logger.info(Shared.Log.Channel.FileBrowser, "Deleting", fullPath.path);
@@ -77,7 +93,15 @@ export function registerFileApi(): boolean {
                 Shared.Paths.PathBases.Absolute,
                 Core.ConfigSystem.getAppConfig(),
             );
-            if (!fullPath) return false;
+            if (!fullPath) {
+                Core.Logger.warning(
+                    Shared.Log.Channel.FileBrowser,
+                    "Failed to check if",
+                    path,
+                    "exists because the path didn't resolve to an absolute path",
+                );
+                return false;
+            }
 
             return existsSync(fullPath.path);
         },

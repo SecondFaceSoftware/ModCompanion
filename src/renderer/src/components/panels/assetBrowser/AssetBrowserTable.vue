@@ -292,10 +292,8 @@ const items = computed(() => {
             const allTextures = !selAssets.some((value) => value.def.type !== Shared.Asset.Types.Texture);
             let autoMaterial: Shared.Vmt.VmtFile | undefined;
             if (allTextures) {
-                const texturePaths = Shared.Asset.getGameFilePaths(selAssets, getAppConfig().gamePath).map((f) =>
-                    Shared.SourceFs.makeGamePathAbsolute(getAppConfig().gamePath, f),
-                );
-                autoMaterial = Shared.Vmt.createAutoMaterial(texturePaths);
+                const texturePaths = Shared.Asset.getGameFilePaths(selAssets);
+                autoMaterial = Shared.Vmt.createAutoMaterial(texturePaths, getAppConfig());
             }
 
             options.push([

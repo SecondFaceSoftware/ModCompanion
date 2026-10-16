@@ -162,6 +162,9 @@ function _transformPathToRootRelative(inputPath: Path, config: AppConfig): Path 
         case PathBases.Content: {
             return createPath(pathe.join("content", config.gameName, inputPath.path), PathBases.Root);
         }
+        case PathBases.GameMaterial: {
+            return createPath(pathe.join("game", config.gameName, "materials", inputPath.path), PathBases.Root);
+        }
         case PathBases.GameMaps: {
             return createPath(pathe.join("game", config.gameName, "maps", inputPath.path), PathBases.Root);
         }

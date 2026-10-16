@@ -236,9 +236,10 @@ const items = computed<ContextMenuItem[][]>(() => {
     }
 
     const allFiles = !entries.some((e) => !e.isFile);
-    const pathsArray = entries.map((e) => e.path);
+    const pathsStringArray = entries.map((e) => e.path);
+    const pathsArray = pathsStringArray.map((p) => Shared.Paths.createPath(p, Shared.Paths.PathBases.Root));
     const allVextures = !entries.some((e) => !e.isFile || pathe.extname(e.name) !== ".vtf");
-    const autoMaterial = allVextures ? Shared.Vmt.createAutoMaterial(pathsArray) : undefined;
+    const autoMaterial = allVextures ? Shared.Vmt.createAutoMaterial(pathsArray, getAppConfig()) : undefined;
 
     return [
         [
@@ -247,8 +248,7 @@ const items = computed<ContextMenuItem[][]>(() => {
                 icon: AppDesign.Icons.ActionLaunchFile,
                 disabled: !allFiles,
                 onSelect() {
-                    const paths = pathsArray.map((p) => Shared.Paths.createPath(p, Shared.Paths.PathBases.Root));
-                    window.electronAPI.fileBrowser.open(paths);
+                    window.electronAPI.fileBrowser.open(pathsArray);
                 },
             },
             {
@@ -268,8 +268,8 @@ const items = computed<ContextMenuItem[][]>(() => {
                 icon: AppDesign.Icons.ActionCreateAsset,
                 disabled: !allFiles,
                 onSelect() {
-                    const primaryPath = activeEntry.value?.path ?? pathsArray[0];
-                    const otherPaths = pathsArray.toSpliced(pathsArray.indexOf(primaryPath), 1);
+                    const primaryPath = activeEntry.value?.path ?? pathsStringArray[0];
+                    const otherPaths = pathsStringArray.toSpliced(pathsStringArray.indexOf(primaryPath), 1);
                     assetListStore.createAsset(primaryPath, otherPaths);
                 },
             },
@@ -278,8 +278,8 @@ const items = computed<ContextMenuItem[][]>(() => {
                 icon: AppDesign.Icons.ActionCreateAsset,
                 disabled: !allFiles,
                 onSelect() {
-                    const primaryPath = activeEntry.value?.path ?? pathsArray[0];
-                    const otherPaths = pathsArray.toSpliced(pathsArray.indexOf(primaryPath), 1);
+                    const primaryPath = activeEntry.value?.path ?? pathsStringArray[0];
+                    const otherPaths = pathsStringArray.toSpliced(pathsStringArray.indexOf(primaryPath), 1);
                     assetListStore
                         .createAsset(primaryPath, otherPaths)
                         .then((assets) => assetGroupsStore.createGroup(assets.map((s) => s.def.id)));

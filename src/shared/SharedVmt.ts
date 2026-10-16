@@ -1,11 +1,11 @@
 import { forwardSlashed } from "./SharedSourceFs.js";
 import { getCommonPrefix, removeTrailing } from "./SharedString.js";
-import * as pathe from "pathe";
 import * as sourcelib from "sourcelib";
+import { changeExtension, createPath, Path, PathBases, stripExtension, transformPathBase } from "./SharedPaths.js";
+import { AppConfig } from "./SharedAppConfig.js";
 
 export interface VmtFile {
-    // Root relative
-    filePath: string;
+    filePath: Path;
     contents: Record<string, any>;
     shaderName: string;
 }
@@ -18,19 +18,21 @@ export function serializeMaterial(vmt: VmtFile): string {
     return serialized;
 }
 
-export function createAutoMaterial(vtfRelativeToRoot: string[]): VmtFile | undefined {
-    const textureNames = vtfRelativeToRoot.map(rootRelativeToMaterialPath);
+export function createAutoMaterial(vtfFiles: Path[], config: AppConfig): VmtFile | undefined {
+    const texturePaths = vtfFiles.map((v) => transformPathBase(v, PathBases.GameMaterial, config)) as Path[];
+    if (texturePaths.some((t) => t === undefined)) return undefined;
+    const texturePathStrings = texturePaths.map((v) => stripExtension(v!).path);
 
-    const baseTexture = textureNames.find(isMaybeBaseTexture);
-    const normalMap = textureNames.find(isMaybeNormalMap);
-    const mraoMap = textureNames.find(isMaybeMraoMap);
+    const baseTexture = texturePathStrings.find(isMaybeBaseTexture);
+    const normalMap = texturePathStrings.find(isMaybeNormalMap);
+    const mraoMap = texturePathStrings.find(isMaybeMraoMap);
 
-    const isProbablyModelMaterial = isMaybeModelMaterial(vtfRelativeToRoot);
+    const isProbablyModelMaterial = isMaybeModelMaterial(vtfFiles);
     const isProbablyPbr = baseTexture && normalMap && mraoMap;
     const isProbablyLightmappedGeneric = baseTexture && !isProbablyModelMaterial;
     const isProbablyVertexlitGeneric = baseTexture && isProbablyModelMaterial;
 
-    const filePath = guessMaterialPath(vtfRelativeToRoot) + ".vmt";
+    const filePath = guessMaterialPath(texturePaths, texturePathStrings);
 
     if (isProbablyPbr) {
         const pbrMaterial: Record<string, any> = {
@@ -59,18 +61,20 @@ export function createAutoMaterial(vtfRelativeToRoot: string[]): VmtFile | undef
     return undefined;
 }
 
-export function guessMaterialPath(vtfs: string[]): string {
-    if (vtfs.length === 1) {
-        return vtfs[0].replace(".vtf", "");
+export function guessMaterialPath(vtfsPaths: Path[], vtfPathStrings: string[]): Path {
+    if (vtfsPaths.length === 1) {
+        return changeExtension(vtfsPaths[0], ".vmt");
     }
-    const commonPrefix = removeTrailing(getCommonPrefix(vtfs), "_");
-    return commonPrefix;
+
+    const commonPrefix = getCommonPrefix(vtfPathStrings);
+    const commonPrefixTrimmed = removeTrailing(commonPrefix, "_");
+    return createPath(commonPrefixTrimmed + ".vmt", PathBases.GameMaterial);
 }
 
-export function isMaybeModelMaterial(fullVtfPaths: string[]): boolean {
+export function isMaybeModelMaterial(fullVtfPaths: Path[]): boolean {
     let couldBeModelScore = 0;
     for (const fullVtfPath of fullVtfPaths) {
-        const splits = forwardSlashed(fullVtfPath).split("/");
+        const splits = forwardSlashed(fullVtfPath.path).split("/");
 
         if (splits.includes("model") || splits.includes("models")) {
             couldBeModelScore++;
@@ -104,20 +108,4 @@ export function isMaybeMraoMap(fileNameWithoutExit: string) {
     if (fileNameWithoutExit.endsWith("_mrao")) return true;
     if (fileNameWithoutExit.endsWith("_mrao_tintmask")) return true;
     return false;
-}
-
-// TODO: Replace with path api
-export function rootRelativeToMaterialPath(vtfPath: string): string {
-    const ext = pathe.extname(vtfPath);
-    const result = vtfPath.replace(ext, "");
-    const splits = forwardSlashed(result).split("/");
-    for (let i = 0; i < splits.length; i++) {
-        const split = splits[i];
-        if (split === "materials") {
-            const trimmed = splits.slice(i + 1).join("/");
-            return trimmed;
-        }
-    }
-
-    return result;
 }

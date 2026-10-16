@@ -18,7 +18,7 @@ function _handleIndexMessage(result: Shared.FileBrowser.FileIndexMessage) {
 let fileWatcherWorker: worker_threads.Worker | undefined = undefined;
 
 const indexDoneEvent = createEvent<Map<string, Shared.FileBrowser.FileEntry[]>>();
-const fileChangedEvent = createEvent<string>();
+const fileChangedEvent = createEvent<Shared.Paths.Path>();
 let dirUpdatedNotifyFunc: Shared.FileBrowser.DirUpdatedNotifyFunc | undefined = undefined;
 
 export const FileBrowserSystem = {
@@ -33,7 +33,9 @@ export const FileBrowserSystem = {
                 undefined,
                 (payload) => {
                     if (payload.fileChanged) {
-                        fileChangedEvent.call(payload.fileChanged);
+                        fileChangedEvent.call(
+                            Shared.Paths.createPath(payload.fileChanged, Shared.Paths.PathBases.Root),
+                        );
                     }
                     if (payload.dirUpdate) {
                         dirUpdatedNotifyFunc?.(payload.dirUpdate.dir, payload.dirUpdate.entries);
