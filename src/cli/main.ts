@@ -196,10 +196,10 @@ program
                 return;
             }
 
-            const queue: { map: string; info: Shared.ArtifactCloud.MapInfo }[] = [];
+            const queue: { map: Shared.Paths.Path; info: Shared.ArtifactCloud.MapInfo }[] = [];
             let sizeSum = 0;
             for (const [map, infos] of result.maps.entries()) {
-                if (map.startsWith(campaignMapPrefix)) {
+                if (map.path.startsWith(campaignMapPrefix)) {
                     queue.push({ map, info: infos[0] });
                     sizeSum += infos[0].size;
                 }
@@ -215,7 +215,7 @@ program
                     `Downloading ${chalk.blue(entry.map)} ${chalk.yellow(humanizePlus.fileSize(entry.info.size))}...`,
                 );
                 if (!dry) {
-                    await Core.ArtifactCloudSystem.downloadMap(entry.info.objectKey, entry.map + ".bsp");
+                    await Core.ArtifactCloudSystem.downloadMap(entry.info.objectKey, entry.map);
                 }
             }
 
@@ -238,7 +238,7 @@ program
                 for (const info of infos) {
                     const ageMillis = now - info.dateModified.getTime();
                     const ageDays = ageMillis / ONE_DAY;
-                    const shouldDelete = !map.startsWith(campaignMapPrefix) || ageMillis > MAX_AGE;
+                    const shouldDelete = !map.path.startsWith(campaignMapPrefix) || ageMillis > MAX_AGE;
                     if (!shouldDelete) continue;
 
                     if (!dry) {

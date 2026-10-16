@@ -8,7 +8,9 @@
         "name": "Second Face Software",
         "email": "hello@secondfacesoftware.com"
     },
-    "scripts": {},
+    "scripts": {
+        "check": "tsc --noEmit"
+    },
     "main": "main.ts",
     "devDependencies": {
         "@types/node": "^25.3.5",
