@@ -30,7 +30,10 @@
             />
             <USeparator orientation="vertical" />
         </template>
-        <div ref="scroller" class="grid grid-cols-[auto_auto_auto_1fr] text-xs gap-x-2 overflow-y-auto font-mono">
+        <div
+            ref="scroller"
+            class="h-full grid grid-cols-[auto_auto_auto_1fr] text-xs gap-x-2 overflow-y-auto font-mono"
+        >
             <template v-for="(event, i) in events" :key="i">
                 <div class="grid col-span-full grid-cols-subgrid p-1 border-b border-b-accented">
                     <MLogTypeIcon :type="event.type" />
