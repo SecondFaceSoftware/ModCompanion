@@ -36,7 +36,7 @@
         "concurrently": "^9.2.1",
         "copyfiles": "^2.4.1",
         "cross-env": "^10.1.0",
-        "esbuild": "^0.27.3",
+        "esbuild": "^0.28.2",
         "fs-extra": "^11.3.6",
         "prettier": "^3.8.1",
         "vitepress": "^2.0.0-alpha.20"
