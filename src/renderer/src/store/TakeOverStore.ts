@@ -3,11 +3,13 @@ import { AppDesign } from "~/design/AppDesign.js";
 import MessageLogTakeOver from "~/components/takeovers/MessageLogTakeOver.vue";
 import AssetWizardTakeOver from "~/components/takeovers/AssetWizardTakeOver.vue";
 import DevToolsTakeOver from "~/components/takeovers/DevToolsTakeOver.vue";
+import FindAnythingTakeOver from "~/components/takeovers/FindAnythingTakeOver.vue";
 
 export enum TakeOverId {
     MessageLog,
     AssetWizard,
     DevTools,
+    FindAnything,
 }
 
 interface TakeOverDef {
@@ -32,6 +34,11 @@ export const TakeOverConfig: Record<TakeOverId, TakeOverDef> = {
         icon: AppDesign.Icons.TakeOver_DevTools,
         component: DevToolsTakeOver,
     },
+    [TakeOverId.FindAnything]: {
+        name: "Find Anything",
+        icon: AppDesign.Icons.TakeOver_FindAnything,
+        component: FindAnythingTakeOver,
+    },
 } as const;
 
 export const useTakeOverStore = defineStore("takeover", () => {
@@ -49,5 +56,13 @@ export const useTakeOverStore = defineStore("takeover", () => {
         openTakeOver.value = takeOver;
     }
 
-    return { openTakeOver, isOpen, close, open };
+    function toggle(takeOver: TakeOverId): void {
+        if (isOpen(takeOver)) {
+            close();
+        } else {
+            open(takeOver);
+        }
+    }
+
+    return { openTakeOver, isOpen, close, open, toggle };
 });

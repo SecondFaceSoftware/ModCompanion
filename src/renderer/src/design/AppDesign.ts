@@ -37,6 +37,8 @@ export const Icons = {
 
     Conversion: "mingcute:lightning-fill",
 
+    FindAnything: "mingcute:search-3-line",
+
     FsFolder: "mingcute:folder-fill",
     FsFolderOpen: "mingcute:folder-open-fill",
     FsFile: "mingcute:file-fill",
@@ -111,6 +113,7 @@ export const Icons = {
     TakeOver_AssetWizard: "mingcute:traffic-cone-fill",
     TakeOver_Log: "mingcute:list-check-fill",
     TakeOver_DevTools: "mingcute:list-check-fill",
+    TakeOver_FindAnything: "mingcute:search-3-line",
 
     Log: "mingcute:list-check-fill",
     LogType_Debug: "mingcute:bug-fill",

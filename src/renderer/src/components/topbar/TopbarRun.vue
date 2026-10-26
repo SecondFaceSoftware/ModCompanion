@@ -12,7 +12,7 @@
                     class="text-nowrap overflow-x-clip text-ellipsis max-md:hidden"
                     :class="gameInteropStore.connected ? 'text-success' : 'text-muted'"
                 >
-                    {{ Shared.Launchers.GameLauncherOptions[lastRunGameConfig]?.name }}
+                    {{ Shared.Launchers.GameLauncherOptions[runStore.lastRunGameConfig]?.name }}
                 </span>
                 <UIcon
                     v-if="gameInteropStore.connected"
@@ -54,15 +54,13 @@ import { DropdownMenuItem } from "@nuxt/ui/components/DropdownMenu.vue.js";
 import * as Shared from "mod_companion_shared";
 import { useRememberRef } from "~/composables/useRemember.js";
 import { useGameInteropStore } from "~/store/GameInteropStore.js";
+import { useRunStore } from "~/store/RunStore.js";
 
 const gameInteropStore = useGameInteropStore();
-
-const lastRunGameConfig = useRememberRef(ref<number>(1), "last-run-game-config-idx");
+const runStore = useRunStore();
 
 function handleClickGame(): void {
-    const idx = Math.max(0, Math.min(lastRunGameConfig.value, Shared.Launchers.GameLauncherOptions.length - 1));
-    const option = Shared.Launchers.GameLauncherOptions[idx];
-    window.electronAPI.app.launch(option.type, option.args);
+    runStore.runLastGameConfig();
 }
 
 function handleClickTool(option: Shared.Launchers.LauncherOption): void {
@@ -75,7 +73,7 @@ const gameItems = ref<DropdownMenuItem[][]>([
             ({
                 label: o.name,
                 onSelect() {
-                    lastRunGameConfig.value = idx;
+                    runStore.lastRunGameConfig = idx;
                     window.electronAPI.app.launch(o.type, o.args);
                 },
             }) satisfies DropdownMenuItem,

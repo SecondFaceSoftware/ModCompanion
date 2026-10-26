@@ -7,12 +7,9 @@
             align: 'start',
         }"
     >
-        <UButton size="sm" variant="ghost" class="py-0 px-2 gap-2">
-            <template #leading>
-                <MBitmapIcon name="uty_48x48" class="h-7 w-7" />
-            </template>
+        <UButton size="sm" variant="ghost" class="py-0 px-1">
             <template #default>
-                <span class="text-nowrap max-md:hidden text-muted font-bold">Mod Companion</span>
+                <MBitmapIcon name="uty_48x48" class="h-7 w-7" />
             </template>
         </UButton>
 

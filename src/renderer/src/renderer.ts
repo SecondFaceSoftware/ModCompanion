@@ -30,6 +30,7 @@ import { Logger } from "~/logger.js";
 import { useArtifactCloudStore } from "~/store/ArtifactCloudStore.js";
 import { useFileBrowserStore } from "~/store/FileBrowserStore.js";
 import * as Shared from "mod_companion_shared";
+import { registerGlobalShortcuts } from "~/renderer-global-shortcuts.js";
 
 Logger.init();
 initConfig();
@@ -40,6 +41,8 @@ function postInit() {
     useAssetGroupsStore().refresh();
     useArtifactCloudStore().refresh();
     useFileBrowserStore().refreshDir("");
+
+    registerGlobalShortcuts();
 }
 
 postInit();

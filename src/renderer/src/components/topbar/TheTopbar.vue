@@ -12,9 +12,9 @@
 
         <div class="app-region-drag-important"></div>
 
-        <div class="grid grid-cols-[minmax(0,1fr)_auto] gap-1">
+        <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-1">
+            <TopbarFind />
             <TopbarRun />
-
             <TopbarSystemButtons />
         </div>
     </nav>
@@ -27,6 +27,7 @@ import TopbarAssets from "~/components/topbar/TopbarAssets.vue";
 import TopbarWorkspaces from "~/components/topbar/TopbarWorkspaces.vue";
 import TopbarSystemButtons from "~/components/topbar/TopbarSystemButtons.vue";
 import TopbarModcomp from "~/components/topbar/TopbarModcomp.vue";
+import TopbarFind from "~/components/topbar/TopbarFind.vue";
 </script>
 
 <style>
