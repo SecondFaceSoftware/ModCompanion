@@ -151,11 +151,11 @@ export function openFile(path: Shared.Paths.Path): void {
     let command = "";
 
     if (platform === "win32") {
-        command = `"${fullPath}"`;
+        command = `"${fullPath.path}"`;
     } else if (platform === "darwin") {
-        command = `open "${fullPath}"`;
+        command = `open "${fullPath.path}"`;
     } else if (platform === "linux") {
-        command = `xdg-open "${fullPath}"`;
+        command = `xdg-open "${fullPath.path}"`;
     } else {
         Logger.error(Shared.Log.Channel.FileBrowser, `Unsupported platform: ${platform}`);
         return;
