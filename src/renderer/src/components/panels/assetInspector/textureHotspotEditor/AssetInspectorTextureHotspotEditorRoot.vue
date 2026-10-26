@@ -8,7 +8,7 @@
             <div class="p-1">
                 <div class="grid grid-cols-1 gap-2">
                     <UFormField label="Mode">
-                        <UButtonGroup>
+                        <UFieldGroup>
                             <UButton
                                 label="Select"
                                 :icon="AppDesign.Icons.ActionSelectCursor"
@@ -27,7 +27,7 @@
                                 :color="editMode === HotspotEditMode.Delete ? 'info' : 'neutral'"
                                 @click="setEditMode(HotspotEditMode.Delete)"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </UFormField>
                     <UFormField
                         v-if="editMode === HotspotEditMode.Select && selectedRectIdx !== undefined"
@@ -37,7 +37,7 @@
                     </UFormField>
                     <UFormField label="Grid">
                         <div class="grid gap-4">
-                            <UButtonGroup>
+                            <UFieldGroup>
                                 <UButton
                                     label="8"
                                     :color="gridSnapSize === 8 ? 'info' : 'neutral'"
@@ -68,7 +68,7 @@
                                     :color="gridSnapSize === 256 ? 'info' : 'neutral'"
                                     @click="setGridSnapSize(256)"
                                 />
-                            </UButtonGroup>
+                            </UFieldGroup>
 
                             <UCheckbox :id="useId()" v-model="gridShow" label="Show Snap Grid" />
                             <UCheckbox :id="useId()" v-model="showRectTiles" label="Show Rect Tiles" />

@@ -3,7 +3,7 @@
         <template #header>
             <div class="grid gap-1 grid-cols-[minmax(0,1fr)_minmax(4rem,30%)]">
                 <div class="flex gap-1">
-                    <UButtonGroup>
+                    <UFieldGroup>
                         <UButton
                             :icon="AppDesign.Icons.ChevronLeft"
                             :disabled="historyIdx <= 0"
@@ -14,7 +14,7 @@
                             :disabled="historyIdx >= history.length - 1"
                             @click="goHistoryForward"
                         />
-                    </UButtonGroup>
+                    </UFieldGroup>
                     <UButton :icon="AppDesign.Icons.ActionRefresh" @click="refresh" />
                     <FileBrowserLocationBar
                         v-model="currentDir"

@@ -1,6 +1,6 @@
 <template>
     <div class="flex gap-1 overflow-x-hidden justify-end">
-        <UButtonGroup>
+        <UFieldGroup>
             <UButton
                 size="sm"
                 :variant="gameInteropStore.connected ? 'subtle' : 'outline'"
@@ -34,9 +34,9 @@
                     :color="gameInteropStore.connected ? 'success' : 'neutral'"
                 />
             </UDropdownMenu>
-        </UButtonGroup>
+        </UFieldGroup>
 
-        <UButtonGroup>
+        <UFieldGroup>
             <template v-for="(option, i) in Shared.Launchers.ToolLauncherOptions" :key="i">
                 <UTooltip :text="'Start ' + option.name">
                     <UButton variant="outline" size="xs" @click="() => handleClickTool(option)">
@@ -44,7 +44,7 @@
                     </UButton>
                 </UTooltip>
             </template>
-        </UButtonGroup>
+        </UFieldGroup>
     </div>
 </template>
 

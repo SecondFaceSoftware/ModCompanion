@@ -16,12 +16,12 @@
                     variant="subtle"
                     @click="handleResetTransform"
                 />
-                <!--                <UButtonGroup>-->
+                <!--                <UFieldGroup>-->
                 <!--                    <UButton label="R" variant="subtle" />-->
                 <!--                    <UButton label="G" variant="subtle" />-->
                 <!--                    <UButton label="B" variant="subtle" />-->
                 <!--                    <UButton label="A" variant="subtle" />-->
-                <!--                </UButtonGroup>-->
+                <!--                </UFieldGroup>-->
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <UButtonGroup class="h-full inline-flex gap-1">
+    <UFieldGroup class="h-full inline-flex gap-1">
         <UButton
             :icon="AppDesign.Icons.ActionPlay"
             :color="compileStore.state !== Shared.PlayPauseStop.State.Playing ? 'success' : 'neutral'"
@@ -18,7 +18,7 @@
             :disabled="compileStore.state === Shared.PlayPauseStop.State.Stopped"
             @click="handleClickStop"
         />
-    </UButtonGroup>
+    </UFieldGroup>
 </template>
 
 <script setup lang="ts">

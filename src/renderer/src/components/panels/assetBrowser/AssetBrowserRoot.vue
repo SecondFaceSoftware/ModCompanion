@@ -10,7 +10,7 @@
                     autofocus
                 />
                 <AssetBrowserTypeSelect v-model="model.typeFilter" />
-                <UButtonGroup>
+                <UFieldGroup>
                     <UTooltip text="Expand All">
                         <UButton :icon="AppDesign.Icons.ExpandVertical" @click="table?.expandAll()" />
                     </UTooltip>
@@ -18,7 +18,7 @@
                         <UButton :icon="AppDesign.Icons.CollapseVertical" @click="table?.collapseAll()" />
                     </UTooltip>
                     <AssetBrowserRefreshButton />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
         <AssetBrowserTable ref="table" v-model="model" />

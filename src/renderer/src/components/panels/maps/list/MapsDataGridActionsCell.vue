@@ -1,5 +1,5 @@
 <template>
-    <UButtonGroup class="my-0.5">
+    <UFieldGroup class="my-0.5">
         <UTooltip text="Compile Now">
             <UButton
                 :icon="AppDesign.Icons.ActionCompileMap"
@@ -32,7 +32,7 @@
         <UDropdownMenu :items="dropdownItems">
             <UButton :icon="AppDesign.Icons.EllipsisVertical" />
         </UDropdownMenu>
-    </UButtonGroup>
+    </UFieldGroup>
 </template>
 
 <script setup lang="ts">
