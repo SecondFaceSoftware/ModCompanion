@@ -46,8 +46,8 @@
     ],
     "allowScripts": {
         "vue-demi@0.14.10": true,
-        "esbuild@0.25.12": true,
         "esbuild@0.28.2": true,
-        "exifreader@4.52.0": true
+        "exifreader@4.52.0": true,
+        "esbuild@0.27.7": true
     }
 }
