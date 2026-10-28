@@ -13,7 +13,8 @@
         <div class="app-region-drag-important"></div>
 
         <div class="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-1">
-            <TopbarFind />
+            <!-- MC-54 Stubs for find anything feature -->
+            <!--            <TopbarFind />-->
             <TopbarRun />
             <TopbarSystemButtons />
         </div>
