@@ -4,7 +4,7 @@
         :contenteditable="editing ? 'plaintext-only' : 'false'"
         class="outline-0"
         @keydown="handleKeyDown"
-        @blur="handleValueChanged"
+        @blur="handleBlur"
     >
         {{ theValue }}
     </span>
@@ -66,7 +66,9 @@ function handleKeyDown(event: KeyboardEvent) {
     }
 }
 
-function handleValueChanged() {
+function handleBlur() {
+    emit("stopEditing");
+
     const newName = editableRef.value?.innerText;
     if (newName) {
         emit("changed", newName);

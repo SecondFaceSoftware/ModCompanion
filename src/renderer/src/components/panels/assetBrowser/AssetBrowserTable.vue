@@ -164,7 +164,7 @@ function treeChildFunc(entry: AssetBrowserEntry): AssetBrowserEntry[] | undefine
 }
 
 const editingGroup = ref<Shared.AssetGroup.GroupId | undefined>();
-const editingAsset = ref<Shared.AssetGroup.GroupId | undefined>();
+const editingAsset = ref<Shared.Asset.AssetId | undefined>();
 
 function stopEditing() {
     editingAsset.value = undefined;

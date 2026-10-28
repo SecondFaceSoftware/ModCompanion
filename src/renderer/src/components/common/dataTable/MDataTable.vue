@@ -257,7 +257,8 @@ function handleKeyDown(event: KeyboardEvent) {
         return;
     }
 
-    emit("onKeyDown", event, activeIdx.value ? entriesHierarchy.value[activeIdx.value].entry : undefined);
+    const entry = activeIdx.value !== undefined ? entriesHierarchy.value[activeIdx.value].entry : undefined;
+    emit("onKeyDown", event, entry);
 }
 
 // Dragan drop
