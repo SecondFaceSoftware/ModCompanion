@@ -206,8 +206,10 @@ export const usePanelsStore = defineStore("panels", () => {
         return panelsOfSameType;
     }
 
-    function openInspector(
+    function openInspector<T extends PanelModel>(
         panelName: PanelComponentName,
+        model: T,
+        defaultDirection: Direction = "right",
         existingInspectorPredicate: (panel: IDockviewPanel) => boolean,
     ) {
         // When double clicking a file that's already open as a temporary editor, make it non-temporary
@@ -217,6 +219,8 @@ export const usePanelsStore = defineStore("panels", () => {
             const panelId = existingInspector!.params!.panelId;
             focus(panelId);
             makeNonTemporary(panelId);
+        } else {
+            spawnTemporaryPanel(panelName, model, defaultDirection);
         }
     }
 

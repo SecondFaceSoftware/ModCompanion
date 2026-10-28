@@ -351,8 +351,10 @@ function handleActivated(entry: Shared.FileBrowser.FileEntry, event?: KeyboardEv
     if (event?.shiftKey) {
         window.electronAPI.fileBrowser.open(Shared.Paths.createPath(entry.path, Shared.Paths.PathBases.Root));
     } else {
-        panelsStore.openInspector(
+        panelsStore.openInspector<FileInspectorModel>(
             GlobalComponentNames.FileInspector,
+            { file: entry.path },
+            "right",
             (i) => panelsStore.getModel<FileInspectorModel>(i.params?.panelId)?.file === entry.path,
         );
     }

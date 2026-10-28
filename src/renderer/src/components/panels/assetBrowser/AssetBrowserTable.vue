@@ -417,8 +417,12 @@ function handleEntryActivated(entry: AssetBrowserEntry): void {
     if (isAssetBrowserGroupEntry(entry)) {
         toggleCollapsed(entry.group.id);
     } else {
-        panelsStore.openInspector(
+        panelsStore.openInspector<AssetInspectorModel>(
             GlobalComponentNames.AssetInspector,
+            {
+                assetId: entry.assetDef.id,
+            },
+            "right",
             (i) => panelsStore.getModel<AssetInspectorModel>(i.params?.panelId)?.assetId === entry.assetDef.id,
         );
     }
