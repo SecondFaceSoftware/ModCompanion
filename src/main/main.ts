@@ -76,7 +76,8 @@ const systems: System[] = [
                 endTaskFunc: TaskApi.notifyEndTask,
             }),
     },
-    { name: "Materials", initFunction: Core.MaterialSystem.initSystem },
+    // MC-19 Disabled until the UI for this is built
+    // { name: "Materials", initFunction: Core.MaterialSystem.initSystem },
 ];
 
 async function _startSystems(): Promise<void> {
