@@ -20,6 +20,7 @@ import { themeModcompNested } from "~/design/ModcompDockviewTheme.js";
 import * as Shared from "mod_companion_shared";
 import { GlobalComponentNames, SubPanelParams } from "~/helper/GlobalComponents.js";
 import { AppDesign } from "~/design/AppDesign.js";
+import { Logger } from "~/logger.js";
 
 const props = defineProps<{ asset: Shared.Asset.Asset }>();
 const workspaceStore = useWorkspaceStore();
@@ -111,7 +112,6 @@ function deserializeLayout(type: Shared.Asset.Type): SerializedDockview | undefi
 
 const SubPanels = [
     GlobalComponentNames.AssetInspectorGeneral,
-    GlobalComponentNames.AssetInspectorTextureChannels,
     GlobalComponentNames.AssetInspectorTextureConvert,
     GlobalComponentNames.AssetInspectorTextureHotspotEditor,
     GlobalComponentNames.AssetInspectorTextureMetadata,
@@ -121,7 +121,6 @@ export type SubPanel = (typeof SubPanels)[number];
 
 const SubPanelsTitles: Record<SubPanel, string> = {
     [GlobalComponentNames.AssetInspectorGeneral]: "General",
-    [GlobalComponentNames.AssetInspectorTextureChannels]: "Channels",
     [GlobalComponentNames.AssetInspectorTextureConvert]: "VTF Settings",
     [GlobalComponentNames.AssetInspectorTextureHotspotEditor]: "Hotspot",
     [GlobalComponentNames.AssetInspectorTextureMetadata]: "Meta",
@@ -130,7 +129,6 @@ const SubPanelsTitles: Record<SubPanel, string> = {
 
 const SubPanelsIcons: Record<SubPanel, string> = {
     [GlobalComponentNames.AssetInspectorGeneral]: AppDesign.Icons.Panel_AssetInspector_General,
-    [GlobalComponentNames.AssetInspectorTextureChannels]: AppDesign.Icons.Panel_AssetInspector_TextureChannels,
     [GlobalComponentNames.AssetInspectorTextureConvert]: AppDesign.Icons.Panel_AssetInspector_TextureConvert,
     [GlobalComponentNames.AssetInspectorTextureHotspotEditor]:
         AppDesign.Icons.Panel_AssetInspector_TextureHotspotEditor,
@@ -144,7 +142,6 @@ function getPanelsByType(type: Shared.Asset.Type): SubPanel[] {
 
     if (type === Shared.Asset.Types.Texture) {
         whichPanelsShouldExist.push(GlobalComponentNames.AssetInspectorTexturePreview);
-        whichPanelsShouldExist.push(GlobalComponentNames.AssetInspectorTextureChannels);
         whichPanelsShouldExist.push(GlobalComponentNames.AssetInspectorTextureMetadata);
         whichPanelsShouldExist.push(GlobalComponentNames.AssetInspectorTextureConvert);
         whichPanelsShouldExist.push(GlobalComponentNames.AssetInspectorTextureHotspotEditor);
@@ -188,7 +185,7 @@ function updateTabs(type: Shared.Asset.Type, api: DockviewApi): void {
         try {
             api.fromJSON(savedPanels);
         } catch (e) {
-            console.warn(e);
+            Logger.warning(Shared.Log.Channel.Assets, e);
         }
     }
 

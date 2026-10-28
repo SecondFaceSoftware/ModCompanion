@@ -4,7 +4,6 @@ import FileInspectorPanel from "~/components/panels/fileInspector/FileInspectorP
 import AssetBrowserPanel from "~/components/panels/assetBrowser/AssetBrowserPanel.vue";
 import AssetInspectorPanel from "~/components/panels/assetInspector/AssetInspectorPanel.vue";
 import AssetInspectorTexturePreviewPanel from "~/components/panels/assetInspector/texturePreviewPanel/AssetInspectorTexturePreviewPanel.vue";
-import AssetInspectorTextureChannelsPanel from "~/components/panels/assetInspector/textureChannelsPanel/AssetInspectorTextureChannelsPanel.vue";
 import AssetInspectorTextureMetadataPanel from "~/components/panels/assetInspector/textureMetadataPanel/AssetInspectorTextureMetadataPanel.vue";
 import AssetInspectorTextureConvertPanel from "~/components/panels/assetInspector/textureConvert/AssetInspectorTextureConvertPanel.vue";
 import AssetInspectorGeneralPanel from "~/components/panels/assetInspector/generalPanel/AssetInspectorGeneralPanel.vue";
@@ -29,7 +28,6 @@ import { EventHandler } from "~/composables/useEvent.js";
 
 export const GlobalComponentNames = {
     AssetInspectorTexturePreview: "_AssetInspector_TexturePreview",
-    AssetInspectorTextureChannels: "_AssetInspector_TextureChannels",
     AssetInspectorTextureMetadata: "_AssetInspector_TextureMetadata",
     AssetInspectorTextureConvert: "_AssetInspector_TextureConvert",
     AssetInspectorTextureHotspotEditor: "_AssetInspector_TextureHotspotEditor",
@@ -52,7 +50,6 @@ export type GlobalComponentName = (typeof GlobalComponentNames)[keyof typeof Glo
 type Component = any;
 export const GlobalComponentMapping: Record<GlobalComponentName, Component> = {
     _AssetInspector_TexturePreview: AssetInspectorTexturePreviewPanel,
-    _AssetInspector_TextureChannels: AssetInspectorTextureChannelsPanel,
     _AssetInspector_TextureMetadata: AssetInspectorTextureMetadataPanel,
     _AssetInspector_TextureConvert: AssetInspectorTextureConvertPanel,
     _AssetInspector_TextureHotspotEditor: AssetInspectorTextureHotspotEditorPanel,
