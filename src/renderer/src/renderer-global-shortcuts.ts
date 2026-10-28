@@ -6,7 +6,7 @@ export function registerGlobalShortcuts(): void {
         // ctrl_p: () => {
         //     useTakeOverStore().toggle(TakeOverId.FindAnything);
         // },
-        f5: () => {
+        f6: () => {
             useRunStore().runLastGameConfig();
         },
     });
