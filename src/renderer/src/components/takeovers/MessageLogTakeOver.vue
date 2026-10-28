@@ -32,10 +32,10 @@
         </template>
         <div
             ref="scroller"
-            class="h-full grid grid-cols-[auto_auto_auto_1fr] text-xs gap-x-2 overflow-y-auto font-mono"
+            class="h-full grid grid-cols-[auto_auto_auto_1fr] text-xs gap-x-2 overflow-y-auto font-mono content-start"
         >
             <template v-for="(event, i) in events" :key="i">
-                <div class="grid col-span-full grid-cols-subgrid p-1 border-b border-b-accented">
+                <div class="grid col-span-full grid-cols-subgrid p-1 border-b border-b-accented items-center">
                     <MLogTypeIcon :type="event.type" />
                     <div v-show="showTime" class="whitespace-nowrap text-muted tabular-nums">
                         {{ Shared.Log.getLogTime(event.time) }}
