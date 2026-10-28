@@ -40,7 +40,7 @@ export async function browseTo(path: Shared.Paths.Path): Promise<void> {
         return;
     }
 
-    Logger.info(Shared.Log.Channel.FileBrowser, "Running", command);
+    // Logger.debug(Shared.Log.Channel.FileBrowser, "Running", command);
     child_process.exec(
         command,
         {
@@ -106,7 +106,7 @@ function _getBrowseToDirectoryCommand(dirPath: string): string | undefined {
     const platform = os.platform();
 
     if (platform === "win32") {
-        return `explorer.exe "${dirPath}"`;
+        return `explorer.exe "${Shared.SourceFs.backSlashed(dirPath)}"`;
     }
     if (platform === "linux") {
         return `xdg-open "${dirPath}"`;
