@@ -58,11 +58,6 @@ export function getConversionStateColor(state: State): string {
     }
 }
 
-export interface SharedConversion {
-    assetId: AssetId;
-    state: State;
-}
-
 export interface ConversionEvent {
     assetId: AssetId;
     stateHistory: State[];
@@ -74,7 +69,7 @@ export interface ConversionEvent {
 }
 
 export interface UpdateEvent {
-    conversions: Map<AssetId, SharedConversion>;
+    conversions: Map<AssetId, State>;
     conversionsLastChangeTime: Date | undefined;
     events: ConversionEvent[];
     eventsLastChangeTime: Date | undefined;
@@ -85,10 +80,11 @@ export type UpdateNotifyFunc = (event: UpdateEvent) => void;
 export type ConversionStartNotifyFunc = (asset: AssetId) => void;
 
 export interface SharedConversionGetStateIpcReport {
-    conversions: Map<AssetId, SharedConversion>;
+    conversions: Map<AssetId, State>;
 }
 
 export interface SharedConversionSummary {
     currentStatus: "working" | "idle";
     totalSum: number;
+    queueLength: number;
 }

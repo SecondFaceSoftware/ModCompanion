@@ -2,12 +2,16 @@ import { defineStore } from "pinia";
 import * as Shared from "mod_companion_shared";
 
 export const useAssetConversionStore = defineStore("asset-conversion", () => {
-    const conversions = ref<Map<Shared.Asset.AssetId, Shared.Conversion.SharedConversion>>(new Map());
+    const conversions = ref<Map<Shared.Asset.AssetId, Shared.Conversion.State>>(new Map());
     const conversionsLastChangeTime = ref<number>(0);
     const events = ref<Shared.Conversion.ConversionEvent[]>([]);
     const eventsLastChangeTime = ref<number>(0);
     const activeEvent = ref<Shared.Conversion.ConversionEvent | undefined>();
-    const summary = ref<Shared.Conversion.SharedConversionSummary>({ currentStatus: "idle", totalSum: 0 });
+    const summary = ref<Shared.Conversion.SharedConversionSummary>({
+        currentStatus: "idle",
+        totalSum: 0,
+        queueLength: 0,
+    });
 
     window.electronAPI.conversion.subscribeUpdated((event) => {
         const time1 = event.conversionsLastChangeTime?.getTime();
@@ -25,7 +29,7 @@ export const useAssetConversionStore = defineStore("asset-conversion", () => {
     });
 
     function getState(id: Shared.Asset.AssetId): Shared.Conversion.State {
-        return conversions.value.get(id)?.state ?? Shared.Conversion.State.Unknown;
+        return conversions.value.get(id) ?? Shared.Conversion.State.Unknown;
     }
 
     function enqueue(id: Shared.Asset.AssetId): void {

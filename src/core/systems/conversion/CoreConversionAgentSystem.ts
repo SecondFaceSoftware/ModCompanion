@@ -19,7 +19,7 @@ type JobResult = string | undefined;
 const conversionJobs: Map<Shared.Asset.AssetId, Promise<JobResult>> = new Map();
 
 let agentInterval: NodeJS.Timeout | undefined;
-const conversionsMap: Map<Shared.Asset.AssetId, Shared.Conversion.SharedConversion> = new Map();
+const conversionsMap: Map<Shared.Asset.AssetId, Shared.Conversion.State> = new Map();
 
 let notifyFunc: Shared.Conversion.UpdateNotifyFunc | undefined = undefined;
 
@@ -42,25 +42,21 @@ export const ConversionAgentSystem = {
         force?: boolean,
         convStartNotifyFunc?: Shared.Conversion.ConversionStartNotifyFunc,
     ): Promise<void> {
-        for (const conv of conversionsMap.values()) {
-            if (
-                force ||
-                conv.state === Shared.Conversion.State.Pending ||
-                conv.state === Shared.Conversion.State.PendingForced
-            ) {
+        for (const [assetId, state] of conversionsMap.entries()) {
+            if (force || state === Shared.Conversion.State.Pending || state === Shared.Conversion.State.PendingForced) {
                 if (force) {
-                    _setState(conv.assetId, Shared.Conversion.State.PendingForced);
+                    _setState(assetId, Shared.Conversion.State.PendingForced);
                 }
-                convStartNotifyFunc?.(conv.assetId);
+                convStartNotifyFunc?.(assetId);
                 try {
-                    await _startConversion(conv.assetId);
+                    await _startConversion(assetId);
                 } catch (e) {
-                    Logger.warning(Shared.Log.Channel.ConversionAgent, "Conversion failed", conv.assetId);
+                    Logger.warning(Shared.Log.Channel.ConversionAgent, "Conversion failed", assetId);
                 }
             }
         }
     },
-    getConversionsMap(): Map<string, Shared.Conversion.SharedConversion> {
+    getConversionsMap(): Map<Shared.Asset.AssetId, Shared.Conversion.State> {
         return conversionsMap;
     },
     enqueue(assetId: string, force: boolean = false): void {
@@ -105,11 +101,11 @@ export const ConversionAgentSystem = {
 
 async function _runAgent(): Promise<void> {
     const assetsToConvert = _getAssetsToConvert();
-    if (assetsToConvert.length > 0) {
+    if (assetsToConvert.assets.length > 0) {
         // Logger.info(Shared.Log.Channel.ConversionAgent, `Converting ${assetsToConvert.length} asset`);
         const promises: Promise<string | undefined>[] = [];
-        for (const id of assetsToConvert) {
-            promises.push(_startConversion(id));
+        for (const assetId of assetsToConvert.assets) {
+            promises.push(_startConversion(assetId));
         }
 
         await Promise.allSettled(promises);
@@ -124,31 +120,32 @@ async function _runAgent(): Promise<void> {
         summary: {
             currentStatus: conversionJobs.size === 0 ? "idle" : "working",
             totalSum: ConversionEventSystem.conversionEvents.length,
+            queueLength: assetsToConvert.totalAssetsToConvertCount + conversionJobs.size,
         },
     };
 
     notifyFunc?.(event);
 }
 
-function _getAssetsToConvert(): Shared.Asset.AssetId[] {
+function _getAssetsToConvert(): { assets: Shared.Asset.AssetId[]; totalAssetsToConvertCount: number } {
     let freeJobsCount = MAX_PARALLEL_JOBS - conversionJobs.size;
-    if (freeJobsCount === 0) return [];
+    let queueLength = 0;
 
-    const result: Shared.Asset.AssetId[] = [];
+    const assets: Shared.Asset.AssetId[] = [];
 
-    for (const conv of conversionsMap.values()) {
-        if (freeJobsCount <= 0) break;
-
-        const alreadyAdded = conversionJobs.has(conv.assetId);
-        const isPending =
-            conv.state === Shared.Conversion.State.Pending || conv.state === Shared.Conversion.State.PendingForced;
+    for (const [assetId, state] of conversionsMap.entries()) {
+        const alreadyAdded = conversionJobs.has(assetId);
+        const isPending = state === Shared.Conversion.State.Pending || state === Shared.Conversion.State.PendingForced;
         if (isPending && !alreadyAdded) {
-            result.push(conv.assetId);
-            freeJobsCount--;
+            queueLength++;
+            if (freeJobsCount > 0) {
+                assets.push(assetId);
+                freeJobsCount--;
+            }
         }
     }
 
-    return result;
+    return { assets, totalAssetsToConvertCount: queueLength };
 }
 
 async function _startConversion(id: Shared.Asset.AssetId): Promise<string | undefined> {
@@ -255,11 +252,7 @@ function _onJobPromiseDone(id: Shared.Asset.AssetId, stateAfter: Shared.Conversi
 
 function _setState(id: Shared.Asset.AssetId, state: Shared.Conversion.State, noHistory = false) {
     lastChangeTime = new Date();
-    if (conversionsMap.has(id)) {
-        conversionsMap.get(id)!.state = state;
-    } else {
-        conversionsMap.set(id, { assetId: id, state });
-    }
+    conversionsMap.set(id, state);
 
     if (!noHistory) {
         ConversionEventSystem.updateLatestEvent(id, (event) => {
@@ -269,7 +262,7 @@ function _setState(id: Shared.Asset.AssetId, state: Shared.Conversion.State, noH
 }
 
 function _getState(id: Shared.Asset.AssetId) {
-    return conversionsMap.get(id)?.state ?? Shared.Conversion.State.Unknown;
+    return conversionsMap.get(id) ?? Shared.Conversion.State.Unknown;
 }
 
 async function _touchAsset(asset: Shared.Asset.AssetDef) {

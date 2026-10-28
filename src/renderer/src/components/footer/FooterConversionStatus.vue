@@ -11,8 +11,8 @@
                 <MConversionStateIcon :state="Shared.Conversion.State.InProgress" no-color class="text-magenta-900" />
                 <span>Conversion Agent Busy</span>
             </span>
-            <span>
-                (<span class="tabular-nums">{{ total }}</span> total)
+            <span v-if="queueLength > 0">
+                (<span class="tabular-nums">{{ queueLength }}</span> in queue)
             </span>
         </UButton>
         <template #content>
@@ -55,7 +55,7 @@ const open = ref(false);
 
 const conversionStore = useAssetConversionStore();
 const status = computed(() => conversionStore.summary.currentStatus);
-const total = computed(() => conversionStore.summary.totalSum);
+const queueLength = computed(() => conversionStore.summary.queueLength);
 
 const events = computed(() => conversionStore.conversionEvents.slice(-MAX_ITEMS));
 
