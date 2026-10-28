@@ -31,10 +31,11 @@ export const AssetWatcherSystem = {
     },
 };
 
-function _handleChanged(filePath: string): void {
+function _handleChanged(filePathRaw: string): void {
+    const filePath = Shared.SourceFs.forwardSlashed(filePathRaw);
     const ignoreCount = ignoreMap.get(filePath);
     if (ignoreCount !== undefined && ignoreCount > 0) {
-        ignoreMap.set(filePath, ignoreCount - 1);
+        ignoreMap.set(filePathRaw, ignoreCount - 1);
         return;
     }
     const relativePath = getContentRelativePath(filePath);

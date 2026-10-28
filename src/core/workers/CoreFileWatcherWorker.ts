@@ -43,32 +43,45 @@ alwaysWatcher.on("unlink", _delete);
 
 // ----------------
 
-async function _change(filePath: string): Promise<void> {
+async function _change(filePathRaw: string): Promise<void> {
+    const filePath = Shared.SourceFs.forwardSlashed(filePathRaw);
     messages.log.info(Shared.Log.Channel.FileBrowser, "CHANGED", filePath);
     return _sendUpdate(filePath);
 }
 
-async function _delete(filePath: string): Promise<void> {
+async function _delete(filePathRaw: string): Promise<void> {
+    const filePath = Shared.SourceFs.forwardSlashed(filePathRaw);
     messages.log.info(Shared.Log.Channel.FileBrowser, "DELETED", filePath);
     return _sendUpdate(filePath);
 }
 
-async function _add(filePath: string): Promise<void> {
+async function _add(filePathRaw: string): Promise<void> {
+    const filePath = Shared.SourceFs.forwardSlashed(filePathRaw);
     messages.log.info(Shared.Log.Channel.FileBrowser, "ADDED", filePath);
     return _sendUpdate(filePath);
 }
 
-async function _sendUpdate(filePath: string) {
-    const dir = pathe.dirname(filePath);
+async function _sendUpdate(inFilePath: string) {
+    const dir = pathe.dirname(inFilePath);
 
     const result = await listFiles(dir);
 
-    let finalDir = dir.substring(data.common.appConfig.rootPath.length + 1);
+    const absFilePath = Shared.Paths.createPath(inFilePath, Shared.Paths.PathBases.Absolute);
+    const rootRelativeFilePath = Shared.Paths.transformPathBase(
+        absFilePath,
+        Shared.Paths.PathBases.Root,
+        data.common.appConfig,
+    );
+    if (!rootRelativeFilePath) {
+        return;
+    }
+
+    let finalDir = rootRelativeFilePath.path;
     if (!finalDir) {
         finalDir = "/";
     }
 
-    messages.post({ fileChanged: filePath, dirUpdate: { dir: finalDir, entries: result } });
+    messages.post({ fileChanged: inFilePath, dirUpdate: { dir: finalDir, entries: result } });
 }
 
 async function _recreateWatcher(dirs: string[]) {
