@@ -26,13 +26,14 @@ watch(hotReloadEnabled, (on) => {
 
 const itemsAssets = computed<DropdownMenuItem[][]>(() => [
     [
-        {
-            label: "Create Asset",
-            icon: AppDesign.Icons.ActionAdd,
-            onSelect(e: Event) {
-                useTakeOverStore().open(TakeOverId.AssetWizard);
-            },
-        },
+        // MC-33
+        // {
+        //     label: "Create Asset",
+        //     icon: AppDesign.Icons.ActionAdd,
+        //     onSelect(e: Event) {
+        //         useTakeOverStore().open(TakeOverId.AssetWizard);
+        //     },
+        // },
         {
             label: "Convert All",
             icon: AppDesign.Icons.ActionConvertAsset,
