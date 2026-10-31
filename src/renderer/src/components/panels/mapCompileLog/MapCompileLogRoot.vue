@@ -55,7 +55,13 @@ const stepTabItems: TabsItem[] = [
 ];
 
 const mapSelectItems = computed(() => {
-    const combinedSet = new Set([...Array.from(mapConsoleStore.mapsWithLog), ...mapListStore.mapList]);
+    const combinedSet = new Set([...Array.from(mapConsoleStore.mapsWithLog)]);
+    for (const mapListItem of mapListStore.mapList) {
+        if (!Shared.Paths.isInIterable(combinedSet, mapListItem)) {
+            combinedSet.add(mapListItem);
+        }
+    }
+
     return Array.from(useMapDisplayNames(Array.from(combinedSet)).entries()).map(([id, label]) => ({
         id,
         label,

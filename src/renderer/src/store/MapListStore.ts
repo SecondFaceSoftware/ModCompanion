@@ -19,7 +19,12 @@ export const useMapListStore = defineStore("map-list", () => {
     }
 
     function isMapInList(mapPath: Shared.Paths.Path): boolean {
-        return mapList.value.includes(mapPath);
+        for (const mapListItem of mapList.value) {
+            if (Shared.Paths.isEqual(mapListItem, mapPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function addMap(mapPath: Shared.Paths.Path): void {

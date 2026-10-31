@@ -32,6 +32,17 @@ export interface Path {
     base: PathBase;
 }
 
+export function isEqual(p1: Path, p2: Path): boolean {
+    return p1.path === p2.path && p1.base === p2.base;
+}
+
+export function isInIterable(set: Iterable<Path>, path: Path): boolean {
+    for (const s of set) {
+        if (isEqual(s, path)) return true;
+    }
+    return false;
+}
+
 export function getBasePrefixPath(base: PathBase | undefined, config: AppConfig): string {
     switch (base) {
         case PathBases.Root:

@@ -103,7 +103,7 @@ export function useRememberArray<T>(
         return ref;
     }
 
-    if (!validationFunc?.(arrAny)) {
+    if (validationFunc && !validationFunc?.(arrAny)) {
         console.warn(`Loading ${keyName} from local storage failed: Object validation failed`);
         return ref;
     }

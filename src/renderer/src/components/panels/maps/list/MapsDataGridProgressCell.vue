@@ -25,7 +25,7 @@ const props = defineProps<{ mapPath: Shared.Paths.Path; step: Shared.Map.Compile
 const compileStore = useMapCompileStore();
 
 const state = computed<Shared.Map.CompileState>(() => {
-    const p = compileStore.progress.get({ map: props.mapPath, step: props.step });
+    const p = compileStore.progress.get(Shared.Map.createMapPathAndStep(props.mapPath, props.step));
     if (!p) return Shared.Map.CompileState.Idle;
 
     return p;

@@ -26,7 +26,10 @@ export const useMapConsoleStore = defineStore("map-console", () => {
 
         const existingText = logMap.get(eventHash) ?? "";
         logMap.set(eventHash, existingText + event.message);
-        mapsWithLog.add(event.mapPath);
+
+        if (!Shared.Paths.isInIterable(mapsWithLog, event.mapPath)) {
+            mapsWithLog.add(event.mapPath);
+        }
     });
 
     function getLog(map: Shared.Paths.Path, step: Shared.Map.CompileStep) {

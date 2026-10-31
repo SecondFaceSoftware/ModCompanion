@@ -26,6 +26,12 @@ export type QueueUpdatedNotifyFunc = (mapPaths: Path[]) => void;
 
 export type CompileLogNotifyFunc = (event: CompileLogEvent) => void;
 
+export type MapPathAndStep = string;
+
+export function createMapPathAndStep(mapSrcRelativePath: Path, step: CompileStep): MapPathAndStep {
+    return mapSrcRelativePath.path + ":" + step;
+}
+
 export interface CompileProgressEvent {
     mapPath: Path;
     step: CompileStep;
