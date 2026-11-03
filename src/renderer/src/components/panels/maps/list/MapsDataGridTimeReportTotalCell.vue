@@ -4,15 +4,14 @@
 </template>
 
 <script setup lang="ts">
-import * as Shared from "mod_companion_shared";
 import { useMapTimeReportStore } from "~/store/MapTimeReportStore.js";
 import { computed } from "vue";
 
-const props = defineProps<{ mapPath: Shared.Paths.Path }>();
+const props = defineProps<{ mapName: string }>();
 
 const timeReportStore = useMapTimeReportStore();
 
-const totalSeconds = computed(() => timeReportStore.report?.totals.get(props.mapPath));
+const totalSeconds = computed(() => timeReportStore.report?.totals.get(props.mapName));
 </script>
 
 <style scoped></style>

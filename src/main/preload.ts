@@ -64,10 +64,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
     map: {
         listSourceDirs: () => ipcRenderer.invoke(Shared.Ipc.Channels.MapListSourceDirs),
-        enqueue: (mapPaths: Shared.Paths.Path[]) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueEnqueue, mapPaths),
-        subscribeQueueUpdated: (callback: (mapPaths: Shared.Paths.Path[]) => void) =>
-            ipcRenderer.on(Shared.Ipc.Channels.MapQueueUpdated, (e: IpcRendererEvent, mapPaths: Shared.Paths.Path[]) =>
-                callback(mapPaths),
+        enqueue: (mapNames: string[]) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueEnqueue, mapNames),
+        subscribeQueueUpdated: (callback: (mapNames: string[]) => void) =>
+            ipcRenderer.on(Shared.Ipc.Channels.MapQueueUpdated, (e: IpcRendererEvent, mapNames: string[]) =>
+                callback(mapNames),
             ),
         cancelQueue: () => ipcRenderer.send(Shared.Ipc.Channels.MapQueueCancel),
         pauseQueue: (paused: boolean) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueSetPaused, paused),
@@ -81,8 +81,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
                 Shared.Ipc.Channels.MapCompileProgress,
                 (e: IpcRendererEvent, event: Shared.Map.CompileProgressEvent) => callback(event),
             ),
-        createTimeReport: (mapPaths: Shared.Paths.Path[]) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.MapCreateTimeReport, mapPaths) as Promise<Shared.Map.TimeReport>,
+        createTimeReport: (mapNames: string[]) =>
+            ipcRenderer.invoke(Shared.Ipc.Channels.MapCreateTimeReport, mapNames) as Promise<Shared.Map.TimeReport>,
     },
 
     asset: {
@@ -176,8 +176,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     artifactCloud: {
         isConnected: () => ipcRenderer.invoke(Shared.Ipc.Channels.ArtifactCloud_IsConnected),
         listAllMaps: () => ipcRenderer.invoke(Shared.Ipc.Channels.ArtifactCloud_ListAllMaps),
-        downloadMap: (artifactKey: string, mapPath: string) =>
-            ipcRenderer.invoke(Shared.Ipc.Channels.ArtifactCloud_DownloadMap, artifactKey, mapPath),
+        downloadMap: (artifactKey: string, mapName: string) =>
+            ipcRenderer.invoke(Shared.Ipc.Channels.ArtifactCloud_DownloadMap, artifactKey, mapName),
     },
 
     log: {

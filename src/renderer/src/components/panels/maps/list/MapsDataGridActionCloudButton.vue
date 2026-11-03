@@ -1,10 +1,7 @@
 <template>
     <UTooltip :text="tooltip">
         <UPopover v-model:open="open">
-            <UButton
-                :disabled="disabled || downloadPromise !== undefined || maps.length === 0"
-                @click="handleDownloadQuickClicked"
-            >
+            <UButton :disabled="isButtonDisabled" @click="handleDownloadQuickClicked">
                 <template #leading>
                     <template v-if="downloadPromise !== undefined">
                         <UIcon :name="AppDesign.Icons.Loading" class="size-5 animate-spin" />
@@ -46,20 +43,23 @@
 </template>
 
 <script setup lang="ts">
-import * as Shared from "mod_companion_shared";
 import { AppDesign } from "~/design/AppDesign.js";
 import { useArtifactCloudStore } from "~/store/ArtifactCloudStore.js";
 import { fileSize } from "humanize-plus";
 import { MapInfo } from "mod_companion_shared/SharedArtifactCloud.js";
 
-const props = defineProps<{ mapPath: Shared.Paths.Path; disabled?: boolean }>();
+const props = defineProps<{ mapName: string; disabled?: boolean }>();
 const open = ref(false);
 
 const artifactCloudStore = useArtifactCloudStore();
 
-const downloadPromise = computed(() => artifactCloudStore.activeDownloads.get(props.mapPath));
+const downloadPromise = computed(() => artifactCloudStore.activeDownloads.get(props.mapName));
 
-const maps = computed(() => artifactCloudStore.mapsList.get(props.mapPath) ?? []);
+const isButtonDisabled = computed(
+    () => props.disabled || downloadPromise.value !== undefined || maps.value.length === 0,
+);
+
+const maps = computed(() => artifactCloudStore.mapsList.get(props.mapName) ?? []);
 const tooltip = computed(() =>
     maps.value.length > 0
         ? `Download latest (${maps.value[0].dateModified.toDateString()}) ${fileSize(maps.value[0].size)}`
@@ -68,13 +68,13 @@ const tooltip = computed(() =>
 
 function handleDownloadQuickClicked(event: MouseEvent) {
     if (event.shiftKey) {
-        artifactCloudStore.downloadMap(props.mapPath, maps.value[0].objectKey);
+        artifactCloudStore.downloadMap(props.mapName, maps.value[0].objectKey);
         open.value = !open.value; // Prevent it from changing state because fuck this library
     }
 }
 
 function handleDownloadMapClicked(map: MapInfo) {
-    artifactCloudStore.downloadMap(props.mapPath, map.objectKey);
+    artifactCloudStore.downloadMap(props.mapName, map.objectKey);
     open.value = false;
 }
 </script>

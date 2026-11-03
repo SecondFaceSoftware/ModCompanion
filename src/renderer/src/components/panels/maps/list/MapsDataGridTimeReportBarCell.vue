@@ -8,15 +8,14 @@
 </template>
 
 <script setup lang="ts">
-import * as Shared from "mod_companion_shared";
 import { useMapTimeReportStore } from "~/store/MapTimeReportStore.js";
 
 const timeReportStore = useMapTimeReportStore();
 
-const props = defineProps<{ mapPath: Shared.Paths.Path; displayName: string }>();
+const props = defineProps<{ mapName: string; displayName: string }>();
 
 const chartWidth = computed(() => {
-    const percentage = timeReportStore.reportChart?.get(props.mapPath);
+    const percentage = timeReportStore.reportChart?.get(props.mapName);
     if (percentage === undefined) return "0%";
 
     return `${percentage}%`;

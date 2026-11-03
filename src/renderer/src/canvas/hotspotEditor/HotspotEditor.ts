@@ -1,5 +1,5 @@
 import { useEvent } from "~/composables/useEvent.js";
-import * as Shared from "../../../../shared/SharedManifest.js";
+import * as Shared from "mod_companion_shared";
 
 export interface RectAndIdx {
     idx: number;

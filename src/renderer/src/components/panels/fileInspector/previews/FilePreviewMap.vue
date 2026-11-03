@@ -25,7 +25,7 @@ import * as pathe from "pathe";
 const props = defineProps<{ path: Shared.Paths.Path }>();
 
 function handleEdit(): void {
-    openMapInHammer(props.path);
+    openMapInHammer(Shared.Paths.getFileName(props.path) ?? "");
 }
 
 function handlePlay(): void {

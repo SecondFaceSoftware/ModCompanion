@@ -20,12 +20,12 @@ import { computed } from "vue";
 import { AppDesign } from "~/design/AppDesign.js";
 import * as Shared from "mod_companion_shared";
 
-const props = defineProps<{ mapPath: Shared.Paths.Path; step: Shared.Map.CompileStep }>();
+const props = defineProps<{ mapName: string; step: Shared.Map.CompileStep }>();
 
 const compileStore = useMapCompileStore();
 
 const state = computed<Shared.Map.CompileState>(() => {
-    const p = compileStore.progress.get(Shared.Map.createMapPathAndStep(props.mapPath, props.step));
+    const p = compileStore.progress.get(Shared.Map.createMapPathAndStep(props.mapName, props.step));
     if (!p) return Shared.Map.CompileState.Idle;
 
     return p;

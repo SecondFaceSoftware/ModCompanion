@@ -8,10 +8,10 @@
                     v-for="[name, maps] in presetsStore.presets"
                     :key="name"
                     class="grid grid-cols-3 items-start text-start"
-                    @click="handleClickPreset(maps)"
+                    @click="() => handleClickPreset(maps)"
                 >
                     <div class="text-sm col-span-full">{{ name }}</div>
-                    <MapPresetList :maps="maps" />
+                    <MapPresetList :map-names="maps" />
                 </UButton>
             </div>
         </template>
@@ -21,15 +21,14 @@
 <script setup lang="ts">
 import { useMapPresetsStore } from "~/store/MapPresetsStore.js";
 import { useMapListStore } from "~/store/MapListStore.js";
-import * as Shared from "mod_companion_shared";
 
 const listStore = useMapListStore();
 const presetsStore = useMapPresetsStore();
 
 const open = ref(false);
 
-function handleClickPreset(mapPaths: Shared.Paths.Path[]) {
-    listStore.mapList = mapPaths;
+function handleClickPreset(mapNames: string[]) {
+    listStore.mapList = mapNames;
     open.value = false;
 }
 </script>

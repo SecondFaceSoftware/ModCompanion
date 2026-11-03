@@ -17,9 +17,9 @@ interface Stage {
     action: MapCompilerAction;
 }
 
-let queue: Shared.Paths.Path[] = [];
+let queue: string[] = [];
 let workerInterval: NodeJS.Timeout | undefined = undefined;
-const mapQueueStages = new Map<Shared.Paths.Path, Stage[]>();
+const mapQueueStages = new Map<string, Stage[]>();
 let currentCompilePromise: Promise<boolean> | undefined = undefined;
 
 let paused = false;
@@ -52,25 +52,15 @@ export const MapCompileSystem = {
 
         return true;
     },
-    enqueue(mapPaths: Shared.Paths.Path[]): void {
-        for (const mapPath of mapPaths) {
-            if (mapPath.base !== Shared.Paths.PathBases.ContentMaps) {
-                Logger.warning(
-                    Shared.Log.Channel.MapCompile,
-                    `Map`,
-                    mapPath.path,
-                    `is not a file path based in content maps. Skipping`,
-                );
+    enqueue(mapNames: string[]): void {
+        for (const mapName of mapNames) {
+            if (queue.includes(mapName)) {
+                Logger.warning(Shared.Log.Channel.MapCompile, `Map`, mapName, `is already in queue. Skipping`);
                 continue;
             }
 
-            if (queue.includes(mapPath)) {
-                Logger.warning(Shared.Log.Channel.MapCompile, `Map`, mapPath.path, `is already in queue. Skipping`);
-                continue;
-            }
-
-            queue.push(mapPath);
-            mapQueueStages.set(mapPath, _createStages());
+            queue.push(mapName);
+            mapQueueStages.set(mapName, _createStages());
         }
 
         notifyQueueFunc?.(MapCompileSystem.getQueue());
@@ -82,7 +72,7 @@ export const MapCompileSystem = {
     setPaused(isPaused: boolean): void {
         paused = isPaused;
     },
-    getQueue(): Shared.Paths.Path[] {
+    getQueue(): string[] {
         return queue;
     },
 };
@@ -140,7 +130,7 @@ function _isStepsCompleted(steps: Stage[]): boolean {
     return !steps.some((s) => s.state !== Shared.Map.CompileState.Completed);
 }
 
-function _workMap(mapPath: Shared.Paths.Path, steps: Stage[]) {
+function _workMap(mapName: string, steps: Stage[]) {
     const inProgressStepIdx = steps.findIndex((s) => s.state === Shared.Map.CompileState.InProgress);
     if (inProgressStepIdx > 0 || currentCompilePromise !== undefined) {
         return;
@@ -150,40 +140,40 @@ function _workMap(mapPath: Shared.Paths.Path, steps: Stage[]) {
     for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         if (step.state === Shared.Map.CompileState.Idle) {
-            _startStage(mapPath, i);
+            _startStage(mapName, i);
             return;
         }
     }
 }
 
-function _mapFinished(mapPath: Shared.Paths.Path): void {
-    queue.splice(queue.indexOf(mapPath), 1);
-    mapQueueStages.delete(mapPath);
+function _mapFinished(mapName: string): void {
+    queue.splice(queue.indexOf(mapName), 1);
+    mapQueueStages.delete(mapName);
     notifyQueueFunc?.(MapCompileSystem.getQueue());
 }
 
-function _startStage(mapPath: Shared.Paths.Path, stageIdx: number): void {
-    const stage = mapQueueStages.get(mapPath)![stageIdx];
+function _startStage(mapName: string, stageIdx: number): void {
+    const stage = mapQueueStages.get(mapName)![stageIdx];
 
     currentCompilePromise = stage.action(
-        mapPath,
+        mapName,
         (msg: string) => {
-            notifyLogFunc?.({ mapPath, message: msg, step: stage.step, isError: false });
+            notifyLogFunc?.({ mapName: mapName, message: msg, step: stage.step, isError: false });
         },
         (msg: string) => {
-            notifyLogFunc?.({ mapPath, message: msg, step: stage.step, isError: true });
+            notifyLogFunc?.({ mapName: mapName, message: msg, step: stage.step, isError: true });
         },
     );
     stage.state = Shared.Map.CompileState.InProgress;
-    notifyProgressFunc?.({ mapPath, step: stage.step, state: stage.state });
+    notifyProgressFunc?.({ mapName: mapName, step: stage.step, state: stage.state });
 
     currentCompilePromise.then(() => {
-        _stageFinished(mapPath, stage);
+        _stageFinished(mapName, stage);
     });
 }
 
-function _stageFinished(mapPath: Shared.Paths.Path, stage: Stage): void {
+function _stageFinished(mapName: string, stage: Stage): void {
     currentCompilePromise = undefined;
     stage.state = Shared.Map.CompileState.Completed;
-    notifyProgressFunc?.({ mapPath, step: stage.step, state: stage.state });
+    notifyProgressFunc?.({ mapName, step: stage.step, state: stage.state });
 }

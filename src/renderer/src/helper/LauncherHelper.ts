@@ -3,10 +3,6 @@ import { filename } from "pathe/utils";
 import { getAppConfig } from "~/renderer-config.js";
 import { Logger } from "~/logger.js";
 
-/**
- * Opens a map in the game
- * @param mapName Path to the map path, or just its name. Must be in the maps folder
- */
 export function openMapInGame(mapName: string): void {
     const n = filename(mapName);
     window.electronAPI.app.launch(
@@ -15,10 +11,11 @@ export function openMapInGame(mapName: string): void {
     );
 }
 
-export function openMapInHammer(vmfPath: Shared.Paths.Path): void {
-    const absVmfPath = Shared.Paths.transformPathBase(vmfPath, Shared.Paths.PathBases.Absolute, getAppConfig());
+export function openMapInHammer(mapName: string): void {
+    const relativeVmfPath = Shared.Paths.createPath(mapName + "vmf", Shared.Paths.PathBases.ContentMaps);
+    const absVmfPath = Shared.Paths.transformPathBase(relativeVmfPath, Shared.Paths.PathBases.Absolute, getAppConfig());
     if (!absVmfPath) {
-        Logger.warning(Shared.Log.Channel.Generic, "Failed to open map. Path failed to resolve", vmfPath);
+        Logger.warning(Shared.Log.Channel.Generic, "Failed to open map. Path failed to resolve", mapName);
         return;
     }
 

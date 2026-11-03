@@ -1,5 +1,5 @@
 import { useMessageLogStore } from "~/store/MessageLogStore.js";
-import * as Shared from "../../shared/SharedManifest.js";
+import * as Shared from "mod_companion_shared";
 
 export const Logger = {
     processLog(logEvent: Shared.Log.Event, replicateToMain: boolean = false): void {

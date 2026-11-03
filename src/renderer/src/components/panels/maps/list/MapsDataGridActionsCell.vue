@@ -4,10 +4,10 @@
             <UButton
                 :icon="AppDesign.Icons.ActionCompileMap"
                 :disabled="hasQueue"
-                @click="() => compileStore.compileNow(mapPath)"
+                @click="() => compileStore.compileNow(mapName)"
             />
         </UTooltip>
-        <MapsDataGridActionCloudButton v-if="artifactCloudStore.connected" :map-path="mapPath" :disabled="hasQueue" />
+        <MapsDataGridActionCloudButton v-if="artifactCloudStore.connected" :map-name="mapName" :disabled="hasQueue" />
         <UTooltip text="Open in Hammer">
             <UButton @click="handleOpenInHammer">
                 <template #leading>
@@ -16,7 +16,7 @@
             </UButton>
         </UTooltip>
         <UTooltip text="Open in Game">
-            <UButton @click="() => openMapInGame(mapPath.path)">
+            <UButton @click="() => openMapInGame(mapName)">
                 <template #leading>
                     <MBitmapIcon :name="AppDesign.BitmapIcon.Launchers.game" />
                 </template>
@@ -26,7 +26,7 @@
             <UButton
                 :icon="AppDesign.Icons.ActionRemove"
                 :disabled="hasQueue"
-                @click="() => listStore.removeMap(mapPath)"
+                @click="() => listStore.removeMap(mapName)"
             />
         </UTooltip>
         <UDropdownMenu :items="dropdownItems">
@@ -50,12 +50,14 @@ const compileStore = useMapCompileStore();
 const listStore = useMapListStore();
 const artifactCloudStore = useArtifactCloudStore();
 
-const props = defineProps<{ mapPath: Shared.Paths.Path }>();
+const props = defineProps<{ mapName: string }>();
+
+const vmfMapPath = computed(() => Shared.Paths.createPath(props.mapName, Shared.Paths.PathBases.ContentMaps));
 
 const hasQueue = computed(() => listStore.mapQueue.length > 0);
 
 function handleOpenInHammer() {
-    openMapInHammer(props.mapPath);
+    openMapInHammer(props.mapName);
 }
 
 const dropdownItems = ref<DropdownMenuItem[][]>([
@@ -64,15 +66,15 @@ const dropdownItems = ref<DropdownMenuItem[][]>([
             label: "Browse to VMF",
             icon: AppDesign.Icons.ActionBrowseToFolder,
             onSelect() {
-                window.electronAPI.fileBrowser.browseTo(props.mapPath);
+                window.electronAPI.fileBrowser.browseTo(vmfMapPath.value);
             },
         },
         {
             label: "Browse to BSP",
             icon: AppDesign.Icons.ActionBrowseToFolder,
-            disabled: Shared.Paths.getBspPathFromVmfPath(props.mapPath) === undefined,
+            disabled: Shared.Paths.getBspPathFromVmfPath(vmfMapPath.value) === undefined,
             onSelect() {
-                const bspFilePath = Shared.Paths.getBspPathFromVmfPath(props.mapPath);
+                const bspFilePath = Shared.Paths.getBspPathFromVmfPath(vmfMapPath.value);
                 if (bspFilePath) {
                     window.electronAPI.fileBrowser.browseTo(bspFilePath);
                 }

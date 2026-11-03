@@ -6,55 +6,56 @@ import { Logger } from "../systems/CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 
 export type MapCompilerAction = (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ) => Promise<boolean>;
 
 export const runVBsp: MapCompilerAction = (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    return _runMapCompiler(mapPath, config.vbspExePath, config.vbspArgs, onStdOut, onStdErr);
+    return _runMapCompiler(mapName, config.vbspExePath, config.vbspArgs, onStdOut, onStdErr);
 };
 
 export const runVVis: MapCompilerAction = (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    return _runMapCompiler(mapPath, config.vvisExePath, config.vvisArgs, onStdOut, onStdErr);
+    return _runMapCompiler(mapName, config.vvisExePath, config.vvisArgs, onStdOut, onStdErr);
 };
 
 export const runVRad: MapCompilerAction = (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    return _runMapCompiler(mapPath, config.vradExePath, config.vradArgs, onStdOut, onStdErr);
+    return _runMapCompiler(mapName, config.vradExePath, config.vradArgs, onStdOut, onStdErr);
 };
 
 export const runPostcompiler: MapCompilerAction = (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    return _runMapCompiler(mapPath, config.postcompilerExePath, config.postcompilerArgs, onStdOut, onStdErr);
+    return _runMapCompiler(mapName, config.postcompilerExePath, config.postcompilerArgs, onStdOut, onStdErr);
 };
 
 export const runDone: MapCompilerAction = async (
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> => {
     const config = ConfigSystem.getAppConfig();
-    const from = Shared.Paths.changeExtension(mapPath, ".bsp");
-    const to = Shared.Paths.getBspPathFromVmfPath(mapPath);
+    const relativeMapPath = Shared.Paths.createPath(mapName, Shared.Paths.PathBases.ContentMaps);
+    const from = Shared.Paths.changeExtension(relativeMapPath, ".bsp");
+    const to = Shared.Paths.getBspPathFromVmfPath(relativeMapPath);
     if (!to) {
         Logger.warning(
             Shared.Log.Channel.MapCompile,
@@ -93,14 +94,15 @@ export const runDone: MapCompilerAction = async (
 };
 
 async function _runMapCompiler(
-    mapPath: Shared.Paths.Path,
+    mapName: string,
     exePath: string,
     args: string,
     onStdOut?: (msg: string) => void,
     onStdErr?: (msg: string) => void,
 ): Promise<boolean> {
     const config = ConfigSystem.getAppConfig();
-    const absMapPath = Shared.Paths.transformPathBase(mapPath, Shared.Paths.PathBases.Absolute, config);
+    const relativeMapPath = Shared.Paths.createPath(mapName, Shared.Paths.PathBases.ContentMaps);
+    const absMapPath = Shared.Paths.transformPathBase(relativeMapPath, Shared.Paths.PathBases.Absolute, config);
     if (!absMapPath) {
         return false;
     }

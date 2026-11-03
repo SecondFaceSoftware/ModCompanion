@@ -6,7 +6,7 @@ import * as Shared from "mod_companion_shared";
 export const useMapTimeReportStore = defineStore("map-time-report", () => {
     const report = ref<Shared.Map.TimeReport | undefined>();
     const showReport = ref(false);
-    const reportChart = ref<Map<Shared.Paths.Path, number> | undefined>();
+    const reportChart = ref<Map<string, number> | undefined>();
 
     function createTimeReport(): void {
         window.electronAPI.map.createTimeReport(toRaw(useMapListStore().mapList)).then((r) => {
@@ -18,8 +18,8 @@ export const useMapTimeReportStore = defineStore("map-time-report", () => {
     return { createTimeReport, showReport, report, reportChart };
 });
 
-function _createReportChart(report: Shared.Map.TimeReport): Map<Shared.Paths.Path, number> {
-    const map = new Map<Shared.Paths.Path, number>();
+function _createReportChart(report: Shared.Map.TimeReport): Map<string, number> {
+    const map = new Map<string, number>();
 
     let longestTime = 0;
     let shortestTime = Number.MAX_VALUE;

@@ -4,8 +4,8 @@ import * as Shared from "mod_companion_shared";
 
 export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
     const connected = ref(false);
-    const mapsList = ref<Map<Shared.Paths.Path, Shared.ArtifactCloud.MapInfo[]>>(new Map());
-    const activeDownloads = reactive<Map<Shared.Paths.Path, Promise<boolean>>>(new Map());
+    const mapsList = ref<Map<string, Shared.ArtifactCloud.MapInfo[]>>(new Map());
+    const activeDownloads = reactive<Map<string, Promise<boolean>>>(new Map());
 
     async function checkAlive() {
         connected.value = await window.electronAPI.artifactCloud.isConnected();
@@ -21,15 +21,15 @@ export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
     async function refresh(): Promise<void> {
         const result = await window.electronAPI.artifactCloud.listAllMaps();
         if (result?.maps) {
-            mapsList.value = result?.maps;
+            mapsList.value = result.maps;
         }
     }
 
-    async function downloadMap(mapPath: Shared.Paths.Path, objectKey: string): Promise<boolean> {
+    async function downloadMap(mapName: string, objectKey: string): Promise<boolean> {
         const promise = window.electronAPI.artifactCloud
-            .downloadMap(objectKey, mapPath)
-            .finally(() => activeDownloads.delete(mapPath));
-        activeDownloads.set(mapPath, promise);
+            .downloadMap(objectKey, mapName)
+            .finally(() => activeDownloads.delete(mapName));
+        activeDownloads.set(mapName, promise);
         return promise;
     }
 
@@ -45,5 +45,5 @@ export const useArtifactCloudStore = defineStore("artifact-cloud", () => {
         return Promise.allSettled(promises);
     }
 
-    return { connected, downloadMap, downloadAll, refresh, mapsList, activeDownloads };
+    return { connected, downloadMap, downloadAll, refresh, activeDownloads, mapsList };
 });

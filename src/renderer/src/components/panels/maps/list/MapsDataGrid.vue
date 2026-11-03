@@ -28,102 +28,102 @@ const table = useTemplateRef("table");
 
 const columns = computed(() => (timeReportStore.showReport ? reportColumns : listColumns));
 
-const listColumns: DataTableColumn<Shared.Paths.Path>[] = [
+const listColumns: DataTableColumn<string>[] = [
     {
         id: "name",
         label: "Name",
         size: "1fr",
-        cell: (entry) => h("span", { class: "tabular-nums text-sm" }, listStore.mapDisplayList.get(entry)),
+        cell: (entry) => h("span", { class: "tabular-nums text-sm" }, entry),
     },
     {
         id: "vbsp",
         label: "VBSP",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.VBsp }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.VBsp }),
         headerClass: "text-center px-1",
     },
     {
         id: "post",
         label: "POST",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.Post }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.Post }),
         headerClass: "text-center px-1",
     },
     {
         id: "vvis",
         label: "VVIS",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.VVis }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.VVis }),
         headerClass: "text-center px-1",
     },
     {
         id: "vrad",
         label: "VRAD",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.VRad }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.VRad }),
         headerClass: "text-center px-1",
     },
     {
         id: "game",
         label: "GAME",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.Game }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.Game }),
         headerClass: "text-center px-1",
     },
     {
         id: "done",
         label: "DONE",
-        cell: (entry) => h(MapsDataGridProgressCell, { mapPath: entry, step: Shared.Map.CompileStep.Done }),
+        cell: (entry) => h(MapsDataGridProgressCell, { mapName: entry, step: Shared.Map.CompileStep.Done }),
         headerClass: "text-center px-1",
     },
     {
         id: "actions",
         label: "",
-        cell: (entry) => h(MapsDataGridActionsCell, { mapPath: entry }),
+        cell: (entry) => h(MapsDataGridActionsCell, { mapName: entry }),
         headerClass: "text-center px-1",
     },
 ];
 
-const reportColumns: DataTableColumn<Shared.Paths.Path>[] = [
+const reportColumns: DataTableColumn<string>[] = [
     {
         id: "name",
         label: "Name",
         size: "1fr",
         cell: (entry) =>
             h(MapsDataGridTimeReportBarCell, {
-                mapPath: entry,
-                displayName: listStore.mapDisplayList.get(entry) ?? Shared.Paths.getFileName(entry) ?? entry.path,
+                mapName: entry,
+                displayName: entry,
             }),
     },
     {
         id: "vbsp",
         label: "VBSP",
-        cell: (entry) => h(MapsDataGridTimeReportCell, { mapPath: entry, step: Shared.Map.CompileStep.VBsp }),
+        cell: (entry) => h(MapsDataGridTimeReportCell, { mapName: entry, step: Shared.Map.CompileStep.VBsp }),
         headerClass: "text-center px-2",
     },
     {
         id: "vvis",
         label: "VVIS",
-        cell: (entry) => h(MapsDataGridTimeReportCell, { mapPath: entry, step: Shared.Map.CompileStep.VVis }),
+        cell: (entry) => h(MapsDataGridTimeReportCell, { mapName: entry, step: Shared.Map.CompileStep.VVis }),
         headerClass: "text-center px-2",
     },
     {
         id: "vrad",
         label: "VRAD",
-        cell: (entry) => h(MapsDataGridTimeReportCell, { mapPath: entry, step: Shared.Map.CompileStep.VRad }),
+        cell: (entry) => h(MapsDataGridTimeReportCell, { mapName: entry, step: Shared.Map.CompileStep.VRad }),
         headerClass: "text-center px-2",
     },
     {
         id: "total",
         label: "TOTAL",
-        cell: (entry) => h(MapsDataGridTimeReportTotalCell, { mapPath: entry }),
+        cell: (entry) => h(MapsDataGridTimeReportTotalCell, { mapName: entry }),
         headerClass: "text-center px-2",
     },
     {
         id: "actions",
         label: "",
-        cell: (entry) => h(MapsDataGridActionsCell, { mapPath: entry }),
+        cell: (entry) => h(MapsDataGridActionsCell, { mapName: entry }),
         headerClass: "text-center px-2",
     },
 ];
 
-function handleActiveChanged(map: Shared.Paths.Path | undefined): void {
-    listStore.selectMap(map);
+function handleActiveChanged(mapName: string | undefined): void {
+    listStore.selectMap(mapName);
 }
 
 watch(

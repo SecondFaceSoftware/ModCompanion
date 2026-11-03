@@ -1,9 +1,7 @@
 import * as AWS from "@aws-sdk/client-s3";
 import { ConfigSystem } from "./CoreConfigSystem.js";
-import { filename } from "pathe/utils";
 import { createWriteStream } from "node:fs";
 import fs from "node:fs/promises";
-import * as pathe from "pathe";
 import { pipeline } from "node:stream/promises";
 import { Logger } from "./CoreLogSystem.js";
 import humanizePlus from "humanize-plus";
@@ -51,12 +49,12 @@ export const ArtifactCloudSystem = {
                 return undefined;
             }
 
-            const mapsMap = new Map<Shared.Paths.Path, Shared.ArtifactCloud.MapInfo[]>();
+            const mapInfos = new Map<string, Shared.ArtifactCloud.MapInfo[]>();
             for (const content of contents) {
                 if (content.Size === undefined || content.LastModified === undefined || content.Key === undefined)
                     continue;
 
-                const mapPath = Shared.Paths.createPath(content.Key, Shared.Paths.PathBases.ContentMaps);
+                const mapName = content.Key;
 
                 const entry: Shared.ArtifactCloud.MapInfo = {
                     size: content.Size,
@@ -64,30 +62,22 @@ export const ArtifactCloudSystem = {
                     objectKey: content.Key,
                 };
 
-                if (!mapsMap.has(mapPath)) {
-                    mapsMap.set(mapPath, [entry]);
+                if (!mapInfos.has(mapName)) {
+                    mapInfos.set(mapName, [entry]);
                 } else {
-                    mapsMap.get(mapPath)?.push(entry);
+                    mapInfos.get(mapName)?.push(entry);
                 }
             }
 
-            for (const arr of mapsMap.values()) {
+            for (const arr of mapInfos.values()) {
                 arr.sort((a, b) => b.dateModified.getTime() - a.dateModified.getTime());
             }
 
-            return { maps: mapsMap };
+            return { maps: mapInfos };
         });
     },
-    async downloadMap(objectKey: string, mapPath: Shared.Paths.Path): Promise<boolean> {
+    async downloadMap(objectKey: string, mapName: string): Promise<boolean> {
         const config = ConfigSystem.getAppConfig();
-        const absMapPath = Shared.Paths.transformPathBase(mapPath, Shared.Paths.PathBases.Absolute, config);
-        if (!absMapPath) {
-            Logger.warning(
-                Shared.Log.Channel.ArtifactCloud,
-                "Failed to download map because the map path didn't resolve to an absolute path",
-            );
-            return false;
-        }
 
         const bspPath = Shared.Paths.getBspPathFromVmfPath(absMapPath);
         if (!bspPath) {

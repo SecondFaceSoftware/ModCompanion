@@ -8,12 +8,12 @@ import { useMapTimeReportStore } from "~/store/MapTimeReportStore.js";
 import { computed } from "vue";
 import * as Shared from "mod_companion_shared";
 
-const props = defineProps<{ mapPath: Shared.Paths.Path; step: Shared.Map.CompileStep }>();
+const props = defineProps<{ mapName: string; step: Shared.Map.CompileStep }>();
 
 const timeReportStore = useMapTimeReportStore();
 
 const seconds = computed(() => {
-    return timeReportStore.report?.maps.get({ step: props.step, map: props.mapPath });
+    return timeReportStore.report?.maps.get({ step: props.step, mapName: props.mapName });
 });
 </script>
 

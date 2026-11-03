@@ -30,7 +30,6 @@ import { useMapListStore } from "~/store/MapListStore.js";
 import { useMapConsoleStore } from "~/store/MapConsoleStore.js";
 import { computed } from "vue";
 import { TabsItem } from "@nuxt/ui/components/Tabs.vue.js";
-import { useMapDisplayNames } from "~/composables/useMapDisplayNames.js";
 import * as Shared from "mod_companion_shared";
 
 const mapListStore = useMapListStore();
@@ -55,17 +54,7 @@ const stepTabItems: TabsItem[] = [
 ];
 
 const mapSelectItems = computed(() => {
-    const combinedSet = new Set([...Array.from(mapConsoleStore.mapsWithLog)]);
-    for (const mapListItem of mapListStore.mapList) {
-        if (!Shared.Paths.isInIterable(combinedSet, mapListItem)) {
-            combinedSet.add(mapListItem);
-        }
-    }
-
-    return Array.from(useMapDisplayNames(Array.from(combinedSet)).entries()).map(([id, label]) => ({
-        id,
-        label,
-    }));
+    return Array.from(new Set([...Array.from(mapConsoleStore.mapsWithLog), ...mapListStore.mapList]));
 });
 </script>
 

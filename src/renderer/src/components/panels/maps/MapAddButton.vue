@@ -9,7 +9,6 @@ import { AppDesign } from "~/design/AppDesign.js";
 import { filename } from "pathe/utils";
 import { DropdownMenuItem } from "@nuxt/ui/components/DropdownMenu.vue.js";
 import { useMapListStore } from "~/store/MapListStore.js";
-import * as pathe from "pathe";
 import * as Shared from "mod_companion_shared";
 
 const listStore = useMapListStore();
@@ -22,17 +21,15 @@ const items = computed(() => {
     const menu = mapDirs.value.map<DropdownMenuItem>((d) => ({
         label: d.dirName,
         children: d.vmfNames.map<DropdownMenuItem>((m) => {
-            const fullPathStr = pathe.join(d.dirName, m);
-            const fullPath = Shared.Paths.createPath(fullPathStr, Shared.Paths.PathBases.ContentMaps);
             return {
                 label: filename(m),
                 type: "checkbox",
-                checked: listStore.isMapInList(fullPath),
+                checked: listStore.isMapInList(m),
                 onUpdateChecked(checked: boolean) {
                     if (checked) {
-                        listStore.addMap(fullPath);
+                        listStore.addMap(m);
                     } else {
-                        listStore.removeMap(fullPath);
+                        listStore.removeMap(m);
                     }
                 },
             };

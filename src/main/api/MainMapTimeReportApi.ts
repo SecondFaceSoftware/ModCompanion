@@ -66,7 +66,7 @@ async function _createTimeReport(mapPaths: Shared.Paths.Path[]): Promise<Shared.
             const seconds = _getCompileTimeSeconds(logContents);
             if (seconds === undefined) continue;
 
-            const key: Shared.Map.TimeReportMapStep = { map: mapPath, step };
+            const key: Shared.Map.TimeReportMapStep = { mapName: mapPath, step };
 
             report.maps.set(key, seconds);
 

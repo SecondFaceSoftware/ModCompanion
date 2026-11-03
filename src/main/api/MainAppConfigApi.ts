@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
-import { Channels } from "../../shared/SharedIpcChannels.js";
+import * as Shared from "mod_companion_shared";
 import * as Core from "mod_companion_core";
 
 export function registerAppConfigApi(): boolean {
-    ipcMain.handle(Channels.ConfigGet, () => {
+    ipcMain.handle(Shared.Ipc.Channels.ConfigGet, () => {
         return Core.ConfigSystem.getAppConfig();
     });
     return true;
