@@ -79,12 +79,14 @@ export const ArtifactCloudSystem = {
     async downloadMap(objectKey: string, mapName: string): Promise<boolean> {
         const config = ConfigSystem.getAppConfig();
 
-        const bspPath = Shared.Paths.getBspPathFromVmfPath(absMapPath);
+        const relativeMapPath = Shared.Paths.createPath(mapName, Shared.Paths.PathBases.ContentMaps);
+
+        const bspPath = Shared.Paths.getBspPathFromVmfPath(relativeMapPath);
         if (!bspPath) {
             Logger.warning(
                 Shared.Log.Channel.ArtifactCloud,
                 "Failed to download map because",
-                absMapPath,
+                relativeMapPath,
                 "doesn't map to a valid bsp path",
             );
             return false;
@@ -94,14 +96,14 @@ export const ArtifactCloudSystem = {
             Logger.warning(
                 Shared.Log.Channel.ArtifactCloud,
                 "Failed to download map because",
-                absMapPath,
+                bspPath,
                 "doesn't resolve to an absolute path",
             );
             return false;
         }
 
         const result = await _useS3(async (client, bucket): Promise<boolean> => {
-            Logger.info(Shared.Log.Channel.ArtifactCloud, `Downloading map object ${objectKey} to ${absMapPath.path}`);
+            Logger.info(Shared.Log.Channel.ArtifactCloud, `Downloading map object ${objectKey} to ${absBspPath.path}`);
             const response = await client.getObject({ Bucket: bucket, Key: objectKey });
             const s3Stream = response.Body as NodeJS.ReadableStream;
             if (!s3Stream) {

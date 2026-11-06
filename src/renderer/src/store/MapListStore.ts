@@ -1,10 +1,10 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { useRememberArray, useRememberWorkspaceRef } from "~/composables/useRemember.js";
+import { useRememberArray, useRememberStringArray, useRememberWorkspaceRef } from "~/composables/useRemember.js";
 import { useFilter } from "~/composables/useFilter.js";
 
 export const useMapListStore = defineStore("map-list", () => {
-    const mapList = useRememberArray(ref<string[]>([]), "map-list");
+    const mapList = useRememberStringArray(ref<string[]>([]), "map-list");
     const searchTerm = useRememberWorkspaceRef(ref<string>(""), "map-search");
     const filteredMapList = useFilter(mapList, (item) => item.toLowerCase(), searchTerm);
     const selectedMap = ref<string | undefined>();
