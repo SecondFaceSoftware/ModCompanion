@@ -35,8 +35,18 @@ function _handleFileChanged(filePath: Shared.Paths.Path) {
             Shared.Paths.PathBases.GameMaterial,
             ConfigSystem.getAppConfig(),
         );
-        Logger.info(Shared.Log.Channel.HotReload, "Reloading texture", vtfPath);
-        GameInteropSystem.sendCommand(`mat_reloadtexture ${vtfPath}`);
+        if (!vtfPath) {
+            Logger.warning(
+                Shared.Log.Channel.HotReload,
+                "Failed to reload texture because",
+                filePath.path,
+                "isn't a valid game material path",
+            );
+        } else {
+            const finalVtfPath = Shared.Paths.stripExtension(vtfPath).path;
+            Logger.info(Shared.Log.Channel.HotReload, "Reloading texture", finalVtfPath);
+            GameInteropSystem.sendCommand(`mat_reloadtexture ${finalVtfPath}`);
+        }
         return;
     }
 
@@ -46,8 +56,18 @@ function _handleFileChanged(filePath: Shared.Paths.Path) {
             Shared.Paths.PathBases.GameMaterial,
             ConfigSystem.getAppConfig(),
         );
-        Logger.info(Shared.Log.Channel.HotReload, "Reloading material", vmtPath);
-        GameInteropSystem.sendCommand(`mat_reloadmaterial ${vmtPath}`);
+        if (!vmtPath) {
+            Logger.warning(
+                Shared.Log.Channel.HotReload,
+                "Failed to reload material because",
+                filePath.path,
+                "isn't a valid game material path",
+            );
+        } else {
+            const finalVmtPath = Shared.Paths.stripExtension(vmtPath).path;
+            Logger.info(Shared.Log.Channel.HotReload, "Reloading material", finalVmtPath);
+            GameInteropSystem.sendCommand(`mat_reloadmaterial ${finalVmtPath}`);
+        }
         return;
     }
 }
