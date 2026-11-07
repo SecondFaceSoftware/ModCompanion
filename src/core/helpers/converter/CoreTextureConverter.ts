@@ -21,8 +21,17 @@ export const TextureConverter = {
         const outFileRel = asset.gameFiles![0];
         const outFile = pathe.join(config.gamePath, outFileRel);
 
-        let options = config.assetDefaults?.vtfOptions ?? {};
-        options = { ...options, ...asset.vtfOptions };
-        return MareTfSystem.createVtf(srcFile, outFile, options);
+        const finalOptions = structuredClone(config.assetDefaults?.vtfOptions ?? {}) as any;
+
+        if (asset.vtfOptions) {
+            for (const [key, value] of Object.entries(asset.vtfOptions)) {
+                if (Array.isArray(value) && value.length > 0) {
+                    finalOptions[key] = value;
+                } else if (value !== undefined && value !== null && !Array.isArray(value)) {
+                    finalOptions[key] = value;
+                }
+            }
+        }
+        return MareTfSystem.createVtf(srcFile, outFile, finalOptions);
     },
 };
