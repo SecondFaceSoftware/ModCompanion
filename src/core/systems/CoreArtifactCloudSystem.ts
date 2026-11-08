@@ -6,6 +6,7 @@ import { pipeline } from "node:stream/promises";
 import { Logger } from "./CoreLogSystem.js";
 import humanizePlus from "humanize-plus";
 import * as Shared from "mod_companion_shared";
+import { filename } from "pathe/utils";
 
 let s3Client: AWS.S3 | undefined = undefined;
 let s3Bucket: string | undefined = undefined;
@@ -54,7 +55,8 @@ export const ArtifactCloudSystem = {
                 if (content.Size === undefined || content.LastModified === undefined || content.Key === undefined)
                     continue;
 
-                const mapName = content.Key;
+                const mapName = filename(content.Key);
+                if (!mapName) continue;
 
                 const entry: Shared.ArtifactCloud.MapInfo = {
                     size: content.Size,
