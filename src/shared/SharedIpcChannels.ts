@@ -28,7 +28,6 @@ export const Channels = {
 
     ConfigGet: "config_get",
 
-    MapListSourceDirs: "map_list_source_dirs",
     MapQueueEnqueue: "map_queue_enqueue",
     MapQueueUpdated: "map_queue_updated",
     MapQueueSetPaused: "map_queue_set_paused",

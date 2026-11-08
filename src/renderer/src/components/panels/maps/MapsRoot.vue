@@ -3,7 +3,6 @@
         <template #header>
             <div class="flex gap-1 flex-wrap">
                 <MapAddButton />
-                <MapPresetButton />
                 <UInput
                     v-model="listStore.searchTerm"
                     placeholder="Search"
@@ -27,7 +26,6 @@ import MapsDataGrid from "./list/MapsDataGrid.vue";
 import { useMapListStore } from "~/store/MapListStore.js";
 import MapsTimeReportToggle from "./MapsTimeReportToggle.vue";
 import { AppDesign } from "~/design/AppDesign.js";
-import MapPresetButton from "~/components/panels/maps/MapPresetButton.vue";
 import MapAddButton from "~/components/panels/maps/MapAddButton.vue";
 import MapsDownloadAllButton from "~/components/panels/maps/MapsDownloadAllButton.vue";
 

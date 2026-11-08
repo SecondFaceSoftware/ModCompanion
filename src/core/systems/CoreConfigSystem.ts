@@ -32,8 +32,6 @@ const ProjectConfigFileSchema = z.object({
             }),
         }),
     ),
-    mapSourceDirs: z.optional(z.array(z.string())),
-    mapPresets: z.optional(z.record(z.string(), z.array(z.string()))),
 });
 
 type ProjectConfigFile = z.infer<typeof ProjectConfigFileSchema>;
@@ -102,9 +100,6 @@ function _createConfig(c: ProjectConfigFile, cfgPath: string): Shared.AppConfig.
         vvisArgs: `-report -game ${c.searchPath}`,
         vradArgs: `-report -PortalTraversalLighting -textureshadows -StaticPropLighting -StaticPropPolys -game ${c.searchPath}`,
         cubemapArgs: "-buildcubemaps -novid -windowed -w 800 -h 600 -condebug -bordered",
-
-        mapSourceDirs: c.mapSourceDirs,
-        mapPresets: c.mapPresets,
 
         assetDefaults: c.assetDefaults as Shared.AppConfig.AppConfigAssetDefaults,
         artifactCloud: c.artifactCloud,

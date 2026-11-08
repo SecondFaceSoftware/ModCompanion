@@ -38,19 +38,7 @@ export interface CompileProgressEvent {
 
 export type CompileProgressNotifyFunc = (event: CompileProgressEvent) => void;
 
-export type MapPresets = Record<string, string[]>;
-
-export interface TimeReportMapStep {
-    mapName: string;
-    step: CompileStep;
-}
-
 export interface TimeReport {
-    maps: Map<TimeReportMapStep, number>;
+    maps: Map<MapNameAndStep, number>;
     totals: Map<string, number>;
-}
-
-export interface SharedMapSourceDir {
-    dirName: string;
-    vmfNames: string[];
 }

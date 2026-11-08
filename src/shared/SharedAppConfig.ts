@@ -96,9 +96,6 @@ export interface AppConfig {
     /** Default search path. e.g. "revolution" */
     gameName: string;
 
-    mapSourceDirs?: string[];
-    mapPresets?: Record<string, string[]>;
-
     assetDefaults?: AppConfigAssetDefaults;
 
     artifactCloud?: {

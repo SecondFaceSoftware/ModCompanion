@@ -66,7 +66,6 @@ declare global {
             };
 
             map: {
-                listSourceDirs: () => Promise<Shared.Map.SharedMapSourceDir[]>;
                 enqueue: (mapNames: string[]) => void;
                 subscribeQueueUpdated: (callback: (mapNamesQueue: string[]) => void) => IpcRenderer;
                 cancelQueue: () => void;

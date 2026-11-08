@@ -1,5 +1,4 @@
 import { registerLauncherApi } from "../api/MainLauncherApi.js";
-import { registerMapScannerApi } from "../api/MainMapScannerApi.js";
 import { AppApi } from "../api/MainAppApi.js";
 import { registerMapCompileApi } from "../api/MainMapCompileApi.js";
 import { registerAppConfigApi } from "../api/MainAppConfigApi.js";
@@ -25,7 +24,6 @@ const apis: (() => boolean)[] = [
     AppApi.register,
     registerAppConfigApi,
     registerLauncherApi,
-    registerMapScannerApi,
     registerMapCompileApi,
     registerMapTimeReportApi,
     FileBrowserApi.register,

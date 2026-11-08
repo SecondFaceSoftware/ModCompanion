@@ -52,7 +52,9 @@ const artifactCloudStore = useArtifactCloudStore();
 
 const props = defineProps<{ mapName: string }>();
 
-const vmfMapPath = computed(() => Shared.Paths.createPath(props.mapName, Shared.Paths.PathBases.ContentMaps));
+const vmfMapPath = computed(() =>
+    Shared.Paths.addExtension(Shared.Paths.createPath(props.mapName, Shared.Paths.PathBases.ContentMaps), ".vmf"),
+);
 
 const hasQueue = computed(() => listStore.mapQueue.length > 0);
 
@@ -76,7 +78,7 @@ const dropdownItems = ref<DropdownMenuItem[][]>([
             onSelect() {
                 const bspFilePath = Shared.Paths.getBspPathFromVmfPath(vmfMapPath.value);
                 if (bspFilePath) {
-                    window.electronAPI.fileBrowser.browseTo(bspFilePath);
+                    window.electronAPI.fileBrowser.browseTo(Shared.Paths.changeExtension(bspFilePath, ".bsp"));
                 }
             },
         },

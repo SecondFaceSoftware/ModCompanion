@@ -10,7 +10,6 @@ import { useArtifactCloudStore } from "~/store/ArtifactCloudStore.js";
 import { useMessageLogStore } from "~/store/MessageLogStore.js";
 import { initGlobalComponents } from "~/helper/GlobalComponents.js";
 import { useSystemStore } from "~/store/SystemStore.js";
-import { useMapPresetsStore } from "~/store/MapPresetsStore.js";
 import { useTaskStore } from "~/store/TaskStore.js";
 
 export function initVue() {
@@ -37,6 +36,5 @@ function _initSystemStores() {
     useGameInteropStore();
     useArtifactCloudStore();
     useSystemStore();
-    useMapPresetsStore();
     useTaskStore();
 }

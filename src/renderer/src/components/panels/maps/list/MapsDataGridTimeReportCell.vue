@@ -13,7 +13,7 @@ const props = defineProps<{ mapName: string; step: Shared.Map.CompileStep }>();
 const timeReportStore = useMapTimeReportStore();
 
 const seconds = computed(() => {
-    return timeReportStore.report?.maps.get({ step: props.step, mapName: props.mapName });
+    return timeReportStore.report?.maps.get(Shared.Map.createMapPathAndStep(props.mapName, props.step));
 });
 </script>
 

@@ -63,7 +63,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     },
 
     map: {
-        listSourceDirs: () => ipcRenderer.invoke(Shared.Ipc.Channels.MapListSourceDirs),
         enqueue: (mapNames: string[]) => ipcRenderer.send(Shared.Ipc.Channels.MapQueueEnqueue, mapNames),
         subscribeQueueUpdated: (callback: (mapNames: string[]) => void) =>
             ipcRenderer.on(Shared.Ipc.Channels.MapQueueUpdated, (e: IpcRendererEvent, mapNames: string[]) =>
