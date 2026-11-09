@@ -60,7 +60,7 @@ export const MareTfSystem = {
 
         const infoText = await _runMaretfInfo(absFilePath.path);
         if (!infoText) {
-            throw new Error("Failed to get vtf info");
+            throw new Error("Failed to get vtf info. Maretf returned no text");
         }
 
         // maretf outputs multiple root nodes and it's easier to parse this way.
@@ -93,7 +93,7 @@ function _runMaretfInfo(inputPath: string): Promise<string> {
 }
 
 function _runMaretfExtract(inputPath: string): Promise<string> {
-    const cmd = `${binary} extract --verbose --extract-stdout ${inputPath}`;
+    const cmd = `${binary} extract --extract-stdout ${inputPath}`;
     return runProcess(cmd, "MareTF Extract");
 }
 

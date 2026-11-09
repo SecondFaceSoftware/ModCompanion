@@ -50,6 +50,7 @@ async function loadInfo() {
     try {
         info.value = await window.electronAPI.vtf.getInfo(props.path);
         extract.value = await window.electronAPI.vtf.getExtract(props.path);
+        extract.value = extract.value.split(" ")[1];
         loading.value = true;
     } catch (e) {
         error.value = true;
