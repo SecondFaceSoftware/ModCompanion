@@ -12,7 +12,7 @@ export function openMapInGame(mapName: string): void {
 }
 
 export function openMapInHammer(mapName: string): void {
-    const relativeVmfPath = Shared.Paths.createPath(mapName + "vmf", Shared.Paths.PathBases.ContentMaps);
+    const relativeVmfPath = Shared.Paths.createPath(mapName + ".vmf", Shared.Paths.PathBases.ContentMaps);
     const absVmfPath = Shared.Paths.transformPathBase(relativeVmfPath, Shared.Paths.PathBases.Absolute, getAppConfig());
     if (!absVmfPath) {
         Logger.warning(Shared.Log.Channel.Generic, "Failed to open map. Path failed to resolve", mapName);
