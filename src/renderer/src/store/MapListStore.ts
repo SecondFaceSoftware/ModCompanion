@@ -25,6 +25,16 @@ export const useMapListStore = defineStore("map-list", () => {
         }
     }
 
+    function addMapsAndSort(mapNames: string[]): void {
+        const mapListCopy = [...mapList.value];
+        for (const mapName of mapNames) {
+            if (mapListCopy.includes(mapName)) continue;
+            mapListCopy.push(mapName);
+        }
+        mapListCopy.sort();
+        mapList.value = mapListCopy;
+    }
+
     function removeMap(mapName: string): void {
         const idx = mapList.value.indexOf(mapName);
         if (idx < 0) return;
@@ -32,6 +42,10 @@ export const useMapListStore = defineStore("map-list", () => {
         const mapListCopy = mapList.value;
         mapListCopy.splice(idx, 1);
         mapList.value = mapListCopy;
+    }
+
+    function sortList(): void {
+        mapList.value = mapList.value.toSorted();
     }
 
     window.electronAPI.map.subscribeQueueUpdated((arg) => {
@@ -45,8 +59,10 @@ export const useMapListStore = defineStore("map-list", () => {
         selectedMap,
         mapQueue,
         addMap,
+        addMapsAndSort,
         removeMap,
         isMapInList,
         selectMap,
+        sortList,
     };
 });

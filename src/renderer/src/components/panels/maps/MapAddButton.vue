@@ -19,26 +19,40 @@ const mapFileEntries = useAsyncState(window.electronAPI.fileBrowser.listFiles("c
     entries: [],
 });
 
-const items = computed(() => {
-    if (!mapFileEntries.state.value.valid) return [];
+const mapList = computed(() =>
+    mapFileEntries.state.value.valid
+        ? mapFileEntries.state.value.entries
+              .filter((e) => e.isFile && pathe.extname(e.name))
+              .map((e) => filename(e.name) ?? e.name)
+        : [],
+);
 
-    const menu = mapFileEntries.state.value.entries
-        .filter((d) => d.isFile && pathe.extname(d.name) === ".vmf")
-        .map<DropdownMenuItem>((d) => {
-            const mapName = filename(d.name) ?? d.name;
-            return {
-                label: mapName,
-                type: "checkbox",
-                checked: listStore.isMapInList(mapName),
-                onUpdateChecked(checked: boolean) {
-                    if (checked) {
-                        listStore.addMap(mapName);
-                    } else {
-                        listStore.removeMap(mapName);
-                    }
-                },
-            };
-        });
+const items = computed(() => {
+    const menu: DropdownMenuItem[] = [
+        {
+            label: "Add All",
+            onSelect() {
+                listStore.addMapsAndSort(mapList.value);
+            },
+        },
+        { type: "separator" },
+    ];
+
+    for (const mapName of mapList.value) {
+        const item: DropdownMenuItem = {
+            label: mapName,
+            type: "checkbox",
+            checked: listStore.isMapInList(mapName),
+            onUpdateChecked(checked: boolean) {
+                if (checked) {
+                    listStore.addMap(mapName);
+                } else {
+                    listStore.removeMap(mapName);
+                }
+            },
+        };
+        menu.push(item);
+    }
 
     return menu;
 });
