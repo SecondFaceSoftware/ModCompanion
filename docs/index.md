@@ -16,19 +16,16 @@ hero:
     - theme: alt
       text: User Guide
       link: /user-guide
-    - theme: alt
-      text: Programmer Guide
-      link: /programmer-guide
 
 features:
   - title: Asset Database
-    details: Mod Companion keeps an index of your project's assets in raw and game format. Search your entire project in a millisecond and analyse asset dependencies
+    details: Mod Companion keeps an index of your entire project. Search it in a millisecond
   - title: Asset Conversion
     details: Automatically convert assets from their raw formats into game assets using a centralized tool
   - title: Asset Creation
-    details: Create materials, textures and models with ease
+    details: Create materials, textures and models
   - title: Asset Hot Reloading
-    details: When a file changes on disk, Mod Companion immediately converts it for you and tells the game to reload it
+    details: When a file changes on disk, Mod Companion automatically converts it and tells the game to reload
     
   - title: Bulk Map Compilation
     details: Put all your maps in a queue and let Mod Companion build them all for you
@@ -36,7 +33,5 @@ features:
     details: Identify problematic maps that compile longer than they should
   - title: Map Cloud Compilation
     details: Build your maps on a dedicated map compile machine and download the BSP files when they're ready
-  - title: Deployment
-    details: Identify problematic maps that compile longer than they should
 ---
 

@@ -10,7 +10,6 @@ export default defineConfig({
         nav: [
             { text: "Home", link: "/" },
             { text: "User Guide", link: "/user-guide" },
-            { text: "Programmer Reference", link: "/programmer-reference" },
         ],
 
         logo: "/img/lity_48x48.png",
@@ -40,8 +39,8 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Programmer Reference",
-                items: [{ text: "Path Bases", link: "/programmer-reference/path-bases" }],
+                text: "Other",
+                items: [{ text: "Uty-Lity: Mod Companion's Mascot", link: "/other/mascot-utylity" }],
             },
         ],
 

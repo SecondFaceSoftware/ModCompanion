@@ -121,6 +121,12 @@
   --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
 }
 
+@media (min-width: 60rem) {
+  .image-container {
+    height: 150% !important;
+    transform: translate(0rem, -4rem) !important;
+  }
+}
 
 .image-container .image-src {
   max-width: unset;
