@@ -1,9 +1,19 @@
 <template>
     <div>
         <template v-if="!error && !loading">
-            <div>
-                <img :src="`data:image/png;base64,${extract}`" />
-                <MTextArea horiz-scroll>{{ info }}</MTextArea>
+            <div class="grid gap-2">
+                <img :src="`data:image/png;base64,${extract}`" class="border border-accented" />
+                <UCollapsible v-model:open="detailsOpen">
+                    <UButton
+                        label="Details"
+                        :icon="detailsOpen ? AppDesign.Icons.ChevronUp : AppDesign.Icons.ChevronDown"
+                    />
+                    <template #content>
+                        <div class="py-2">
+                            <MTextArea horiz-scroll>{{ info }}</MTextArea>
+                        </div>
+                    </template>
+                </UCollapsible>
             </div>
         </template>
         <template v-else-if="loading">
@@ -36,6 +46,8 @@ const loading = ref(false);
 const error = ref(false);
 const info = ref<Shared.Vtf.SharedVtfInfo | undefined>(undefined);
 const extract = ref<string | undefined>(undefined);
+
+const detailsOpen = ref(false);
 
 watchImmediate(() => props.path, loadInfo);
 
