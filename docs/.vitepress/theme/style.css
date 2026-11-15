@@ -123,8 +123,8 @@
 
 @media (min-width: 60rem) {
   .image-container {
-    height: 150% !important;
-    transform: translate(0rem, -4rem) !important;
+    height: 170% !important;
+    transform: translate(0rem, -6rem) !important;
   }
 }
 

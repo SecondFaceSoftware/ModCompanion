@@ -11,3 +11,7 @@ Lity is a game developer with cotton candy hair. She represents the human creati
 Uty is a cubic robot on wheels. He represents the game technology and tooling Lity needs to turn her dreams into reality. He can open up like a toolbox, with new technology for Lity to use.
 
 Uty and Lity: Technological Innovation and Human Creativity. Both need each other to make great games.
+
+---
+
+[Get the sources here](https://github.com/SecondFaceSoftware/ModCompanion/tree/dev/art/uty_lity_sources)
