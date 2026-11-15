@@ -37,6 +37,9 @@ export default defineConfig({
             },
         ],
 
-        socialLinks: [{ icon: "github", link: "https://github.com/SecondFaceSoftware/ModCompanion" }],
+        socialLinks: [
+            { icon: "github", link: "https://github.com/SecondFaceSoftware/ModCompanion" },
+            { icon: "discord", link: "https://discord.gg/BDDxkNwXWw" },
+        ],
     },
 });
