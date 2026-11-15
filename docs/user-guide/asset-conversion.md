@@ -23,7 +23,7 @@ Valve uses a folder called "content" to represent the raw, unconverted assets an
 
 ![Unified conversion](/img/diagrams/unified_conversion.png)
 
-Here's an example of how assets are shown in the [Asset Browser](/user-guide/panels/asset-browser). Different kinds of assets are shown in the same list and can be grouped together. 
+Here's an example of how assets are shown in the Asset Browser Panel. Different kinds of assets are shown in the same list and can be grouped together. 
 The UI shows all asset's conversion status at a quick glance, and all assets can be converted the same way.
 
 Some assets, like materials, require no conversion step, since they only exist as game assets. 
@@ -39,7 +39,7 @@ All types of assets can be marked for conversion from the context menu.
 The system responsible for converting assets is called the Conversion Agent. This process runs in the background and waits for jobs to be added to the conversion queue.
 
 When a job is at the front of the conversion queue, Mod Companion processes the conversion and continues to the next job when finished.
-The queue and finished jobs can be seen in the [Conversions Panel](/user-guide/panels/conversions).
+The queue and finished jobs can be seen in the Conversions Panel.
 
 ![Conversions Panel](/img/diagrams/conversions_panel.png)
 

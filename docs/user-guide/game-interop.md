@@ -3,7 +3,7 @@
 Mod Companion can communicate with a running instance of a Source Engine game using console commands. 
 This requires the game to be started with the `-netconport 8020` command line parameter.
 
-Game Interop has to be active for [Asset Hot Reloading](/user-guide/asset-hot-reloading) and the [Game Console](/user-guide/panels/game-console) to function.
+Game Interop has to be active for [Asset Hot Reloading](/user-guide/asset-hot-reloading) and the Game Console Panel to function.
 
 
 ---

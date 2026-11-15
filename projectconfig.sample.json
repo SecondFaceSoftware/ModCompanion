@@ -17,9 +17,5 @@
             "compressionMethod": "DEFLATE",
             "filter": "KAISER"
         }
-    },
-    "mapSourceDirs": ["revolution2", "revolution2_concepts", "revolution2_styleguide", "revolution2_pbr"],
-    "mapPresets": {
-        "All Campaign": ["revolution2/r2_a1_begin"]
     }
 }

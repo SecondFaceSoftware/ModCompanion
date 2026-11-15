@@ -32,13 +32,6 @@ export default defineConfig({
                 ],
             },
             {
-                text: "Panels",
-                items: [
-                    { text: "Asset Browser", link: "/user-guide/panels/asset-browser" },
-                    { text: "Conversions", link: "/user-guide/panels/conversions" },
-                ],
-            },
-            {
                 text: "Other",
                 items: [{ text: "Uty-Lity: Mod Companion's Mascot", link: "/other/mascot-utylity" }],
             },
