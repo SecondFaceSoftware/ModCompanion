@@ -6,7 +6,7 @@
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Regular") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff-Regular.ttf") format('woff2');
 }
 
 @font-face {
@@ -15,7 +15,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Medium") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff-Medium.ttf") format('woff2');
 }
 
 @font-face {
@@ -24,7 +24,7 @@
     font-weight: 600;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-SemiBold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff-SemiBold.ttf") format('woff2');
 }
 
 @font-face {
@@ -33,7 +33,7 @@
     font-weight: 700;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Bold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff-Bold.ttf") format('woff2');
 }
 
 /* Semi Condensed */
@@ -44,7 +44,7 @@
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-SemiCondensed-Regular") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_SemiCondensed-Regular.ttf") format('woff2');
 }
 
 @font-face {
@@ -53,7 +53,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-SemiCondensed-Medium") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_SemiCondensed-Medium.ttf") format('woff2');
 }
 
 @font-face {
@@ -62,7 +62,7 @@
     font-weight: 600;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-SemiCondensed-SemiBold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_SemiCondensed-SemiBold.ttf") format('woff2');
 }
 
 @font-face {
@@ -71,7 +71,7 @@
     font-weight: 700;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-SemiCondensed-Bold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_SemiCondensed-Bold.ttf") format('woff2');
 }
 
 /* Condensed */
@@ -82,7 +82,7 @@
     font-weight: 400;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Condensed-Regular") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_Condensed-Regular.ttf") format('woff2');
 }
 
 @font-face {
@@ -91,7 +91,7 @@
     font-weight: 500;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Condensed-Medium") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_Condensed-Medium.ttf") format('woff2');
 }
 
 @font-face {
@@ -100,7 +100,7 @@
     font-weight: 600;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Condensed-SemiBold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_Condensed-SemiBold.ttf") format('woff2');
 }
 
 @font-face {
@@ -109,5 +109,5 @@
     font-weight: 700;
     font-stretch: 100%;
     font-display: swap;
-    src: url("/fonts/dynapuff/DynaPuff-Condensed-Bold") format('woff2');
+    src: url("./src/public/fonts/dynapuff/DynaPuff_Condensed-Bold.ttf") format('woff2');
 }
