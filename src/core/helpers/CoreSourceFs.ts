@@ -1,4 +1,3 @@
-import * as pathe from "pathe";
 import { ConfigSystem } from "../systems/CoreConfigSystem.js";
 import * as Shared from "mod_companion_shared";
 

@@ -1,7 +1,5 @@
 import { expect, test } from "vitest";
 import * as Paths from "../shared/SharedPaths";
-import * as pathe from "pathe";
-import * as path from "node:path";
 import { AppConfig } from "../shared/SharedAppConfig";
 
 const testConfig: AppConfig = {
@@ -32,8 +30,6 @@ const testConfig: AppConfig = {
     vvisArgs: "-report -game revolution",
     vradArgs: "-report -PortalTraversalLighting -textureshadows -StaticPropLighting -StaticPropPolys -game revolution",
     cubemapArgs: "-buildcubemaps -novid -windowed -w 800 -h 600 -condebug -bordered",
-    mapSourceDirs: [],
-    mapPresets: {},
     assetDefaults: {},
     artifactCloud: {},
 };

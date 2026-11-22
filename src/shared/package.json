@@ -16,6 +16,6 @@
     "main": "SharedManifest.ts",
     "dependencies": {
         "pathe": "^2.0.3",
-        "sourcelib": "^0.4.3"
+        "sourcelib": "^0.5.3"
     }
 }
