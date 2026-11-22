@@ -24,6 +24,12 @@ export const PathBases = {
 
     // Relative to <root>/content/<searchpath>/maps
     ContentMaps: 6,
+
+    // Relative to <root>/game/<searchpath>/models
+    GameModels: 7,
+
+    // Relative to <root>/content/<searchpath>/models
+    ContentModels: 8,
 } as const;
 export type PathBase = (typeof PathBases)[keyof typeof PathBases];
 
@@ -51,6 +57,16 @@ export function getBasePrefixPath(base: PathBase | undefined, config: AppConfig)
             return config.gamePath;
         case PathBases.Content:
             return config.contentPath;
+        case PathBases.GameMaterial:
+            return config.textureOutputPath;
+        case PathBases.GameMaps:
+            return config.mapSourcePath;
+        case PathBases.ContentMaps:
+            return config.mapSourcePath;
+        case PathBases.GameModels:
+            return config.modelOutputPath;
+        case PathBases.ContentModels:
+            return config.modelSourcePath;
         case PathBases.Absolute:
         default:
             return "";
@@ -106,6 +122,18 @@ export function transformPathBase<OutputBase extends PathBase>(
             return createPath(
                 rootRelative.path.substring(pathe.join("content", config.gameName, "maps").length + 1),
                 PathBases.ContentMaps,
+            );
+        }
+        case PathBases.GameModels: {
+            return createPath(
+                rootRelative.path.substring(pathe.join("game", config.gameName, "models").length + 1),
+                PathBases.GameModels,
+            );
+        }
+        case PathBases.ContentModels: {
+            return createPath(
+                rootRelative.path.substring(pathe.join("content", config.gameName, "models").length + 1),
+                PathBases.ContentModels,
             );
         }
         default: {
@@ -181,6 +209,12 @@ function _transformPathToRootRelative(inputPath: Path, config: AppConfig): Path 
         }
         case PathBases.ContentMaps: {
             return createPath(pathe.join("content", config.gameName, "maps", inputPath.path), PathBases.Root);
+        }
+        case PathBases.GameModels: {
+            return createPath(pathe.join("game", config.gameName, "models", inputPath.path), PathBases.Root);
+        }
+        case PathBases.ContentModels: {
+            return createPath(pathe.join("content", config.gameName, "models", inputPath.path), PathBases.Root);
         }
         default: {
             return undefined;
