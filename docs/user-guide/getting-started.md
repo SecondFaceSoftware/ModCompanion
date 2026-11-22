@@ -98,7 +98,7 @@ projectconfig.json
         }
     },
     
-    // optional.
+    // Optional
     "assetDefaults": {
       
         // Recommended default config for strata source games
@@ -108,6 +108,16 @@ projectconfig.json
             "compressionMethod": "DEFLATE",
             "filter": "KAISER"
         }
+    },
+  
+    // Optional
+    assetDiscovery: {
+        // Optional. Root relative paths that should be searched for assets. If missing, all paths are searched
+        contentInclude: ["models, materialsrc"]
+    },
+    conversionAgent: {
+        // Optional. Root relative paths that should be automatically converted when the files change. If missing, all paths are automatically converted
+        autoConvertPaths: ["models/_hr", "materialsrc/_hr"]
     }
 }
 

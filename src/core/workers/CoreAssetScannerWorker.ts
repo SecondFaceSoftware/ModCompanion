@@ -21,6 +21,7 @@ async function _buildAssets(
             let asset: Shared.Asset.Asset | undefined = undefined;
 
             if (filePath.path.startsWith("content")) {
+                if (!_shouldScanContentPath(filePath.path)) continue;
                 asset = await _scanContentFile(filePath);
             } else if (filePath.path.startsWith("game")) {
                 asset = await _scanGameFile(filePath);
@@ -48,6 +49,11 @@ async function _buildAssets(
     }
 
     return assets;
+}
+
+function _shouldScanContentPath(filePath: string): boolean {
+    if (data.common.appConfig.assetDiscovery?.contentInclude === undefined) return true;
+    return data.common.appConfig.assetDiscovery.contentInclude.some((c) => filePath.startsWith(c));
 }
 
 function _postProgress(progressTotal: number, progressNow: number) {

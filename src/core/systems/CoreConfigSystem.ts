@@ -32,6 +32,16 @@ const ProjectConfigFileSchema = z.object({
             }),
         }),
     ),
+    assetDiscovery: z.optional(
+        z.object({
+            contentInclude: z.optional(z.array(z.string())),
+        }),
+    ),
+    conversionAgent: z.optional(
+        z.object({
+            autoConvertPaths: z.optional(z.array(z.string())),
+        }),
+    ),
 });
 
 type ProjectConfigFile = z.infer<typeof ProjectConfigFileSchema>;
@@ -103,6 +113,14 @@ function _createConfig(c: ProjectConfigFile, cfgPath: string): Shared.AppConfig.
 
         assetDefaults: c.assetDefaults as Shared.AppConfig.AppConfigAssetDefaults,
         artifactCloud: c.artifactCloud,
+
+        assetDiscovery: {
+            contentInclude: _transformAssetContentIncludePaths(c.assetDiscovery?.contentInclude, c.searchPath),
+        },
+
+        conversionAgent: {
+            autoConvertPaths: _transformAssetContentIncludePaths(c.conversionAgent?.autoConvertPaths, c.searchPath),
+        },
     };
 }
 
@@ -183,4 +201,9 @@ async function _loadProjectConfig(): Promise<{ cfg: ProjectConfigFile; cfgPath: 
         Logger.error(Shared.Log.Channel.MainSystems, "Error loading project config", e);
         return undefined;
     }
+}
+
+function _transformAssetContentIncludePaths(paths: string[] | undefined, searchPath: string): string[] | undefined {
+    if (paths === undefined) return undefined;
+    return paths.map((p) => pathe.join("content", searchPath, p));
 }

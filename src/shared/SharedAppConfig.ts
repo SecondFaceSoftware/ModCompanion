@@ -105,4 +105,13 @@ export interface AppConfig {
             mapsPrefix?: string;
         };
     };
+
+    assetDiscovery?: {
+        /** Root relative paths that should be searched for assets */
+        contentInclude?: string[];
+    };
+    conversionAgent?: {
+        /** Root relative paths that should be automatically converted when the files change */
+        autoConvertPaths?: string[];
+    };
 }

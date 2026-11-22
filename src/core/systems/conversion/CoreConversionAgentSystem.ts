@@ -9,6 +9,7 @@ import { AssetWatcherSystem } from "../CoreAssetWatcherSystem.js";
 import { Logger } from "../CoreLogSystem.js";
 import * as Shared from "mod_companion_shared";
 import { AssetRepositorySystem } from "../asset/CoreAssetRepositorySystem.js";
+import { ConfigSystem } from "../CoreConfigSystem.js";
 
 const MAX_PARALLEL_JOBS = 1;
 const CONVERSION_INTERVAL_MS = 100;
@@ -127,6 +128,14 @@ async function _runAgent(): Promise<void> {
     notifyFunc?.(event);
 }
 
+function _shouldAutoConvert(asset: Shared.Asset.Asset): boolean {
+    const autoConvertPaths = ConfigSystem.getAppConfig().conversionAgent?.autoConvertPaths;
+    if (!autoConvertPaths) return true;
+    if (asset.defFilePath === undefined) return false;
+
+    return autoConvertPaths.some((p) => asset.defFilePath!.startsWith(p));
+}
+
 function _getAssetsToConvert(): { assets: Shared.Asset.AssetId[]; totalAssetsToConvertCount: number } {
     let freeJobsCount = MAX_PARALLEL_JOBS - conversionJobs.size;
     let queueLength = 0;
@@ -156,7 +165,7 @@ async function _startConversion(id: Shared.Asset.AssetId): Promise<string | unde
         return undefined;
     }
 
-    if (!_isConvertible(asset?.def)) {
+    if (!_isConvertible(asset.def)) {
         return undefined;
     }
 
@@ -172,6 +181,11 @@ async function _startConversion(id: Shared.Asset.AssetId): Promise<string | unde
     const force = previousState === Shared.Conversion.State.PendingForced;
 
     if (!force) {
+        if (!_shouldAutoConvert(asset)) {
+            _setState(id, Shared.Conversion.State.NoChange);
+            return undefined;
+        }
+
         // The purpose of checksums is to avoid unnecessary conversions when the file was touched without contents changing
         // Blender source tools for example reexports all model files in bulk but only one may have its contents updated
         const hasChanged = await ConversionChecksumSystem.hasChanged(asset.def);
