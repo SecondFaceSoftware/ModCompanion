@@ -77,6 +77,9 @@ projectconfig.json
   
     // Your game's primary searchpath. Mod Companion currently only supports a single search path. This is the name of the folder that contains your gameinfo.txt
     "searchPath": "revolution",
+  
+    // The name of your game exe. portal2.exe, hl2.exe... BUT without the exe extension! 
+    "launcherName": "revolution",
     
     // Optional. If you want to use an artifact cloud, this is the config layout
     "artifactCloud": {
