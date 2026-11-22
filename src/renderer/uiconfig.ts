@@ -29,6 +29,16 @@ export default function buildConfig(): NuxtUIOptions {
                         variant: "label",
                         class: "bg-none text-success",
                     },
+                    {
+                        color: "error",
+                        variant: "label",
+                        class: "bg-none text-error",
+                    },
+                    {
+                        color: "info",
+                        variant: "label",
+                        class: "bg-none text-info",
+                    },
                 ],
             },
             button: {
