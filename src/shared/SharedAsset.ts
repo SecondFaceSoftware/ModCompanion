@@ -57,8 +57,8 @@ export function hasGameFiles(type: Type): boolean {
     switch (type) {
         case Types.Texture:
         case Types.Material:
-            return true;
         case Types.Model:
+            return true;
         case Types.Unknown:
         default:
             return false;
