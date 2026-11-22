@@ -137,9 +137,12 @@ async function _readQcFile(fileName: string, fileRootPath: string): Promise<Shar
     if (!text) return undefined;
 
     const qcDoc = sourcelib.qc.QcParser.parseText(text);
+    const modelName = sourcelib.qc.QcUtils.getModelName(qcDoc);
+    if (!modelName) return undefined;
+
     const refs = sourcelib.qc.QcUtils.getAllReferencedModelInputFiles(qcDoc);
 
-    const def = Shared.AssetModel.createModelAssetDefinition(data.common.appConfig, fullPath, refs);
+    const def = Shared.AssetModel.createModelAssetDefinition(data.common.appConfig, fullPath, refs, modelName);
     // TODO: Check if content files exist
     return def;
 }
