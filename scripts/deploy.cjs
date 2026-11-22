@@ -42,7 +42,7 @@ async function _deployRuntimeLinux() {
 }
 
 async function _createPackageJson() {
-    const packageJsonPath = path.resolve(__dirname, `${output}/package.json`);
+    const packageJsonPath = path.resolve(__dirname, `${output}/app/package.json`);
     const version = await fs.readFile(path.resolve(__dirname, "../version.txt"), "utf-8");
     const packageJsonContent = {
         name: "mod_companion",
