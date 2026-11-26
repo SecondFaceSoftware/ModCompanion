@@ -7,6 +7,7 @@
                     <div class="ml-auto">
                         <AssetInspectorSaved />
                     </div>
+                    <AssetInspectorQuickActions :asset="asset" />
                 </header>
                 <AssetInspectorRoot :asset="asset" />
             </div>
@@ -22,6 +23,7 @@ import { PanelParams } from "~/helper/GlobalComponents.js";
 import { usePanelsStore } from "~/store/PanelsStore.js";
 import { AssetInspectorModel } from "~/components/panels/assetInspector/AssetInspector.model.js";
 import { useAssetListStore } from "~/store/AssetListStore.js";
+import AssetInspectorQuickActions from "~/components/panels/assetInspector/AssetInspectorQuickActions.vue";
 
 const props = defineProps<{ params: IDockviewPanelProps<PanelParams> }>();
 const model = computed(() => usePanelsStore().getModel<AssetInspectorModel>(props.params.params.panelId));

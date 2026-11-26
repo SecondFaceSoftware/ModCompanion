@@ -48,6 +48,8 @@ import { GlobalComponentNames } from "~/helper/GlobalComponents.js";
 import { AssetInspectorModel } from "~/components/panels/assetInspector/AssetInspector.model.js";
 import { getAppConfig } from "~/renderer-config.js";
 import { MaterialHelper } from "~/helper/MaterialHelper.js";
+import * as pathe from "pathe";
+import { openModelInHlmv } from "~/helper/LauncherHelper.js";
 
 const listStore = useAssetListStore();
 const conversionStore = useAssetConversionStore();
@@ -290,11 +292,7 @@ const items = computed(() => {
                 assetGroupsStore.isGrouped(selected.def.id),
             );
             const allTextures = !selAssets.some((value) => value.def.type !== Shared.Asset.Types.Texture);
-            let autoMaterial: Shared.Vmt.VmtFile | undefined;
-            if (allTextures) {
-                const texturePaths = Shared.Asset.getGameFilePaths(selAssets);
-                autoMaterial = Shared.Vmt.createAutoMaterial(texturePaths, getAppConfig());
-            }
+            const allModels = !selAssets.some((value) => value.def.type !== Shared.Asset.Types.Model);
 
             options.push([
                 {
@@ -317,18 +315,39 @@ const items = computed(() => {
                     color: isAnyGrouped ? "neutral" : "success",
                     disabled: isAnyGrouped,
                 },
-                {
-                    label: "Create Material",
-                    onSelect(e: Event) {
-                        MaterialHelper.createMaterial(autoMaterial!);
-                    },
-                    icon: AppDesign.Icons.ActionCreateAsset,
-                    disabled: !autoMaterial,
-                },
             ]);
+
+            if (allTextures) {
+                let autoMaterial: Shared.Vmt.VmtFile | undefined;
+                if (allTextures) {
+                    const texturePaths = Shared.Asset.getGameFilePaths(selAssets);
+                    autoMaterial = Shared.Vmt.createAutoMaterial(texturePaths, getAppConfig());
+                }
+                options.push([
+                    {
+                        label: "Create Material",
+                        onSelect(e: Event) {
+                            MaterialHelper.createMaterial(autoMaterial!);
+                        },
+                        icon: AppDesign.Icons.ActionCreateAsset,
+                        disabled: !autoMaterial,
+                    },
+                ]);
+            }
 
             if (selAssets.length === 1) {
                 const sel = selAssets[0];
+
+                if (Shared.Asset.isModelAsset(sel)) {
+                    options.push([
+                        {
+                            label: "Open in HLMV",
+                            onSelect(e: Event) {
+                                openModelInHlmv(sel);
+                            },
+                        },
+                    ]);
+                }
 
                 if (sel.def.associatedFiles) {
                     const ass = sel.def.associatedFiles;

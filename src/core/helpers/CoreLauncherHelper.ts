@@ -14,9 +14,6 @@ export function runLauncher(type: Shared.Launchers.Launchers, args?: string) {
     const workingDir = ConfigSystem.getAppConfig().gameRootPath;
 
     let cmd = exe;
-    if (args) {
-        cmd = `${exe} ${args}`;
-    }
 
     if (_isWine(exe) && os.platform() === "linux") {
         cmd = `wine ${cmd}`;
@@ -24,6 +21,10 @@ export function runLauncher(type: Shared.Launchers.Launchers, args?: string) {
 
     if (!cmd.includes("-game")) {
         cmd += ` -game ${ConfigSystem.getAppConfig().gameName}`;
+    }
+
+    if (args) {
+        cmd += " " + args;
     }
 
     Logger.info(Shared.Log.Channel.Generic, `Launching '${cmd}' Working Dir '${workingDir}'`);

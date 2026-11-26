@@ -190,6 +190,10 @@ export function isModelAssetDef(asset: AssetDef | undefined): asset is ModelAsse
     return asset?.type === Types.Model;
 }
 
+export function isModelAsset(asset: Asset | undefined): asset is ModelAsset {
+    return isModelAssetDef(asset?.def);
+}
+
 export interface MaterialAssetDef extends AssetDef {
     type: typeof Types.Material;
     vmtDocument?: VmtDocument;
