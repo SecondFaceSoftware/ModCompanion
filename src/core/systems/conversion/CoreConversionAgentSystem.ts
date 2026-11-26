@@ -13,7 +13,7 @@ import { ConfigSystem } from "../CoreConfigSystem.js";
 import * as pathe from "pathe";
 
 const MAX_PARALLEL_JOBS = 1;
-const CONVERSION_INTERVAL_MS = 100;
+const CONVERSION_INTERVAL_MS = 10;
 
 let lastChangeTime: Date | undefined = undefined;
 
@@ -84,6 +84,11 @@ export const ConversionAgentSystem = {
                 continue;
             }
 
+            if (!_shouldAutoConvert(asset)) {
+                _setState(asset.def.id, Shared.Conversion.State.NoChange);
+                continue;
+            }
+
             const valid = _isValidAsset(asset.def);
             const contentExists = _areContentFilesValid(asset.def);
             if (!valid || !contentExists) {
@@ -111,7 +116,6 @@ async function _runAgent(): Promise<void> {
         }
 
         await Promise.allSettled(promises);
-        return;
     }
 
     const event: Shared.Conversion.UpdateEvent = {
@@ -165,14 +169,14 @@ async function _startConversion(id: Shared.Asset.AssetId): Promise<string | unde
         return undefined;
     }
 
+    if (!_isConvertible(asset.def)) {
+        return undefined;
+    }
+
     const previousState = _getState(id);
     const force = previousState === Shared.Conversion.State.PendingForced;
     if (!force && !_shouldAutoConvert(asset)) {
         _setState(id, Shared.Conversion.State.NoChange);
-        return undefined;
-    }
-
-    if (!_isConvertible(asset.def)) {
         return undefined;
     }
 

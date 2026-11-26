@@ -41,7 +41,7 @@ function _handleChanged(filePathRaw: string): void {
     // is this asset on the ignore list?
     const ignoreCount = ignoreMap.get(filePath);
     if (ignoreCount !== undefined && ignoreCount > 0) {
-        ignoreMap.set(filePathRaw, ignoreCount - 1);
+        ignoreMap.set(filePath, ignoreCount - 1);
         return;
     }
 
